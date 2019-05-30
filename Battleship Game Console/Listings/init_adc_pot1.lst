@@ -1,0 +1,206 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ; ADC Registers
+    2 00000000 400FE638 
+                       RCGCADC EQU              0x400FE638  ; ADC clock registe
+                                                            r
+    3 00000000 40038000 
+                       ADC0_ACTSS
+                               EQU              0x40038000  ; Sample sequencer 
+                                                            (ADC0 base address)
+                                                            
+    4 00000000 40038014 
+                       ADC0_EMUX
+                               EQU              0x40038014  ; Trigger select
+    5 00000000 400380A0 
+                       ADC0_SSMUX3
+                               EQU              0x400380A0  ; Input channel sel
+                                                            ect
+    6 00000000 400380A4 
+                       ADC0_SSCTL3
+                               EQU              0x400380A4  ; Sample sequence c
+                                                            ontrol
+    7 00000000 40038FC4 
+                       ADC0_PP EQU              0x40038FC4  ; Sample rate
+    8 00000000         
+    9 00000000         ;LABEL  DIRECTIVE VALUE  COMMENT
+   10 00000000                 AREA             main   , READONLY, CODE
+   11 00000000                 THUMB                        ; Subsequent instru
+                                                            ctions are Thumb
+   12 00000000                 EXPORT           INIT_ADC_POT1 ; Make available
+   13 00000000         
+   14 00000000         INIT_ADC_POT1
+                               PROC
+   15 00000000 B500            PUSH             {LR}
+   16 00000002 4917            LDR              R1, =RCGCADC ; Enable ADC0 cloc
+                                                            k 
+   17 00000004 6808            LDR              R0, [R1]
+   18 00000006 F040 0001       ORR              R0, R0, #0x01 ; set bit 0 to en
+                                                            able ADC0 clock
+   19 0000000A 6008            STR              R0, [R1]
+   20 0000000C BF00            NOP
+   21 0000000E BF00            NOP
+   22 00000010 BF00            NOP
+   23 00000012 BF00            NOP
+   24 00000014 BF00            NOP
+   25 00000016 BF00            NOP
+   26 00000018 BF00            NOP
+   27 0000001A BF00            NOP                          ; Let clock stabili
+                                                            ze
+   28 0000001C 4911            LDR              R1, =ADC0_ACTSS ;Disable sequen
+                                                            cer 3 while ADC
+   29 0000001E 6808            LDR              R0, [R1]
+   30 00000020 F020 0008       BIC              R0, R0, #0x08 ; clear bit 3 to 
+                                                            disable seq 3
+   31 00000024 6008            STR              R0, [R1]
+   32 00000026         
+   33 00000026 4910            LDR              R1, =ADC0_EMUX ;Select Event Mu
+                                                            ltiplexer(trigger s
+                                                            ource) 
+   34 00000028 6808            LDR              R0, [R1]    ;as processor trigg
+                                                            er for SS3 
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   35 0000002A F420 4070       BIC              R0, R0, #0xF000
+   36 0000002E 6008            STR              R0, [R1]
+   37 00000030         
+   38 00000030 490E            LDR              R1, =ADC0_SSMUX3 ;Select input 
+                                                            channel as AIN0
+   39 00000032 6808            LDR              R0, [R1]
+   40 00000034 F020 000F       BIC              R0, R0, #0x000F
+   41 00000038 6008            STR              R0, [R1]
+   42 0000003A         
+   43 0000003A 490D            LDR              R1, =ADC0_SSCTL3 ;Config Sample
+                                                             Sequencer Control 
+                                                            3. IE0=1, END0=1
+   44 0000003C 6808            LDR              R0, [R1]    ;IE0:Sample Interru
+                                                            pt Enable =1
+   45 0000003E F040 0006       ORR              R0, R0, #0x06 ;END0:Sample is E
+                                                            nd of Sequence=  1
+   46 00000042 6008            STR              R0, [R1]    ;--> First sample i
+                                                            s the last sample o
+                                                            f seqence   
+   47 00000044         
+   48 00000044         ; Set sample rate
+   49 00000044 490B            LDR              R1, =ADC0_PP
+   50 00000046 6808            LDR              R0, [R1]
+   51 00000048 F040 0001       ORR              R0, R0, #0x01 ;Set sample rate 
+                                                            as 125 kilo-samples
+                                                             per second (ksps)
+   52 0000004C 6008            STR              R0, [R1]
+   53 0000004E         
+   54 0000004E         ; Done with setup, enable sequencer
+   55 0000004E 4905            LDR              R1, =ADC0_ACTSS 
+                                                            ;Enable sequencer 3
+                                                            
+   56 00000050 6808            LDR              R0, [R1]
+   57 00000052 F040 0008       ORR              R0, R0, #0x08
+   58 00000056 6008            STR              R0, [R1]    ; sampling enabled 
+                                                            but not initiated y
+                                                            et
+   59 00000058         
+   60 00000058 F85D EB04       POP              {LR}
+   61 0000005C 4770            BX               LR
+   62 0000005E                 ENDP
+   63 0000005E 00 00           ALIGN
+   64 00000060                 END
+              400FE638 
+              40038000 
+              40038014 
+              400380A0 
+              400380A4 
+              40038FC4 
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
+erwork --depend=.\objects\init_adc_pot1.d -o.\objects\init_adc_pot1.o -I.\RTE\_
+Target_1 -IC:\Keil_v5\ARM\PACK\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123 -IC:\
+Keil_v5\ARM\CMSIS\Include --predefine="__EVAL SETA 1" --predefine="__UVISION_VE
+RSION SETA 526" --predefine="TM4C123GH6PM SETA 1" --list=.\listings\init_adc_po
+t1.lst INIT_ADC_POT1.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+INIT_ADC_POT1 00000000
+
+Symbol: INIT_ADC_POT1
+   Definitions
+      At line 14 in file INIT_ADC_POT1.s
+   Uses
+      At line 12 in file INIT_ADC_POT1.s
+Comment: INIT_ADC_POT1 used once
+main 00000000
+
+Symbol: main
+   Definitions
+      At line 10 in file INIT_ADC_POT1.s
+   Uses
+      None
+Comment: main unused
+2 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Absolute symbols
+
+ADC0_ACTSS 40038000
+
+Symbol: ADC0_ACTSS
+   Definitions
+      At line 3 in file INIT_ADC_POT1.s
+   Uses
+      At line 28 in file INIT_ADC_POT1.s
+      At line 55 in file INIT_ADC_POT1.s
+
+ADC0_EMUX 40038014
+
+Symbol: ADC0_EMUX
+   Definitions
+      At line 4 in file INIT_ADC_POT1.s
+   Uses
+      At line 33 in file INIT_ADC_POT1.s
+Comment: ADC0_EMUX used once
+ADC0_PP 40038FC4
+
+Symbol: ADC0_PP
+   Definitions
+      At line 7 in file INIT_ADC_POT1.s
+   Uses
+      At line 49 in file INIT_ADC_POT1.s
+Comment: ADC0_PP used once
+ADC0_SSCTL3 400380A4
+
+Symbol: ADC0_SSCTL3
+   Definitions
+      At line 6 in file INIT_ADC_POT1.s
+   Uses
+      At line 43 in file INIT_ADC_POT1.s
+Comment: ADC0_SSCTL3 used once
+ADC0_SSMUX3 400380A0
+
+Symbol: ADC0_SSMUX3
+   Definitions
+      At line 5 in file INIT_ADC_POT1.s
+   Uses
+      At line 38 in file INIT_ADC_POT1.s
+Comment: ADC0_SSMUX3 used once
+RCGCADC 400FE638
+
+Symbol: RCGCADC
+   Definitions
+      At line 2 in file INIT_ADC_POT1.s
+   Uses
+      At line 16 in file INIT_ADC_POT1.s
+Comment: RCGCADC used once
+6 symbols
+344 symbols in table

@@ -1,0 +1,67 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ;LABEL  DIRECTIVE VALUE  COMMENT
+    2 00000000                 AREA             main   , READONLY, CODE
+    3 00000000                 THUMB                        ; Subsequent instru
+                                                            ctions are Thumb
+    4 00000000                 EXPORT           DELAY100    ; Make available
+    5 00000000         
+    6 00000000         DELAY100
+                               PROC
+    7 00000000 B500            PUSH             {LR}        ;
+    8 00000002 B401            PUSH             {R0}        ; Store the registe
+                                                            r in Stack
+    9 00000004         
+   10 00000004 F04F 003C       LDR              R0, =60     ; Counter value
+   11 00000008 3801    loop    SUBS             R0,#1
+   12 0000000A D1FD            BNE              loop
+   13 0000000C         
+   14 0000000C BC01            POP              {R0}
+   15 0000000E F85D EB04       POP              {LR}
+   16 00000012 4770            BX               LR
+   17 00000014         
+   18 00000014                 ENDP
+   19 00000014                 ALIGN
+   20 00000014                 END
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
+erwork --depend=.\objects\delay100.d -o.\objects\delay100.o -I.\RTE\_Target_1 -
+IC:\Keil_v5\ARM\PACK\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123 -IC:\Keil_v5\AR
+M\CMSIS\Include --predefine="__EVAL SETA 1" --predefine="__UVISION_VERSION SETA
+ 526" --predefine="TM4C123GH6PM SETA 1" --list=.\listings\delay100.lst DELAY100
+.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+DELAY100 00000000
+
+Symbol: DELAY100
+   Definitions
+      At line 6 in file DELAY100.s
+   Uses
+      At line 4 in file DELAY100.s
+Comment: DELAY100 used once
+loop 00000008
+
+Symbol: loop
+   Definitions
+      At line 11 in file DELAY100.s
+   Uses
+      At line 12 in file DELAY100.s
+Comment: loop used once
+main 00000000
+
+Symbol: main
+   Definitions
+      At line 2 in file DELAY100.s
+   Uses
+      None
+Comment: main unused
+3 symbols
+337 symbols in table

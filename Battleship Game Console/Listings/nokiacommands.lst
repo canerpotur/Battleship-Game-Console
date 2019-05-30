@@ -1,0 +1,4378 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000 40004200 
+                       PIN_RESET
+                               EQU              0x40004200
+    2 00000000 40008008 
+                       SSI0_DR_R
+                               EQU              0x40008008
+    3 00000000 4000800C 
+                       SSI0_SR_R
+                               EQU              0x4000800C
+    4 00000000 40004100 
+                       DC      EQU              0x40004100
+    5 00000000         
+    6 00000000         ;LABEL  DIRECTIVE VALUE  COMMENT
+    7 00000000                 AREA             main   , READONLY, CODE
+    8 00000000                 THUMB                        ; Subsequent instru
+                                                            ctions are Thumb
+    9 00000000                 EXPORT           NokiaCommands ; Make available
+   10 00000000                 EXPORT           NokiaClear
+   11 00000000                 EXPORT           SetCursor_X
+   12 00000000                 EXPORT           SetCursor_Y
+   13 00000000                 EXPORT           PrintCursor
+   14 00000000                 EXPORT           PrintMap
+   15 00000000                 EXPORT           ClearMap
+   16 00000000                 EXPORT           WAITCOMMAND
+   17 00000000                 EXPORT           WAITDATA
+   18 00000000                 EXTERN           DELAY100
+   19 00000000                 EXPORT           PrintCursorShip
+   20 00000000                 EXPORT           PrintShip
+   21 00000000                 EXPORT           PrintShip2
+   22 00000000                 EXPORT           PrintShip3
+   23 00000000                 EXPORT           PrintShip4
+   24 00000000                 EXPORT           PrintWarShip
+   25 00000000                 EXPORT           PrintWarShip2
+   26 00000000                 EXPORT           PrintWarShip3
+   27 00000000                 EXPORT           PrintWarShip4
+   28 00000000                 EXPORT           PRINT
+   29 00000000                 EXPORT           PrintCursor2
+   30 00000000                 IMPORT           READ_POT1
+   31 00000000                 IMPORT           READ_POT2
+   32 00000000                 EXPORT           PrintMine1
+   33 00000000                 EXPORT           PrintMine2
+   34 00000000                 EXPORT           PrintMine3
+   35 00000000                 EXPORT           PrintMine4
+   36 00000000         NokiaCommands
+                               PROC
+   37 00000000         
+   38 00000000         
+   39 00000000         NokiaClear
+                               PROC                         ;CLEAR ALL SCREEN
+   40 00000000 B500            PUSH             {LR}
+   41 00000002 B407            PUSH             {R0-R2}
+   42 00000004 4909            LDR              R1, =DC     ;data
+   43 00000006 6808            LDR              R0, [R1]
+   44 00000008 F04F 0040       MOV              R0, #0x40   ; 
+   45 0000000C 6008            STR              R0, [R1]
+   46 0000000E F240 2206       MOV              R2, #518
+   47 00000012         
+   48 00000012 F7FF FFFE 
+                       loopClear
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+                               BL               WAITDATA
+   49 00000016 F04F 0500       MOV              R5, #0x00   ; SEND 0X00 518 TIM
+                                                            ES
+   50 0000001A F7FF FFFE       BL               PRINT
+   51 0000001E 3A01            SUBS             R2,#1
+   52 00000020 D1F7            BNE              loopClear
+   53 00000022 BC07            POP              {R0-R2}
+   54 00000024 F85D EB04       POP{LR}
+   55 00000028                 ENDP
+   56 00000028 4770            BX               LR
+   57 0000002A 00 00 40004100  LTORG
+   58 00000030         
+   59 00000030         
+   60 00000030         ;;;;;;;;;;;;;;;ClearMap;;;;;;;;;;;;;;;;;;; 
+   61 00000030         ClearMap
+                               PROC
+   62 00000030 B500            PUSH             {LR}
+   63 00000032 B43F            PUSH             {R0-R5}
+   64 00000034 4994            LDR              R1, =DC     ;data
+   65 00000036 6808            LDR              R0, [R1]
+   66 00000038 F04F 0040       MOV              R0, #0x40   ; 
+   67 0000003C 6008            STR              R0, [R1]
+   68 0000003E         ;CLEAR LEFT LINE OF THE FIELD  
+   69 0000003E F04F 0406       MOV              R4, #6
+   70 00000042 F7FF FFFE       BL               SetCursor_X
+   71 00000046 F04F 0401       MOV              R4, #1
+   72 0000004A F7FF FFFE       BL               SetCursor_Y
+   73 0000004E F7FF FFFE       BL               DELAY100
+   74 00000052 F04F 05FF       MOV              R5, 0xFF
+   75 00000056 F7FF FFFE       BL               PRINT
+   76 0000005A F7FF FFFE       BL               DELAY100
+   77 0000005E F04F 0406       MOV              R4, #6
+   78 00000062 F7FF FFFE       BL               SetCursor_X
+   79 00000066 F04F 0402       MOV              R4, #2
+   80 0000006A F7FF FFFE       BL               SetCursor_Y
+   81 0000006E F04F 05FF       MOV              R5, 0xFF
+   82 00000072 F7FF FFFE       BL               PRINT
+   83 00000076 F7FF FFFE       BL               DELAY100
+   84 0000007A F04F 0406       MOV              R4, #6
+   85 0000007E F7FF FFFE       BL               SetCursor_X
+   86 00000082 F04F 0403       MOV              R4, #3
+   87 00000086 F7FF FFFE       BL               SetCursor_Y
+   88 0000008A F04F 05FF       MOV              R5, 0xFF
+   89 0000008E F7FF FFFE       BL               PRINT
+   90 00000092 F7FF FFFE       BL               DELAY100
+   91 00000096 F04F 0406       MOV              R4, #6
+   92 0000009A F7FF FFFE       BL               SetCursor_X
+   93 0000009E F04F 0404       MOV              R4, #4
+   94 000000A2 F7FF FFFE       BL               SetCursor_Y
+   95 000000A6 F04F 05FF       MOV              R5, 0xFF
+   96 000000AA F7FF FFFE       BL               PRINT
+   97 000000AE F7FF FFFE       BL               DELAY100
+   98 000000B2         ;CLEAR LEFT LINE OF THE FIELD 
+   99 000000B2         
+  100 000000B2         
+  101 000000B2         
+  102 000000B2 F04F 0405       MOV              R4, #5
+  103 000000B6 F7FF FFFE       BL               SetCursor_X
+  104 000000BA F04F 0401       MOV              R4, #1
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+  105 000000BE F7FF FFFE       BL               SetCursor_Y
+  106 000000C2 F04F 0500       MOV              R5, 0x00
+  107 000000C6 F7FF FFFE       BL               PRINT
+  108 000000CA F7FF FFFE       BL               DELAY100
+  109 000000CE F04F 0405       MOV              R4, #5
+  110 000000D2 F7FF FFFE       BL               SetCursor_X
+  111 000000D6 F04F 0402       MOV              R4, #2
+  112 000000DA F7FF FFFE       BL               SetCursor_Y
+  113 000000DE F04F 0500       MOV              R5, 0x00
+  114 000000E2 F7FF FFFE       BL               PRINT
+  115 000000E6 F7FF FFFE       BL               DELAY100
+  116 000000EA F04F 0405       MOV              R4, #5
+  117 000000EE F7FF FFFE       BL               SetCursor_X
+  118 000000F2 F04F 0403       MOV              R4, #3
+  119 000000F6 F7FF FFFE       BL               SetCursor_Y
+  120 000000FA F04F 0500       MOV              R5, 0x00
+  121 000000FE F7FF FFFE       BL               PRINT
+  122 00000102 F7FF FFFE       BL               DELAY100
+  123 00000106 F04F 0405       MOV              R4, #5
+  124 0000010A F7FF FFFE       BL               SetCursor_X
+  125 0000010E F04F 0404       MOV              R4, #4
+  126 00000112 F7FF FFFE       BL               SetCursor_Y
+  127 00000116 F04F 0500       MOV              R5, 0x00
+  128 0000011A F7FF FFFE       BL               PRINT
+  129 0000011E F7FF FFFE       BL               DELAY100
+  130 00000122         ;CLEAR LEFT LINE OF THE FIELD     
+  131 00000122         
+  132 00000122         
+  133 00000122         
+  134 00000122         
+  135 00000122         
+  136 00000122         
+  137 00000122         
+  138 00000122         ;CLEAR RIGHT LINE OF THE FIELD  
+  139 00000122 F04F 0445       MOV              R4, #69
+  140 00000126 F7FF FFFE       BL               SetCursor_X
+  141 0000012A F04F 0401       MOV              R4, #1
+  142 0000012E F7FF FFFE       BL               SetCursor_Y
+  143 00000132 F7FF FFFE       BL               DELAY100
+  144 00000136 F04F 05FF       MOV              R5, 0xFF
+  145 0000013A F7FF FFFE       BL               PRINT
+  146 0000013E F7FF FFFE       BL               DELAY100
+  147 00000142 F04F 0445       MOV              R4, #69
+  148 00000146 F7FF FFFE       BL               SetCursor_X
+  149 0000014A F04F 0402       MOV              R4, #2
+  150 0000014E F7FF FFFE       BL               SetCursor_Y
+  151 00000152 F04F 05FF       MOV              R5, 0xFF
+  152 00000156 F7FF FFFE       BL               PRINT
+  153 0000015A F7FF FFFE       BL               DELAY100
+  154 0000015E F04F 0445       MOV              R4, #69
+  155 00000162 F7FF FFFE       BL               SetCursor_X
+  156 00000166 F04F 0403       MOV              R4, #3
+  157 0000016A F7FF FFFE       BL               SetCursor_Y
+  158 0000016E F04F 05FF       MOV              R5, 0xFF
+  159 00000172 F7FF FFFE       BL               PRINT
+  160 00000176 F7FF FFFE       BL               DELAY100
+  161 0000017A F04F 0445       MOV              R4, #69
+  162 0000017E F7FF FFFE       BL               SetCursor_X
+  163 00000182 F04F 0404       MOV              R4, #4
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+  164 00000186 F7FF FFFE       BL               SetCursor_Y
+  165 0000018A F04F 05FF       MOV              R5, 0xFF
+  166 0000018E F7FF FFFE       BL               PRINT
+  167 00000192 F7FF FFFE       BL               DELAY100
+  168 00000196         
+  169 00000196         
+  170 00000196 F04F 0446       MOV              R4, #70
+  171 0000019A F7FF FFFE       BL               SetCursor_X
+  172 0000019E F04F 0401       MOV              R4, #1
+  173 000001A2 F7FF FFFE       BL               SetCursor_Y
+  174 000001A6 F04F 0500       MOV              R5, 0x00
+  175 000001AA F7FF FFFE       BL               PRINT
+  176 000001AE F7FF FFFE       BL               DELAY100
+  177 000001B2 F04F 0446       MOV              R4, #70
+  178 000001B6 F7FF FFFE       BL               SetCursor_X
+  179 000001BA F04F 0402       MOV              R4, #2
+  180 000001BE F7FF FFFE       BL               SetCursor_Y
+  181 000001C2 F04F 0500       MOV              R5, 0x00
+  182 000001C6 F7FF FFFE       BL               PRINT
+  183 000001CA F7FF FFFE       BL               DELAY100
+  184 000001CE F04F 0446       MOV              R4, #70
+  185 000001D2 F7FF FFFE       BL               SetCursor_X
+  186 000001D6 F04F 0403       MOV              R4, #3
+  187 000001DA F7FF FFFE       BL               SetCursor_Y
+  188 000001DE F04F 0500       MOV              R5, 0x00
+  189 000001E2 F7FF FFFE       BL               PRINT
+  190 000001E6 F7FF FFFE       BL               DELAY100
+  191 000001EA F04F 0446       MOV              R4, #70
+  192 000001EE F7FF FFFE       BL               SetCursor_X
+  193 000001F2 F04F 0404       MOV              R4, #4
+  194 000001F6 F7FF FFFE       BL               SetCursor_Y
+  195 000001FA F04F 0500       MOV              R5, 0x00
+  196 000001FE F7FF FFFE       BL               PRINT
+  197 00000202 F7FF FFFE       BL               DELAY100
+  198 00000206         ;CLEAR RIGHT LINE OF THE FIELD  
+  199 00000206         
+  200 00000206         
+  201 00000206         
+  202 00000206         
+  203 00000206         
+  204 00000206         
+  205 00000206         
+  206 00000206         
+  207 00000206         
+  208 00000206 F04F 0207       MOV              R2, #7
+  209 0000020A         
+  210 0000020A F7FF FFFE 
+                       loopClMap
+                               BL               WAITDATA    ;CLEAR INSIDE THE M
+                                                            AP
+  211 0000020E         
+  212 0000020E 4614            MOV              R4, R2
+  213 00000210 F7FF FFFE       BL               SetCursor_X ;CLEAR 7-68  
+  214 00000214 F04F 0401       MOV              R4, #1
+  215 00000218 F7FF FFFE       BL               SetCursor_Y
+  216 0000021C F04F 0500       MOV              R5, 0x00
+  217 00000220 F7FF FFFE       BL               PRINT
+  218 00000224         
+  219 00000224 F7FF FFFE       BL               DELAY100
+
+
+
+ARM Macro Assembler    Page 5 
+
+
+  220 00000228 4614            MOV              R4, R2
+  221 0000022A F7FF FFFE       BL               SetCursor_X
+  222 0000022E F04F 0402       MOV              R4, #2
+  223 00000232 F7FF FFFE       BL               SetCursor_Y
+  224 00000236 F04F 0500       MOV              R5, 0x00
+  225 0000023A F7FF FFFE       BL               PRINT
+  226 0000023E         
+  227 0000023E F7FF FFFE       BL               DELAY100
+  228 00000242 4614            MOV              R4, R2
+  229 00000244 F7FF FFFE       BL               SetCursor_X
+  230 00000248 F04F 0403       MOV              R4, #3
+  231 0000024C F7FF FFFE       BL               SetCursor_Y
+  232 00000250 F04F 0500       MOV              R5, 0x00
+  233 00000254 F7FF FFFE       BL               PRINT
+  234 00000258         
+  235 00000258 F7FF FFFE       BL               DELAY100
+  236 0000025C 4614            MOV              R4, R2
+  237 0000025E F7FF FFFE       BL               SetCursor_X
+  238 00000262 F04F 0404       MOV              R4, #4
+  239 00000266 F7FF FFFE       BL               SetCursor_Y
+  240 0000026A F04F 0500       MOV              R5, 0x00
+  241 0000026E F7FF FFFE       BL               PRINT
+  242 00000272 F7FF FFFE       BL               DELAY100
+  243 00000276         
+  244 00000276 F102 0201       ADD              R2,#1
+  245 0000027A 2A45            CMP              R2,#69
+  246 0000027C D1C5            BNE              loopClMap
+  247 0000027E BC3F            POP              {R0-R5}
+  248 00000280 F85D EB04       POP{LR}
+  249 00000284                 ENDP
+  250 00000284 4770            BX               LR
+  251 00000286 00 00 40004100  LTORG
+  252 0000028C         ;;;;;;;;;;;;;;;ClearMap_End;;;;;;;;;;;;;;;;;;; 
+  253 0000028C         
+  254 0000028C         
+  255 0000028C         
+  256 0000028C         
+  257 0000028C         
+  258 0000028C         
+  259 0000028C         
+  260 0000028C         
+  261 0000028C         
+  262 0000028C         
+  263 0000028C         WAITCOMMAND
+                               PROC                         ;WAIT IF THE SSI IS
+                                                             BUSY
+  264 0000028C B500            PUSH             {LR}
+  265 0000028E B403            PUSH             {R0-R1}
+  266 00000290 4909    wcommand
+                               LDR              R1, =SSI0_SR_R
+  267 00000292 6808            LDR              R0, [R1]
+  268 00000294 F010 0010       ANDS             R0, #0x00000010 ;SSI Busy Bit
+  269 00000298 D1FA            BNE              wcommand
+  270 0000029A BC03            POP              {R0-R1}
+  271 0000029C F85D EB04       POP{LR}
+  272 000002A0         
+  273 000002A0                 ENDP
+  274 000002A0 4770            BX               LR
+  275 000002A2         
+
+
+
+ARM Macro Assembler    Page 6 
+
+
+  276 000002A2         WAITDATA
+                               PROC                         ;WAIT SSI BEFORE SE
+                                                            NDING DATA
+  277 000002A2 B500            PUSH             {LR}
+  278 000002A4 B403            PUSH             {R0-R1}
+  279 000002A6 4904    wdata   LDR              R1, =SSI0_SR_R
+  280 000002A8 6808            LDR              R0, [R1]
+  281 000002AA F010 0002       ANDS             R0, #0x00000002
+  282 000002AE D0FA            BEQ              wdata
+  283 000002B0 BC03            POP              {R0-R1}
+  284 000002B2 F85D EB04       POP{LR}
+  285 000002B6                 ENDP
+  286 000002B6 4770            BX               LR
+  287 000002B8 4000800C        LTORG
+  288 000002BC         
+  289 000002BC         
+  290 000002BC         SetCursor_X
+                               PROC                         ;ADJUST SET CURSORX
+                                                            
+  291 000002BC         
+  292 000002BC B500            PUSH             {LR}
+  293 000002BE B41F            PUSH             {R0-R4}
+  294 000002C0 490B            LDR              R1, =DC     ;command 
+  295 000002C2 6808            LDR              R0, [R1]
+  296 000002C4 F04F 0000       MOV              R0, #0      ; 
+  297 000002C8 6008            STR              R0, [R1]
+  298 000002CA F7FF FFFE       BL               WAITCOMMAND
+  299 000002CE 4909            LDR              R1, =SSI0_DR_R
+  300 000002D0 F04F 0380       MOV              R3,  0x80
+  301 000002D4 EA43 0004       ORR              R0, R3,R4
+  302 000002D8 6008            STR              R0, [R1]
+  303 000002DA F7FF FFFE       BL               WAITCOMMAND
+  304 000002DE 4904            LDR              R1, =DC     ;data
+  305 000002E0 6808            LDR              R0, [R1]
+  306 000002E2 F04F 0040       MOV              R0, #0x40   ; 
+  307 000002E6 6008            STR              R0, [R1]
+  308 000002E8 BC1F            POP              {R0-R4}
+  309 000002EA F85D EB04       POP{LR}
+  310 000002EE                 ENDP
+  311 000002EE 4770            BX               LR
+  312 000002F0 40004100 
+              40008008         LTORG
+  313 000002F8         
+  314 000002F8         
+  315 000002F8         SetCursor_Y
+                               PROC                         ;ADJUST SET CURSORX
+                                                            
+  316 000002F8         
+  317 000002F8 B500            PUSH             {LR}
+  318 000002FA B41F            PUSH             {R0-R4}
+  319 000002FC 490B            LDR              R1, =DC     ;command 
+  320 000002FE 6808            LDR              R0, [R1]
+  321 00000300 F04F 0000       MOV              R0, #0      ; 
+  322 00000304 6008            STR              R0, [R1]
+  323 00000306 F7FF FFFE       BL               WAITCOMMAND
+  324 0000030A 4909            LDR              R1, =SSI0_DR_R
+  325 0000030C F04F 0340       MOV              R3,  0x40
+  326 00000310 EA43 0004       ORR              R0, R3,R4
+  327 00000314 6008            STR              R0, [R1]
+
+
+
+ARM Macro Assembler    Page 7 
+
+
+  328 00000316 F7FF FFFE       BL               WAITCOMMAND
+  329 0000031A 4904            LDR              R1, =DC     ;data
+  330 0000031C 6808            LDR              R0, [R1]
+  331 0000031E F04F 0040       MOV              R0, #0x40   ; 
+  332 00000322 6008            STR              R0, [R1]
+  333 00000324 BC1F            POP              {R0-R4}
+  334 00000326 F85D EB04       POP{LR}
+  335 0000032A                 ENDP
+  336 0000032A 4770            BX               LR
+  337 0000032C 40004100 
+              40008008         LTORG
+  338 00000334         
+  339 00000334         PrintCursor
+                               PROC
+  340 00000334 B500            PUSH             {LR}
+  341 00000336         ; SUB  R5, R8, #3
+  342 00000336         
+  343 00000336         
+  344 00000336         
+  345 00000336         ; MOV R5, #0x00    
+  346 00000336         ; BL PRINT
+  347 00000336         ; BL  DELAY100
+  348 00000336         
+  349 00000336         
+  350 00000336 F04F 051C       MOV              R5, #0x1C
+  351 0000033A F7FF FFFE       BL               PRINT
+  352 0000033E F7FF FFFE       BL               DELAY100
+  353 00000342 F04F 051E       MOV              R5, #0x1E
+  354 00000346 F7FF FFFE       BL               PRINT
+  355 0000034A F7FF FFFE       BL               DELAY100
+  356 0000034E F04F 051F       MOV              R5, #0x1F
+  357 00000352 F7FF FFFE       BL               PRINT
+  358 00000356 F7FF FFFE       BL               DELAY100
+  359 0000035A F04F 051E       MOV              R5, #0x1E
+  360 0000035E F7FF FFFE       BL               PRINT
+  361 00000362 F7FF FFFE       BL               DELAY100
+  362 00000366 F04F 051C       MOV              R5, #0x1C
+  363 0000036A F7FF FFFE       BL               PRINT
+  364 0000036E F7FF FFFE       BL               DELAY100
+  365 00000372         
+  366 00000372         ; MOV R5, #0x00
+  367 00000372         ; BL PRINT
+  368 00000372         ; BL  DELAY100
+  369 00000372         
+  370 00000372 F85D EB04       POP{LR}
+  371 00000376 4770            BX               LR
+  372 00000378                 ENDP
+  373 00000378         
+  374 00000378         
+  375 00000378         
+  376 00000378         
+  377 00000378         
+  378 00000378         PRINT   PROC                         ;SEND DATA TO PRINT
+                                                            
+  379 00000378 B500            PUSH             {LR}
+  380 0000037A B43F            PUSH             {R0-R5}
+  381 0000037C 4907            LDR              R1, =DC     ;data
+  382 0000037E 6808            LDR              R0, [R1]
+  383 00000380 F04F 0040       MOV              R0, #0x40   ; 
+
+
+
+ARM Macro Assembler    Page 8 
+
+
+  384 00000384 6008            STR              R0, [R1]
+  385 00000386         
+  386 00000386 F7FF FFFE       BL               WAITDATA
+  387 0000038A 4905            LDR              R1, =SSI0_DR_R
+  388 0000038C 600D            STR              R5, [R1]
+  389 0000038E         
+  390 0000038E         
+  391 0000038E         ; BL WAITDATA
+  392 0000038E         ; LDR R1, =SSI0_DR_R 
+  393 0000038E         ; LDR R4, [R1]
+  394 0000038E         ; ORR R5, R4  
+  395 0000038E         ; STR R5, [R1]
+  396 0000038E         
+  397 0000038E         
+  398 0000038E F7FF FFFE       BL               WAITDATA
+  399 00000392         
+  400 00000392 BC3F            POP              {R0-R5}
+  401 00000394 F85D EB04       POP{LR}
+  402 00000398         
+  403 00000398 4770            BX               LR
+  404 0000039A 00 00 40004100 
+              40008008         LTORG
+  405 000003A4         
+  406 000003A4         
+  407 000003A4         
+  408 000003A4         
+  409 000003A4         
+  410 000003A4         
+  411 000003A4         
+  412 000003A4         
+  413 000003A4         
+  414 000003A4         PrintMap
+                               PROC                         ;PRINTS THE MAP
+  415 000003A4         
+  416 000003A4 B500            PUSH             {LR}
+  417 000003A6 E92D 01FF       PUSH             {R0-R8}
+  418 000003AA         ;;;;;;;;;;;;;;;TOP side;;;;;;;;;;;;;;;;;;;   
+  419 000003AA         
+  420 000003AA F04F 0705       MOV              R7, #5
+  421 000003AE F04F 0640       MOV              R6, #64
+  422 000003B2 F107 0701 
+                       loopTopSide
+                               ADD              R7,R7,#1
+  423 000003B6 463C            MOV              R4,R7
+  424 000003B8 F7FF FFFE       BL               SetCursor_X
+  425 000003BC         
+  426 000003BC F04F 0400       MOV              R4, #0
+  427 000003C0 F7FF FFFE       BL               SetCursor_Y
+  428 000003C4 F7FF FFFE       BL               DELAY100
+  429 000003C8 F04F 0580       MOV              R5, 0x80
+  430 000003CC F7FF FFFE       BL               PRINT
+  431 000003D0         
+  432 000003D0 F7FF FFFE       BL               DELAY100
+  433 000003D4 3E01            SUBS             R6, #1
+  434 000003D6 D1EC            BNE              loopTopSide
+  435 000003D8         
+  436 000003D8         ;;;;;;;;;;;;;;;TOP side-end;;;;;;;;;;;;;;;;;;; 
+  437 000003D8         
+  438 000003D8         ;;;;;;;;;;;;;;;BOTTOM side;;;;;;;;;;;;;;;;;;;   
+
+
+
+ARM Macro Assembler    Page 9 
+
+
+  439 000003D8         
+  440 000003D8 F04F 0705       MOV              R7, #5
+  441 000003DC F04F 0640       MOV              R6, #64
+  442 000003E0 F107 0701 
+                       loopBotSide
+                               ADD              R7,R7,#1
+  443 000003E4 463C            MOV              R4,R7
+  444 000003E6 F7FF FFFE       BL               SetCursor_X
+  445 000003EA         
+  446 000003EA F04F 0405       MOV              R4, #5
+  447 000003EE F7FF FFFE       BL               SetCursor_Y
+  448 000003F2 F7FF FFFE       BL               DELAY100
+  449 000003F6 F04F 0501       MOV              R5, 0x01
+  450 000003FA F7FF FFFE       BL               PRINT
+  451 000003FE         
+  452 000003FE F7FF FFFE       BL               DELAY100
+  453 00000402 3E01            SUBS             R6, #1
+  454 00000404 D1EC            BNE              loopBotSide
+  455 00000406         
+  456 00000406         ;;;;;;;;;;;;;;;BOTTOM side-end;;;;;;;;;;;;;;;;;;; 
+  457 00000406         
+  458 00000406         ;;;;;;;;;;;;;;;left side;;;;;;;;;;;;;;;;;;;      
+  459 00000406 F04F 0406       MOV              R4, #6
+  460 0000040A F7FF FFFE       BL               SetCursor_X
+  461 0000040E F04F 0401       MOV              R4, #1
+  462 00000412 F7FF FFFE       BL               SetCursor_Y
+  463 00000416 F04F 05FF       MOV              R5, 0xFF
+  464 0000041A F7FF FFFE       BL               PRINT
+  465 0000041E         
+  466 0000041E F7FF FFFE       BL               DELAY100
+  467 00000422 F04F 0406       MOV              R4, #6
+  468 00000426 F7FF FFFE       BL               SetCursor_X
+  469 0000042A F04F 0402       MOV              R4, #2
+  470 0000042E F7FF FFFE       BL               SetCursor_Y
+  471 00000432 F04F 05FF       MOV              R5, 0xFF
+  472 00000436 F7FF FFFE       BL               PRINT
+  473 0000043A         
+  474 0000043A F7FF FFFE       BL               DELAY100
+  475 0000043E F04F 0406       MOV              R4, #6
+  476 00000442 F7FF FFFE       BL               SetCursor_X
+  477 00000446 F04F 0403       MOV              R4, #3
+  478 0000044A F7FF FFFE       BL               SetCursor_Y
+  479 0000044E F04F 05FF       MOV              R5, 0xFF
+  480 00000452 F7FF FFFE       BL               PRINT
+  481 00000456         
+  482 00000456 F7FF FFFE       BL               DELAY100
+  483 0000045A F04F 0406       MOV              R4, #6
+  484 0000045E F7FF FFFE       BL               SetCursor_X
+  485 00000462 F04F 0404       MOV              R4, #4
+  486 00000466 F7FF FFFE       BL               SetCursor_Y
+  487 0000046A F04F 05FF       MOV              R5, 0xFF
+  488 0000046E F7FF FFFE       BL               PRINT
+  489 00000472 F7FF FFFE       BL               DELAY100
+  490 00000476         ;;;;;;;;;;;;;;;left side-end;;;;;;;;;;;;;;;;;;; 
+  491 00000476         
+  492 00000476         
+  493 00000476         
+  494 00000476         
+  495 00000476         ;;;;;;;;;;;;;;;right side;;;;;;;;;;;;;;;;;;;      
+
+
+
+ARM Macro Assembler    Page 10 
+
+
+  496 00000476 F04F 0445       MOV              R4, #69
+  497 0000047A F7FF FFFE       BL               SetCursor_X
+  498 0000047E F04F 0401       MOV              R4, #1
+  499 00000482 F7FF FFFE       BL               SetCursor_Y
+  500 00000486 F04F 05FF       MOV              R5, 0xFF
+  501 0000048A F7FF FFFE       BL               PRINT
+  502 0000048E         
+  503 0000048E F7FF FFFE       BL               DELAY100
+  504 00000492 F04F 0445       MOV              R4, #69
+  505 00000496 F7FF FFFE       BL               SetCursor_X
+  506 0000049A F04F 0402       MOV              R4, #2
+  507 0000049E F7FF FFFE       BL               SetCursor_Y
+  508 000004A2 F04F 05FF       MOV              R5, 0xFF
+  509 000004A6 F7FF FFFE       BL               PRINT
+  510 000004AA         
+  511 000004AA F7FF FFFE       BL               DELAY100
+  512 000004AE F04F 0445       MOV              R4, #69
+  513 000004B2 F7FF FFFE       BL               SetCursor_X
+  514 000004B6 F04F 0403       MOV              R4, #3
+  515 000004BA F7FF FFFE       BL               SetCursor_Y
+  516 000004BE F04F 05FF       MOV              R5, 0xFF
+  517 000004C2 F7FF FFFE       BL               PRINT
+  518 000004C6         
+  519 000004C6 F7FF FFFE       BL               DELAY100
+  520 000004CA F04F 0445       MOV              R4, #69
+  521 000004CE F7FF FFFE       BL               SetCursor_X
+  522 000004D2 F04F 0404       MOV              R4, #4
+  523 000004D6 F7FF FFFE       BL               SetCursor_Y
+  524 000004DA F04F 05FF       MOV              R5, 0xFF
+  525 000004DE F7FF FFFE       BL               PRINT
+  526 000004E2 F7FF FFFE       BL               DELAY100
+  527 000004E6         ;;;;;;;;;;;;;;;left side-end;;;;;;;;;;;;;;;;;;;   
+  528 000004E6         
+  529 000004E6         
+  530 000004E6 E8BD 01FF       POP              {R0-R8}
+  531 000004EA F85D EB04       POP{LR}
+  532 000004EE                 ENDP
+  533 000004EE 4770            BX               LR
+  534 000004F0         
+  535 000004F0         
+  536 000004F0         
+  537 000004F0 20000400 
+                       SHIP1X  EQU              0x20000400
+  538 000004F0 20000404 
+                       SHIP1Y  EQU              0x20000404
+  539 000004F0 20000408 
+                       SHIP2X  EQU              0x20000408
+  540 000004F0 2000040C 
+                       SHIP2Y  EQU              0x2000040C
+  541 000004F0 20000410 
+                       SHIP3X  EQU              0x20000410
+  542 000004F0 20000414 
+                       SHIP3Y  EQU              0x20000414
+  543 000004F0 20000418 
+                       SHIP4X  EQU              0x20000418
+  544 000004F0 2000041C 
+                       SHIP4Y  EQU              0x2000041C
+  545 000004F0         
+  546 000004F0         PrintShip
+
+
+
+ARM Macro Assembler    Page 11 
+
+
+                               PROC                         ;PRINTS THE FIRST C
+                                                            IVILIAN SHIP
+  547 000004F0         
+  548 000004F0 B500            PUSH             {LR}
+  549 000004F2 E92D 1FFF       PUSH             {R0-R12}
+  550 000004F6         
+  551 000004F6 F8DF 8168       LDR              R8, =SHIP1X
+  552 000004FA F8D8 8000       LDR              R8, [R8]
+  553 000004FE F04F 0407       MOV              R4, #7      ;starts at 10th col
+                                                            umn(left limit) 
+  554 00000502 F04F 094B       MOV              R9,#75
+  555 00000506 FBB8 F9F9       UDIV             R9, R8,R9
+  556 0000050A 444C            ADD              R4, R9
+  557 0000050C F7FF FFFE       BL               SetCursor_X
+  558 00000510         
+  559 00000510 F8DF 8150       LDR              R8, =SHIP1Y
+  560 00000514 F8D8 8000       LDR              R8, [R8]
+  561 00000518 F04F 0401       MOV              R4, #1      ;starts at 1st row(
+                                                            upper limit)
+  562 0000051C F44F 69AB       MOV              R9,#1368
+  563 00000520 FBB8 F9F9       UDIV             R9, R8,R9
+  564 00000524 444C            ADD              R4, R9
+  565 00000526 F7FF FFFE       BL               SetCursor_Y
+  566 0000052A         
+  567 0000052A         
+  568 0000052A         ;;;;;;finding shift amount at y axis;;;;;;;;;;;;;;;
+  569 0000052A F5B8 6FAB       CMP              R8, #1368
+  570 0000052E BF88 F5A8 
+              68AB             SUBHI            R8, #1368
+  571 00000534 F5B8 6FAB       CMP              R8, #1368
+  572 00000538 BF88 F5A8 
+              68AB             SUBHI            R8, #1368
+  573 0000053E         
+  574 0000053E F04F 09A9       MOV              R9, #169
+  575 00000542 FBB8 FCF9       UDIV             R12, R8, R9
+  576 00000546         
+  577 00000546         
+  578 00000546 F04F 001C       MOV              R0,  #0x1C
+  579 0000054A F04F 021E       MOV              R2,  #0x1E
+  580 0000054E F04F 03FF       MOV              R3,  #0xFF
+  581 00000552 F04F 0A81       MOV              R10,  #0x81
+  582 00000556 F04F 0BFF       MOV              R11,  #0xFF
+  583 0000055A         ;;;;;;;;;line1;;;;;;;;;;;;;;
+  584 0000055A FA03 F50C       LSL              R5, R3, R12
+  585 0000055E F7FF FFFE       BL               PRINT
+  586 00000562 F7FF FFFE       BL               DELAY100
+  587 00000566 FA0A F50C       LSL              R5, R10, R12
+  588 0000056A F7FF FFFE       BL               PRINT
+  589 0000056E F7FF FFFE       BL               DELAY100
+  590 00000572 FA0A F50C       LSL              R5, R10, R12
+  591 00000576 F7FF FFFE       BL               PRINT
+  592 0000057A F7FF FFFE       BL               DELAY100
+  593 0000057E FA0A F50C       LSL              R5, R10,  R12
+  594 00000582 F7FF FFFE       BL               PRINT
+  595 00000586 F7FF FFFE       BL               DELAY100
+  596 0000058A FA0A F50C       LSL              R5, R10, R12
+  597 0000058E F7FF FFFE       BL               PRINT
+  598 00000592 F7FF FFFE       BL               DELAY100
+  599 00000596 FA0A F50C       LSL              R5, R10,  R12
+
+
+
+ARM Macro Assembler    Page 12 
+
+
+  600 0000059A F7FF FFFE       BL               PRINT
+  601 0000059E F7FF FFFE       BL               DELAY100
+  602 000005A2 FA0A F50C       LSL              R5, R10, R12
+  603 000005A6 F7FF FFFE       BL               PRINT
+  604 000005AA F7FF FFFE       BL               DELAY100
+  605 000005AE FA0B F50C       LSL              R5, R11,  R12
+  606 000005B2 F7FF FFFE       BL               PRINT
+  607 000005B6 F7FF FFFE       BL               DELAY100
+  608 000005BA F104 0401       ADD              R4, #1
+  609 000005BE F7FF FFFE       BL               SetCursor_Y
+  610 000005C2         
+  611 000005C2         ;;;;;;;Finding row (x axis);;;;;;
+  612 000005C2 F8DF 809C       LDR              R8, =SHIP1X
+  613 000005C6 F8D8 8000       LDR              R8, [R8]
+  614 000005CA F04F 0407       MOV              R4, #7      ;starts at 10th col
+                                                            umn(left limit) 
+  615 000005CE F04F 094B       MOV              R9,#75
+  616 000005D2 FBB8 F9F9       UDIV             R9, R8,R9
+  617 000005D6 444C            ADD              R4, R9
+  618 000005D8 F7FF FFFE       BL               SetCursor_X
+  619 000005DC         
+  620 000005DC F04F 001C       MOV              R0,  #0x1C
+  621 000005E0 F04F 021E       MOV              R2,  #0x1E
+  622 000005E4 F04F 03FF       MOV              R3,  #0xFF
+  623 000005E8 F04F 0A81       MOV              R10, #0x81
+  624 000005EC F04F 0BFF       MOV              R11, #0xFF
+  625 000005F0 F1CC 0C08       RSB              R12, #8
+  626 000005F4         
+  627 000005F4         ;;;;;;;;;;;;;;;;;line2;;;;;;;;;;;;;;
+  628 000005F4 FA23 F50C       LSR              R5, R3, R12
+  629 000005F8 F7FF FFFE       BL               PRINT
+  630 000005FC F7FF FFFE       BL               DELAY100
+  631 00000600 FA2A F50C       LSR              R5, R10, R12
+  632 00000604 F7FF FFFE       BL               PRINT
+  633 00000608 F7FF FFFE       BL               DELAY100
+  634 0000060C FA2A F50C       LSR              R5, R10, R12
+  635 00000610 F7FF FFFE       BL               PRINT
+  636 00000614 F7FF FFFE       BL               DELAY100
+  637 00000618 FA2A F50C       LSR              R5, R10,  R12
+  638 0000061C F7FF FFFE       BL               PRINT
+  639 00000620 F7FF FFFE       BL               DELAY100
+  640 00000624 FA2A F50C       LSR              R5, R10, R12
+  641 00000628 F7FF FFFE       BL               PRINT
+  642 0000062C F7FF FFFE       BL               DELAY100
+  643 00000630 FA2A F50C       LSR              R5, R10,  R12
+  644 00000634 F7FF FFFE       BL               PRINT
+  645 00000638 F7FF FFFE       BL               DELAY100
+  646 0000063C FA2A F50C       LSR              R5, R10, R12
+  647 00000640 F7FF FFFE       BL               PRINT
+  648 00000644 F7FF FFFE       BL               DELAY100
+  649 00000648 FA2B F50C       LSR              R5, R11,  R12
+  650 0000064C F7FF FFFE       BL               PRINT
+  651 00000650 F7FF FFFE       BL               DELAY100
+  652 00000654         
+  653 00000654 E8BD 1FFF       POP              {R0-R12}
+  654 00000658 F85D EB04       POP{LR}
+  655 0000065C                 ENDP
+  656 0000065C 4770            BX               LR
+  657 0000065E 00 00 20000400 
+
+
+
+ARM Macro Assembler    Page 13 
+
+
+              20000404         LTORG
+  658 00000668         ;PRINTS THE SECOND CIVILIAN SHIP
+  659 00000668         PrintShip2
+                               PROC
+  660 00000668         
+  661 00000668 B500            PUSH             {LR}
+  662 0000066A E92D 1FFF       PUSH             {R0-R12}
+  663 0000066E         
+  664 0000066E F8DF 82D4       LDR              R8, =SHIP2X
+  665 00000672 F8D8 8000       LDR              R8, [R8]
+  666 00000676 F04F 0407       MOV              R4, #7      ;starts at 10th col
+                                                            umn(left limit) 
+  667 0000067A F04F 094B       MOV              R9,#75
+  668 0000067E FBB8 F9F9       UDIV             R9, R8,R9
+  669 00000682 444C            ADD              R4, R9
+  670 00000684 F7FF FFFE       BL               SetCursor_X
+  671 00000688         
+  672 00000688 F8DF 82BC       LDR              R8, =SHIP2Y
+  673 0000068C F8D8 8000       LDR              R8, [R8]
+  674 00000690 F04F 0401       MOV              R4, #1      ;starts at 1st row(
+                                                            upper limit)
+  675 00000694 F44F 69AB       MOV              R9,#1368
+  676 00000698 FBB8 F9F9       UDIV             R9, R8,R9
+  677 0000069C 444C            ADD              R4, R9
+  678 0000069E F7FF FFFE       BL               SetCursor_Y
+  679 000006A2         
+  680 000006A2         
+  681 000006A2         ;;;;;;finding shift amount at y axis;;;;;;;;;;;;;;;
+  682 000006A2 F5B8 6FAB       CMP              R8, #1368
+  683 000006A6 BF88 F5A8 
+              68AB             SUBHI            R8, #1368
+  684 000006AC F5B8 6FAB       CMP              R8, #1368
+  685 000006B0 BF88 F5A8 
+              68AB             SUBHI            R8, #1368
+  686 000006B6         
+  687 000006B6 F04F 09A9       MOV              R9, #169
+  688 000006BA FBB8 FCF9       UDIV             R12, R8, R9
+  689 000006BE         
+  690 000006BE         
+  691 000006BE F04F 001C       MOV              R0,  #0x1C
+  692 000006C2 F04F 021E       MOV              R2,  #0x1E
+  693 000006C6 F04F 03FF       MOV              R3,  #0xFF
+  694 000006CA F04F 0A81       MOV              R10,  #0x81
+  695 000006CE F04F 0BFF       MOV              R11,  #0xFF
+  696 000006D2         ;;;;;;;;;line1;;;;;;;;;;;;;;
+  697 000006D2 FA03 F50C       LSL              R5, R3, R12
+  698 000006D6 F7FF FFFE       BL               PRINT
+  699 000006DA F7FF FFFE       BL               DELAY100
+  700 000006DE FA0A F50C       LSL              R5, R10, R12
+  701 000006E2 F7FF FFFE       BL               PRINT
+  702 000006E6 F7FF FFFE       BL               DELAY100
+  703 000006EA FA0A F50C       LSL              R5, R10, R12
+  704 000006EE F7FF FFFE       BL               PRINT
+  705 000006F2 F7FF FFFE       BL               DELAY100
+  706 000006F6 FA0A F50C       LSL              R5, R10,  R12
+  707 000006FA F7FF FFFE       BL               PRINT
+  708 000006FE F7FF FFFE       BL               DELAY100
+  709 00000702 FA0A F50C       LSL              R5, R10, R12
+  710 00000706 F7FF FFFE       BL               PRINT
+
+
+
+ARM Macro Assembler    Page 14 
+
+
+  711 0000070A F7FF FFFE       BL               DELAY100
+  712 0000070E FA0A F50C       LSL              R5, R10,  R12
+  713 00000712 F7FF FFFE       BL               PRINT
+  714 00000716 F7FF FFFE       BL               DELAY100
+  715 0000071A FA0A F50C       LSL              R5, R10, R12
+  716 0000071E F7FF FFFE       BL               PRINT
+  717 00000722 F7FF FFFE       BL               DELAY100
+  718 00000726 FA0B F50C       LSL              R5, R11,  R12
+  719 0000072A F7FF FFFE       BL               PRINT
+  720 0000072E F7FF FFFE       BL               DELAY100
+  721 00000732 F104 0401       ADD              R4, #1
+  722 00000736 F7FF FFFE       BL               SetCursor_Y
+  723 0000073A         
+  724 0000073A         ;;;;;;;Finding row (x axis);;;;;;
+  725 0000073A F8DF 8208       LDR              R8, =SHIP2X
+  726 0000073E F8D8 8000       LDR              R8, [R8]
+  727 00000742 F04F 0407       MOV              R4, #7      ;starts at 10th col
+                                                            umn(left limit) 
+  728 00000746 F04F 094B       MOV              R9,#75
+  729 0000074A FBB8 F9F9       UDIV             R9, R8,R9
+  730 0000074E 444C            ADD              R4, R9
+  731 00000750 F7FF FFFE       BL               SetCursor_X
+  732 00000754         
+  733 00000754 F04F 001C       MOV              R0,  #0x1C
+  734 00000758 F04F 021E       MOV              R2,  #0x1E
+  735 0000075C F04F 03FF       MOV              R3,  #0xFF
+  736 00000760 F04F 0A81       MOV              R10, #0x81
+  737 00000764 F04F 0BFF       MOV              R11, #0xFF
+  738 00000768 F1CC 0C08       RSB              R12, #8
+  739 0000076C         
+  740 0000076C         ;;;;;;;;;;;;;;;;;line2;;;;;;;;;;;;;;
+  741 0000076C FA23 F50C       LSR              R5, R3, R12
+  742 00000770 F7FF FFFE       BL               PRINT
+  743 00000774 F7FF FFFE       BL               DELAY100
+  744 00000778 FA2A F50C       LSR              R5, R10, R12
+  745 0000077C F7FF FFFE       BL               PRINT
+  746 00000780 F7FF FFFE       BL               DELAY100
+  747 00000784 FA2A F50C       LSR              R5, R10, R12
+  748 00000788 F7FF FFFE       BL               PRINT
+  749 0000078C F7FF FFFE       BL               DELAY100
+  750 00000790 FA2A F50C       LSR              R5, R10,  R12
+  751 00000794 F7FF FFFE       BL               PRINT
+  752 00000798 F7FF FFFE       BL               DELAY100
+  753 0000079C FA2A F50C       LSR              R5, R10, R12
+  754 000007A0 F7FF FFFE       BL               PRINT
+  755 000007A4 F7FF FFFE       BL               DELAY100
+  756 000007A8 FA2A F50C       LSR              R5, R10,  R12
+  757 000007AC F7FF FFFE       BL               PRINT
+  758 000007B0 F7FF FFFE       BL               DELAY100
+  759 000007B4 FA2A F50C       LSR              R5, R10, R12
+  760 000007B8 F7FF FFFE       BL               PRINT
+  761 000007BC F7FF FFFE       BL               DELAY100
+  762 000007C0 FA2B F50C       LSR              R5, R11,  R12
+  763 000007C4 F7FF FFFE       BL               PRINT
+  764 000007C8 F7FF FFFE       BL               DELAY100
+  765 000007CC         
+  766 000007CC E8BD 1FFF       POP              {R0-R12}
+  767 000007D0 F85D EB04       POP{LR}
+  768 000007D4                 ENDP
+
+
+
+ARM Macro Assembler    Page 15 
+
+
+  769 000007D4 4770            BX               LR
+  770 000007D6         
+  771 000007D6         
+  772 000007D6         
+  773 000007D6         PrintShip3
+                               PROC                         ;PRINTS THE THIRD C
+                                                            IVILIAN SHIP
+  774 000007D6         
+  775 000007D6 B500            PUSH             {LR}
+  776 000007D8 E92D 1FFF       PUSH             {R0-R12}
+  777 000007DC         
+  778 000007DC F8DF 816C       LDR              R8, =SHIP3X
+  779 000007E0 F8D8 8000       LDR              R8, [R8]
+  780 000007E4 F04F 0407       MOV              R4, #7      ;starts at 10th col
+                                                            umn(left limit) 
+  781 000007E8 F04F 094B       MOV              R9,#75
+  782 000007EC FBB8 F9F9       UDIV             R9, R8,R9
+  783 000007F0 444C            ADD              R4, R9
+  784 000007F2 F7FF FFFE       BL               SetCursor_X
+  785 000007F6         
+  786 000007F6 F8DF 8158       LDR              R8, =SHIP3Y
+  787 000007FA F8D8 8000       LDR              R8, [R8]
+  788 000007FE F04F 0401       MOV              R4, #1      ;starts at 1st row(
+                                                            upper limit)
+  789 00000802 F44F 69AB       MOV              R9,#1368
+  790 00000806 FBB8 F9F9       UDIV             R9, R8,R9
+  791 0000080A 444C            ADD              R4, R9
+  792 0000080C F7FF FFFE       BL               SetCursor_Y
+  793 00000810         
+  794 00000810         
+  795 00000810         ;;;;;;finding shift amount at y axis;;;;;;;;;;;;;;;
+  796 00000810 F5B8 6FAB       CMP              R8, #1368
+  797 00000814 BF88 F5A8 
+              68AB             SUBHI            R8, #1368
+  798 0000081A F5B8 6FAB       CMP              R8, #1368
+  799 0000081E BF88 F5A8 
+              68AB             SUBHI            R8, #1368
+  800 00000824         
+  801 00000824 F04F 09A9       MOV              R9, #169
+  802 00000828 FBB8 FCF9       UDIV             R12, R8, R9
+  803 0000082C         
+  804 0000082C         
+  805 0000082C F04F 001C       MOV              R0,  #0x1C
+  806 00000830 F04F 021E       MOV              R2,  #0x1E
+  807 00000834 F04F 03FF       MOV              R3,  #0xFF
+  808 00000838 F04F 0A81       MOV              R10,  #0x81
+  809 0000083C F04F 0BFF       MOV              R11,  #0xFF
+  810 00000840         ;;;;;;;;;line1;;;;;;;;;;;;;;
+  811 00000840 FA03 F50C       LSL              R5, R3, R12
+  812 00000844 F7FF FFFE       BL               PRINT
+  813 00000848 F7FF FFFE       BL               DELAY100
+  814 0000084C FA0A F50C       LSL              R5, R10, R12
+  815 00000850 F7FF FFFE       BL               PRINT
+  816 00000854 F7FF FFFE       BL               DELAY100
+  817 00000858 FA0A F50C       LSL              R5, R10, R12
+  818 0000085C F7FF FFFE       BL               PRINT
+  819 00000860 F7FF FFFE       BL               DELAY100
+  820 00000864 FA0A F50C       LSL              R5, R10,  R12
+  821 00000868 F7FF FFFE       BL               PRINT
+
+
+
+ARM Macro Assembler    Page 16 
+
+
+  822 0000086C F7FF FFFE       BL               DELAY100
+  823 00000870 FA0A F50C       LSL              R5, R10, R12
+  824 00000874 F7FF FFFE       BL               PRINT
+  825 00000878 F7FF FFFE       BL               DELAY100
+  826 0000087C FA0A F50C       LSL              R5, R10,  R12
+  827 00000880 F7FF FFFE       BL               PRINT
+  828 00000884 F7FF FFFE       BL               DELAY100
+  829 00000888 FA0A F50C       LSL              R5, R10, R12
+  830 0000088C F7FF FFFE       BL               PRINT
+  831 00000890 F7FF FFFE       BL               DELAY100
+  832 00000894 FA0B F50C       LSL              R5, R11,  R12
+  833 00000898 F7FF FFFE       BL               PRINT
+  834 0000089C F7FF FFFE       BL               DELAY100
+  835 000008A0 F104 0401       ADD              R4, #1
+  836 000008A4 F7FF FFFE       BL               SetCursor_Y
+  837 000008A8         
+  838 000008A8         ;;;;;;;Finding row (x axis);;;;;;
+  839 000008A8 F8DF 80A0       LDR              R8, =SHIP3X
+  840 000008AC F8D8 8000       LDR              R8, [R8]
+  841 000008B0 F04F 0407       MOV              R4, #7      ;starts at 10th col
+                                                            umn(left limit) 
+  842 000008B4 F04F 094B       MOV              R9,#75      ;((4082-19)/55)
+  843 000008B8 FBB8 F9F9       UDIV             R9, R8,R9
+  844 000008BC 444C            ADD              R4, R9
+  845 000008BE F7FF FFFE       BL               SetCursor_X
+  846 000008C2         
+  847 000008C2 F04F 001C       MOV              R0,  #0x1C
+  848 000008C6 F04F 021E       MOV              R2,  #0x1E
+  849 000008CA F04F 03FF       MOV              R3,  #0xFF
+  850 000008CE F04F 0A81       MOV              R10, #0x81
+  851 000008D2 F04F 0BFF       MOV              R11, #0xFF
+  852 000008D6 F1CC 0C08       RSB              R12, #8
+  853 000008DA         
+  854 000008DA         ;;;;;;;;;;;;;;;;;line2;;;;;;;;;;;;;;
+  855 000008DA FA23 F50C       LSR              R5, R3, R12
+  856 000008DE F7FF FFFE       BL               PRINT
+  857 000008E2 F7FF FFFE       BL               DELAY100
+  858 000008E6 FA2A F50C       LSR              R5, R10, R12
+  859 000008EA F7FF FFFE       BL               PRINT
+  860 000008EE F7FF FFFE       BL               DELAY100
+  861 000008F2 FA2A F50C       LSR              R5, R10, R12
+  862 000008F6 F7FF FFFE       BL               PRINT
+  863 000008FA F7FF FFFE       BL               DELAY100
+  864 000008FE FA2A F50C       LSR              R5, R10,  R12
+  865 00000902 F7FF FFFE       BL               PRINT
+  866 00000906 F7FF FFFE       BL               DELAY100
+  867 0000090A FA2A F50C       LSR              R5, R10, R12
+  868 0000090E F7FF FFFE       BL               PRINT
+  869 00000912 F7FF FFFE       BL               DELAY100
+  870 00000916 FA2A F50C       LSR              R5, R10,  R12
+  871 0000091A F7FF FFFE       BL               PRINT
+  872 0000091E F7FF FFFE       BL               DELAY100
+  873 00000922 FA2A F50C       LSR              R5, R10, R12
+  874 00000926 F7FF FFFE       BL               PRINT
+  875 0000092A F7FF FFFE       BL               DELAY100
+  876 0000092E FA2B F50C       LSR              R5, R11,  R12
+  877 00000932 F7FF FFFE       BL               PRINT
+  878 00000936 F7FF FFFE       BL               DELAY100
+  879 0000093A         
+
+
+
+ARM Macro Assembler    Page 17 
+
+
+  880 0000093A E8BD 1FFF       POP              {R0-R12}
+  881 0000093E F85D EB04       POP{LR}
+  882 00000942                 ENDP
+  883 00000942 4770            BX               LR
+  884 00000944 20000408 
+              2000040C 
+              20000410 
+              20000414         LTORG
+  885 00000954         
+  886 00000954         
+  887 00000954         
+  888 00000954         
+  889 00000954         PrintShip4
+                               PROC                         ;PRINTS THE FOURTH 
+                                                            CIVILIAN SHIP
+  890 00000954         
+  891 00000954 B500            PUSH             {LR}
+  892 00000956 E92D 1FFF       PUSH             {R0-R12}
+  893 0000095A         
+  894 0000095A F8DF 8168       LDR              R8, =SHIP4X
+  895 0000095E F8D8 8000       LDR              R8, [R8]
+  896 00000962 F04F 0407       MOV              R4, #7      ;starts at 10th col
+                                                            umn(left limit) 
+  897 00000966 F04F 094B       MOV              R9,#75
+  898 0000096A FBB8 F9F9       UDIV             R9, R8,R9
+  899 0000096E 444C            ADD              R4, R9
+  900 00000970 F7FF FFFE       BL               SetCursor_X
+  901 00000974         
+  902 00000974 F8DF 8150       LDR              R8, =SHIP4Y
+  903 00000978 F8D8 8000       LDR              R8, [R8]
+  904 0000097C F04F 0401       MOV              R4, #1      ;starts at 1st row(
+                                                            upper limit)
+  905 00000980 F44F 69AB       MOV              R9,#1368
+  906 00000984 FBB8 F9F9       UDIV             R9, R8,R9
+  907 00000988 444C            ADD              R4, R9
+  908 0000098A F7FF FFFE       BL               SetCursor_Y
+  909 0000098E         
+  910 0000098E         
+  911 0000098E         ;;;;;;finding shift amount at y axis;;;;;;;;;;;;;;;
+  912 0000098E F5B8 6FAB       CMP              R8, #1368
+  913 00000992 BF88 F5A8 
+              68AB             SUBHI            R8, #1368
+  914 00000998 F5B8 6FAB       CMP              R8, #1368
+  915 0000099C BF88 F5A8 
+              68AB             SUBHI            R8, #1368
+  916 000009A2         
+  917 000009A2 F04F 09A9       MOV              R9, #169
+  918 000009A6 FBB8 FCF9       UDIV             R12, R8, R9
+  919 000009AA         
+  920 000009AA         
+  921 000009AA F04F 001C       MOV              R0,  #0x1C
+  922 000009AE F04F 021E       MOV              R2,  #0x1E
+  923 000009B2 F04F 03FF       MOV              R3,  #0xFF
+  924 000009B6 F04F 0A81       MOV              R10,  #0x81
+  925 000009BA F04F 0BFF       MOV              R11,  #0xFF
+  926 000009BE         ;;;;;;;;;line1;;;;;;;;;;;;;;
+  927 000009BE FA03 F50C       LSL              R5, R3, R12
+  928 000009C2 F7FF FFFE       BL               PRINT
+  929 000009C6 F7FF FFFE       BL               DELAY100
+
+
+
+ARM Macro Assembler    Page 18 
+
+
+  930 000009CA FA0A F50C       LSL              R5, R10, R12
+  931 000009CE F7FF FFFE       BL               PRINT
+  932 000009D2 F7FF FFFE       BL               DELAY100
+  933 000009D6 FA0A F50C       LSL              R5, R10, R12
+  934 000009DA F7FF FFFE       BL               PRINT
+  935 000009DE F7FF FFFE       BL               DELAY100
+  936 000009E2 FA0A F50C       LSL              R5, R10,  R12
+  937 000009E6 F7FF FFFE       BL               PRINT
+  938 000009EA F7FF FFFE       BL               DELAY100
+  939 000009EE FA0A F50C       LSL              R5, R10, R12
+  940 000009F2 F7FF FFFE       BL               PRINT
+  941 000009F6 F7FF FFFE       BL               DELAY100
+  942 000009FA FA0A F50C       LSL              R5, R10,  R12
+  943 000009FE F7FF FFFE       BL               PRINT
+  944 00000A02 F7FF FFFE       BL               DELAY100
+  945 00000A06 FA0A F50C       LSL              R5, R10, R12
+  946 00000A0A F7FF FFFE       BL               PRINT
+  947 00000A0E F7FF FFFE       BL               DELAY100
+  948 00000A12 FA0B F50C       LSL              R5, R11,  R12
+  949 00000A16 F7FF FFFE       BL               PRINT
+  950 00000A1A F7FF FFFE       BL               DELAY100
+  951 00000A1E F104 0401       ADD              R4, #1
+  952 00000A22 F7FF FFFE       BL               SetCursor_Y
+  953 00000A26         
+  954 00000A26         ;;;;;;;Finding row (x axis);;;;;;
+  955 00000A26 F8DF 809C       LDR              R8, =SHIP4X
+  956 00000A2A F8D8 8000       LDR              R8, [R8]
+  957 00000A2E F04F 0407       MOV              R4, #7      ;starts at 10th col
+                                                            umn(left limit) 
+  958 00000A32 F04F 094B       MOV              R9,#75
+  959 00000A36 FBB8 F9F9       UDIV             R9, R8,R9
+  960 00000A3A 444C            ADD              R4, R9
+  961 00000A3C F7FF FFFE       BL               SetCursor_X
+  962 00000A40         
+  963 00000A40 F04F 001C       MOV              R0,  #0x1C
+  964 00000A44 F04F 021E       MOV              R2,  #0x1E
+  965 00000A48 F04F 03FF       MOV              R3,  #0xFF
+  966 00000A4C F04F 0A81       MOV              R10, #0x81
+  967 00000A50 F04F 0BFF       MOV              R11, #0xFF
+  968 00000A54 F1CC 0C08       RSB              R12, #8
+  969 00000A58         
+  970 00000A58         ;;;;;;;;;;;;;;;;;line2;;;;;;;;;;;;;;
+  971 00000A58 FA23 F50C       LSR              R5, R3, R12
+  972 00000A5C F7FF FFFE       BL               PRINT
+  973 00000A60 F7FF FFFE       BL               DELAY100
+  974 00000A64 FA2A F50C       LSR              R5, R10, R12
+  975 00000A68 F7FF FFFE       BL               PRINT
+  976 00000A6C F7FF FFFE       BL               DELAY100
+  977 00000A70 FA2A F50C       LSR              R5, R10, R12
+  978 00000A74 F7FF FFFE       BL               PRINT
+  979 00000A78 F7FF FFFE       BL               DELAY100
+  980 00000A7C FA2A F50C       LSR              R5, R10,  R12
+  981 00000A80 F7FF FFFE       BL               PRINT
+  982 00000A84 F7FF FFFE       BL               DELAY100
+  983 00000A88 FA2A F50C       LSR              R5, R10, R12
+  984 00000A8C F7FF FFFE       BL               PRINT
+  985 00000A90 F7FF FFFE       BL               DELAY100
+  986 00000A94 FA2A F50C       LSR              R5, R10,  R12
+  987 00000A98 F7FF FFFE       BL               PRINT
+
+
+
+ARM Macro Assembler    Page 19 
+
+
+  988 00000A9C F7FF FFFE       BL               DELAY100
+  989 00000AA0 FA2A F50C       LSR              R5, R10, R12
+  990 00000AA4 F7FF FFFE       BL               PRINT
+  991 00000AA8 F7FF FFFE       BL               DELAY100
+  992 00000AAC FA2B F50C       LSR              R5, R11,  R12
+  993 00000AB0 F7FF FFFE       BL               PRINT
+  994 00000AB4 F7FF FFFE       BL               DELAY100
+  995 00000AB8         
+  996 00000AB8 E8BD 1FFF       POP              {R0-R12}
+  997 00000ABC F85D EB04       POP{LR}
+  998 00000AC0                 ENDP
+  999 00000AC0 4770            BX               LR
+ 1000 00000AC2 00 00 20000418 
+              2000041C         LTORG
+ 1001 00000ACC         
+ 1002 00000ACC         
+ 1003 00000ACC 20000420 
+                       SHIPWAR1X
+                               EQU              0x20000420
+ 1004 00000ACC 20000424 
+                       SHIPWAR1Y
+                               EQU              0x20000424
+ 1005 00000ACC 20000428 
+                       SHIPWAR2X
+                               EQU              0x20000428
+ 1006 00000ACC 2000042C 
+                       SHIPWAR2Y
+                               EQU              0x2000042C
+ 1007 00000ACC 20000430 
+                       SHIPWAR3X
+                               EQU              0x20000430
+ 1008 00000ACC 20000434 
+                       SHIPWAR3Y
+                               EQU              0x20000434
+ 1009 00000ACC 20000438 
+                       SHIPWAR4X
+                               EQU              0x20000438
+ 1010 00000ACC 2000043C 
+                       SHIPWAR4Y
+                               EQU              0x2000043C
+ 1011 00000ACC         
+ 1012 00000ACC         ;PrintWarShip  PROC
+ 1013 00000ACC         ; 
+ 1014 00000ACC         ;    PUSH {LR}  
+ 1015 00000ACC         ;    PUSH {R0-R12}
+ 1016 00000ACC         ;    
+ 1017 00000ACC         ;    LDR R8, =SHIPWAR1X 
+ 1018 00000ACC         ;    LDR R8, [R8]
+ 1019 00000ACC         ;    MOV R4, #7 ;starts at 10th column(left limit) 
+ 1020 00000ACC         ;    MOV R9,#75
+ 1021 00000ACC         ;    UDIV R9, R8,R9    
+ 1022 00000ACC         ;    ADD R4, R9
+ 1023 00000ACC         ;    BL SetCursor_X
+ 1024 00000ACC         ;    
+ 1025 00000ACC         ;    LDR R8, =SHIPWAR1Y 
+ 1026 00000ACC         ;    LDR R8, [R8]
+ 1027 00000ACC         ;    MOV R4, #1  ;starts at 1st row(upper limit)
+ 1028 00000ACC         ;    MOV R9,#1368
+ 1029 00000ACC         ;    UDIV R9, R8,R9    
+
+
+
+ARM Macro Assembler    Page 20 
+
+
+ 1030 00000ACC         ;    ADD R4, R9
+ 1031 00000ACC         ;    BL SetCursor_Y 
+ 1032 00000ACC         ;
+ 1033 00000ACC         ;    
+ 1034 00000ACC         ;    ;;;;;;finding shift amount at y axis;;;;;;;;;;;;;;;
+                       
+ 1035 00000ACC         ;    CMP R8, #1368
+ 1036 00000ACC         ;    SUBHI R8, #1368
+ 1037 00000ACC         ;    CMP R8, #1368
+ 1038 00000ACC         ;    SUBHI R8, #1368    
+ 1039 00000ACC         ;    
+ 1040 00000ACC         ;    MOV R9, #169
+ 1041 00000ACC         ;    UDIV R12, R8, R9
+ 1042 00000ACC         ;    
+ 1043 00000ACC         ;    
+ 1044 00000ACC         ;    MOV R0,  #0x1C    
+ 1045 00000ACC         ;    MOV R2,  #0x1E 
+ 1046 00000ACC         ;    MOV R3,  #0xFF 
+ 1047 00000ACC         ;    MOV R10,  #0xFF
+ 1048 00000ACC         ;    MOV R11,  #0xFF 
+ 1049 00000ACC         ;    ;;;;;;;;;line1;;;;;;;;;;;;;;
+ 1050 00000ACC         ;    MOV R3, #0x20
+ 1051 00000ACC         ;    LSL R5, R3, R12 
+ 1052 00000ACC         ;    BL PRINT
+ 1053 00000ACC         ;    BL  DELAY100
+ 1054 00000ACC         ;    MOV R10, #0x60
+ 1055 00000ACC         ;    LSL R5, R10, R12 
+ 1056 00000ACC         ;    BL PRINT
+ 1057 00000ACC         ;    BL  DELAY100
+ 1058 00000ACC         ;    MOV R10, #0xff
+ 1059 00000ACC         ;    LSL R5, R10, R12 
+ 1060 00000ACC         ;    BL PRINT
+ 1061 00000ACC         ;    BL  DELAY100
+ 1062 00000ACC         ;    MOV R10, #0xef
+ 1063 00000ACC         ;    LSL R5, R10,  R12 
+ 1064 00000ACC         ;    BL PRINT
+ 1065 00000ACC         ;    BL  DELAY100
+ 1066 00000ACC         ;    MOV R10, #0xef
+ 1067 00000ACC         ;    LSL R5, R10, R12 
+ 1068 00000ACC         ;    BL PRINT
+ 1069 00000ACC         ;    BL  DELAY100
+ 1070 00000ACC         ;    MOV R10, #0xef
+ 1071 00000ACC         ;    LSL R5, R10,  R12 
+ 1072 00000ACC         ;    BL PRINT
+ 1073 00000ACC         ;    BL  DELAY100
+ 1074 00000ACC         ;    MOV R10, #0x6f
+ 1075 00000ACC         ;    LSL R5, R10, R12 
+ 1076 00000ACC         ;    BL PRINT
+ 1077 00000ACC         ;    BL  DELAY100
+ 1078 00000ACC         ;    MOV R11, #0x2f
+ 1079 00000ACC         ;    LSL R5, R11,  R12 
+ 1080 00000ACC         ;    BL PRINT
+ 1081 00000ACC         ;    BL  DELAY100
+ 1082 00000ACC         ;    ADD R4, #1
+ 1083 00000ACC         ;    BL SetCursor_Y 
+ 1084 00000ACC         ;    
+ 1085 00000ACC         ;    ;;;;;;;Finding row (x axis);;;;;;
+ 1086 00000ACC         ;    LDR R8, =SHIPWAR1X     
+ 1087 00000ACC         ;    LDR R8, [R8]
+
+
+
+ARM Macro Assembler    Page 21 
+
+
+ 1088 00000ACC         ;    MOV R4, #7 ;starts at 10th column(left limit) 
+ 1089 00000ACC         ;    MOV R9,#75
+ 1090 00000ACC         ;    UDIV R9, R8,R9    
+ 1091 00000ACC         ;    ADD R4, R9
+ 1092 00000ACC         ;    BL SetCursor_X
+ 1093 00000ACC         ;  
+ 1094 00000ACC         ;    MOV R0,  #0x1C    
+ 1095 00000ACC         ;    MOV R2,  #0x1E 
+ 1096 00000ACC         ;    MOV R3,  #0xFF 
+ 1097 00000ACC         ;    MOV R10, #0xFF 
+ 1098 00000ACC         ;    MOV R11, #0xFF 
+ 1099 00000ACC         ;    RSB R12, #8
+ 1100 00000ACC         ;    
+ 1101 00000ACC         ;  ;;;;;;;;;;;;;;;;;line2;;;;;;;;;;;;;;
+ 1102 00000ACC         ;    MOV R3, #0x04
+ 1103 00000ACC         ;    LSR R5, R3, R12 
+ 1104 00000ACC         ;    BL PRINT
+ 1105 00000ACC         ;    BL  DELAY100
+ 1106 00000ACC         ;    MOV R10, #0x1C
+ 1107 00000ACC         ;    LSR R5, R10, R12 
+ 1108 00000ACC         ;    BL PRINT
+ 1109 00000ACC         ;    BL  DELAY100
+ 1110 00000ACC         ;    MOV R10, #0x17
+ 1111 00000ACC         ;    LSR R5, R10, R12 
+ 1112 00000ACC         ;    BL PRINT
+ 1113 00000ACC         ;    BL  DELAY100
+ 1114 00000ACC         ;    MOV R10, #0x15
+ 1115 00000ACC         ;    LSR R5, R10,  R12 
+ 1116 00000ACC         ;    BL PRINT
+ 1117 00000ACC         ;    BL  DELAY100
+ 1118 00000ACC         ;    MOV R10, #0x15
+ 1119 00000ACC         ;    LSR R5, R10, R12 
+ 1120 00000ACC         ;    BL PRINT
+ 1121 00000ACC         ;    BL  DELAY100
+ 1122 00000ACC         ;    MOV R10, #0x15
+ 1123 00000ACC         ;    LSR R5, R10,  R12 
+ 1124 00000ACC         ;    BL PRINT
+ 1125 00000ACC         ;    BL  DELAY100
+ 1126 00000ACC         ;    MOV R10, #0x1D
+ 1127 00000ACC         ;    LSR R5, R10, R12 
+ 1128 00000ACC         ;    BL PRINT
+ 1129 00000ACC         ;    BL  DELAY100
+ 1130 00000ACC         ;    MOV R11, #0x05
+ 1131 00000ACC         ;    LSR R5, R11,  R12 
+ 1132 00000ACC         ;    BL PRINT
+ 1133 00000ACC         ;    BL  DELAY100
+ 1134 00000ACC         ;    
+ 1135 00000ACC         ;    POP {R0-R12}
+ 1136 00000ACC         ;    POP{LR}
+ 1137 00000ACC         ;    ENDP
+ 1138 00000ACC         ;    BX LR
+ 1139 00000ACC         PrintWarShip
+                               PROC                         ;PRINTS THE FIRST W
+                                                            AR SHIP
+ 1140 00000ACC         
+ 1141 00000ACC B500            PUSH             {LR}
+ 1142 00000ACE E92D 1FFF       PUSH             {R0-R12}
+ 1143 00000AD2         
+ 1144 00000AD2 F8DF 8DE4       LDR              R8, =SHIPWAR1X
+
+
+
+ARM Macro Assembler    Page 22 
+
+
+ 1145 00000AD6 F8D8 8000       LDR              R8, [R8]
+ 1146 00000ADA F04F 0407       MOV              R4, #7      ;starts at 10th col
+                                                            umn(left limit) 
+ 1147 00000ADE F04F 094B       MOV              R9,#75
+ 1148 00000AE2 FBB8 F9F9       UDIV             R9, R8,R9
+ 1149 00000AE6 444C            ADD              R4, R9
+ 1150 00000AE8 F7FF FFFE       BL               SetCursor_X
+ 1151 00000AEC         
+ 1152 00000AEC F8DF 8DCC       LDR              R8, =SHIPWAR1Y
+ 1153 00000AF0 F8D8 8000       LDR              R8, [R8]
+ 1154 00000AF4 F04F 0401       MOV              R4, #1      ;starts at 1st row(
+                                                            upper limit)
+ 1155 00000AF8 F44F 69AB       MOV              R9,#1368
+ 1156 00000AFC FBB8 F9F9       UDIV             R9, R8,R9
+ 1157 00000B00 444C            ADD              R4, R9
+ 1158 00000B02 F7FF FFFE       BL               SetCursor_Y
+ 1159 00000B06         
+ 1160 00000B06         
+ 1161 00000B06         ;;;;;;finding shift amount at y axis;;;;;;;;;;;;;;;
+ 1162 00000B06 F5B8 6FAB       CMP              R8, #1368
+ 1163 00000B0A BF88 F5A8 
+              68AB             SUBHI            R8, #1368
+ 1164 00000B10 F5B8 6FAB       CMP              R8, #1368
+ 1165 00000B14 BF88 F5A8 
+              68AB             SUBHI            R8, #1368
+ 1166 00000B1A         
+ 1167 00000B1A F04F 09A9       MOV              R9, #169
+ 1168 00000B1E FBB8 FCF9       UDIV             R12, R8, R9
+ 1169 00000B22         
+ 1170 00000B22         
+ 1171 00000B22 F04F 001C       MOV              R0,  #0x1C
+ 1172 00000B26 F04F 021E       MOV              R2,  #0x1E
+ 1173 00000B2A F04F 03FF       MOV              R3,  #0xFF
+ 1174 00000B2E F04F 0AFF       MOV              R10,  #0xFF
+ 1175 00000B32 F04F 0BFF       MOV              R11,  #0xFF
+ 1176 00000B36         ;;;;;;;;;line1;;;;;;;;;;;;;;
+ 1177 00000B36 FA03 F50C       LSL              R5, R3, R12
+ 1178 00000B3A F7FF FFFE       BL               PRINT
+ 1179 00000B3E F7FF FFFE       BL               DELAY100
+ 1180 00000B42 FA0A F50C       LSL              R5, R10, R12
+ 1181 00000B46 F7FF FFFE       BL               PRINT
+ 1182 00000B4A F7FF FFFE       BL               DELAY100
+ 1183 00000B4E FA0A F50C       LSL              R5, R10, R12
+ 1184 00000B52 F7FF FFFE       BL               PRINT
+ 1185 00000B56 F7FF FFFE       BL               DELAY100
+ 1186 00000B5A FA0A F50C       LSL              R5, R10,  R12
+ 1187 00000B5E F7FF FFFE       BL               PRINT
+ 1188 00000B62 F7FF FFFE       BL               DELAY100
+ 1189 00000B66 FA0A F50C       LSL              R5, R10, R12
+ 1190 00000B6A F7FF FFFE       BL               PRINT
+ 1191 00000B6E F7FF FFFE       BL               DELAY100
+ 1192 00000B72 FA0A F50C       LSL              R5, R10,  R12
+ 1193 00000B76 F7FF FFFE       BL               PRINT
+ 1194 00000B7A F7FF FFFE       BL               DELAY100
+ 1195 00000B7E FA0A F50C       LSL              R5, R10, R12
+ 1196 00000B82 F7FF FFFE       BL               PRINT
+ 1197 00000B86 F7FF FFFE       BL               DELAY100
+ 1198 00000B8A FA0B F50C       LSL              R5, R11,  R12
+ 1199 00000B8E F7FF FFFE       BL               PRINT
+
+
+
+ARM Macro Assembler    Page 23 
+
+
+ 1200 00000B92 F7FF FFFE       BL               DELAY100
+ 1201 00000B96 F104 0401       ADD              R4, #1
+ 1202 00000B9A F7FF FFFE       BL               SetCursor_Y
+ 1203 00000B9E         
+ 1204 00000B9E         ;;;;;;;Finding row (x axis);;;;;;
+ 1205 00000B9E F8DF 8D18       LDR              R8, =SHIPWAR1X
+ 1206 00000BA2 F8D8 8000       LDR              R8, [R8]
+ 1207 00000BA6 F04F 0407       MOV              R4, #7      ;starts at 10th col
+                                                            umn(left limit) 
+ 1208 00000BAA F04F 094B       MOV              R9,#75
+ 1209 00000BAE FBB8 F9F9       UDIV             R9, R8,R9
+ 1210 00000BB2 444C            ADD              R4, R9
+ 1211 00000BB4 F7FF FFFE       BL               SetCursor_X
+ 1212 00000BB8         
+ 1213 00000BB8 F04F 001C       MOV              R0,  #0x1C
+ 1214 00000BBC F04F 021E       MOV              R2,  #0x1E
+ 1215 00000BC0 F04F 03FF       MOV              R3,  #0xFF
+ 1216 00000BC4 F04F 0AFF       MOV              R10, #0xFF
+ 1217 00000BC8 F04F 0BFF       MOV              R11, #0xFF
+ 1218 00000BCC F1CC 0C08       RSB              R12, #8
+ 1219 00000BD0         
+ 1220 00000BD0         ;;;;;;;;;;;;;;;;;line2;;;;;;;;;;;;;;
+ 1221 00000BD0 FA23 F50C       LSR              R5, R3, R12
+ 1222 00000BD4 F7FF FFFE       BL               PRINT
+ 1223 00000BD8 F7FF FFFE       BL               DELAY100
+ 1224 00000BDC FA2A F50C       LSR              R5, R10, R12
+ 1225 00000BE0 F7FF FFFE       BL               PRINT
+ 1226 00000BE4 F7FF FFFE       BL               DELAY100
+ 1227 00000BE8 FA2A F50C       LSR              R5, R10, R12
+ 1228 00000BEC F7FF FFFE       BL               PRINT
+ 1229 00000BF0 F7FF FFFE       BL               DELAY100
+ 1230 00000BF4 FA2A F50C       LSR              R5, R10,  R12
+ 1231 00000BF8 F7FF FFFE       BL               PRINT
+ 1232 00000BFC F7FF FFFE       BL               DELAY100
+ 1233 00000C00 FA2A F50C       LSR              R5, R10, R12
+ 1234 00000C04 F7FF FFFE       BL               PRINT
+ 1235 00000C08 F7FF FFFE       BL               DELAY100
+ 1236 00000C0C FA2A F50C       LSR              R5, R10,  R12
+ 1237 00000C10 F7FF FFFE       BL               PRINT
+ 1238 00000C14 F7FF FFFE       BL               DELAY100
+ 1239 00000C18 FA2A F50C       LSR              R5, R10, R12
+ 1240 00000C1C F7FF FFFE       BL               PRINT
+ 1241 00000C20 F7FF FFFE       BL               DELAY100
+ 1242 00000C24 FA2B F50C       LSR              R5, R11,  R12
+ 1243 00000C28 F7FF FFFE       BL               PRINT
+ 1244 00000C2C F7FF FFFE       BL               DELAY100
+ 1245 00000C30         
+ 1246 00000C30 E8BD 1FFF       POP              {R0-R12}
+ 1247 00000C34 F85D EB04       POP{LR}
+ 1248 00000C38                 ENDP
+ 1249 00000C38 4770            BX               LR
+ 1250 00000C3A         
+ 1251 00000C3A         PrintWarShip2
+                               PROC                         ;PRINTS THE SECOND 
+                                                            WAR SHIP
+ 1252 00000C3A         
+ 1253 00000C3A B500            PUSH             {LR}
+ 1254 00000C3C E92D 1FFF       PUSH             {R0-R12}
+ 1255 00000C40         
+
+
+
+ARM Macro Assembler    Page 24 
+
+
+ 1256 00000C40 F8DF 8C7C       LDR              R8, =SHIPWAR2X
+ 1257 00000C44 F8D8 8000       LDR              R8, [R8]
+ 1258 00000C48 F04F 0407       MOV              R4, #7      ;starts at 10th col
+                                                            umn(left limit) 
+ 1259 00000C4C F04F 094B       MOV              R9,#75
+ 1260 00000C50 FBB8 F9F9       UDIV             R9, R8,R9
+ 1261 00000C54 444C            ADD              R4, R9
+ 1262 00000C56 F7FF FFFE       BL               SetCursor_X
+ 1263 00000C5A         
+ 1264 00000C5A F8DF 8C68       LDR              R8, =SHIPWAR2Y
+ 1265 00000C5E F8D8 8000       LDR              R8, [R8]
+ 1266 00000C62 F04F 0401       MOV              R4, #1      ;starts at 1st row(
+                                                            upper limit)
+ 1267 00000C66 F44F 69AB       MOV              R9,#1368
+ 1268 00000C6A FBB8 F9F9       UDIV             R9, R8,R9
+ 1269 00000C6E 444C            ADD              R4, R9
+ 1270 00000C70 F7FF FFFE       BL               SetCursor_Y
+ 1271 00000C74         
+ 1272 00000C74         
+ 1273 00000C74         ;;;;;;finding shift amount at y axis;;;;;;;;;;;;;;;
+ 1274 00000C74 F5B8 6FAB       CMP              R8, #1368
+ 1275 00000C78 BF88 F5A8 
+              68AB             SUBHI            R8, #1368
+ 1276 00000C7E F5B8 6FAB       CMP              R8, #1368
+ 1277 00000C82 BF88 F5A8 
+              68AB             SUBHI            R8, #1368
+ 1278 00000C88         
+ 1279 00000C88 F04F 09A9       MOV              R9, #169
+ 1280 00000C8C FBB8 FCF9       UDIV             R12, R8, R9
+ 1281 00000C90         
+ 1282 00000C90         
+ 1283 00000C90 F04F 001C       MOV              R0,  #0x1C
+ 1284 00000C94 F04F 021E       MOV              R2,  #0x1E
+ 1285 00000C98 F04F 03FF       MOV              R3,  #0xFF
+ 1286 00000C9C F04F 0AFF       MOV              R10,  #0xFF
+ 1287 00000CA0 F04F 0BFF       MOV              R11,  #0xFF
+ 1288 00000CA4         ;;;;;;;;;line1;;;;;;;;;;;;;;
+ 1289 00000CA4 FA03 F50C       LSL              R5, R3, R12
+ 1290 00000CA8 F7FF FFFE       BL               PRINT
+ 1291 00000CAC F7FF FFFE       BL               DELAY100
+ 1292 00000CB0 FA0A F50C       LSL              R5, R10, R12
+ 1293 00000CB4 F7FF FFFE       BL               PRINT
+ 1294 00000CB8 F7FF FFFE       BL               DELAY100
+ 1295 00000CBC FA0A F50C       LSL              R5, R10, R12
+ 1296 00000CC0 F7FF FFFE       BL               PRINT
+ 1297 00000CC4 F7FF FFFE       BL               DELAY100
+ 1298 00000CC8 FA0A F50C       LSL              R5, R10,  R12
+ 1299 00000CCC F7FF FFFE       BL               PRINT
+ 1300 00000CD0 F7FF FFFE       BL               DELAY100
+ 1301 00000CD4 FA0A F50C       LSL              R5, R10, R12
+ 1302 00000CD8 F7FF FFFE       BL               PRINT
+ 1303 00000CDC F7FF FFFE       BL               DELAY100
+ 1304 00000CE0 FA0A F50C       LSL              R5, R10,  R12
+ 1305 00000CE4 F7FF FFFE       BL               PRINT
+ 1306 00000CE8 F7FF FFFE       BL               DELAY100
+ 1307 00000CEC FA0A F50C       LSL              R5, R10, R12
+ 1308 00000CF0 F7FF FFFE       BL               PRINT
+ 1309 00000CF4 F7FF FFFE       BL               DELAY100
+ 1310 00000CF8 FA0B F50C       LSL              R5, R11,  R12
+
+
+
+ARM Macro Assembler    Page 25 
+
+
+ 1311 00000CFC F7FF FFFE       BL               PRINT
+ 1312 00000D00 F7FF FFFE       BL               DELAY100
+ 1313 00000D04 F104 0401       ADD              R4, #1
+ 1314 00000D08 F7FF FFFE       BL               SetCursor_Y
+ 1315 00000D0C         
+ 1316 00000D0C         ;;;;;;;Finding row (x axis);;;;;;
+ 1317 00000D0C F8DF 8BB0       LDR              R8, =SHIPWAR2X
+ 1318 00000D10 F8D8 8000       LDR              R8, [R8]
+ 1319 00000D14 F04F 0407       MOV              R4, #7      ;starts at 10th col
+                                                            umn(left limit) 
+ 1320 00000D18 F04F 094B       MOV              R9,#75
+ 1321 00000D1C FBB8 F9F9       UDIV             R9, R8,R9
+ 1322 00000D20 444C            ADD              R4, R9
+ 1323 00000D22 F7FF FFFE       BL               SetCursor_X
+ 1324 00000D26         
+ 1325 00000D26 F04F 001C       MOV              R0,  #0x1C
+ 1326 00000D2A F04F 021E       MOV              R2,  #0x1E
+ 1327 00000D2E F04F 03FF       MOV              R3,  #0xFF
+ 1328 00000D32 F04F 0AFF       MOV              R10, #0xFF
+ 1329 00000D36 F04F 0BFF       MOV              R11, #0xFF
+ 1330 00000D3A F1CC 0C08       RSB              R12, #8
+ 1331 00000D3E         
+ 1332 00000D3E         ;;;;;;;;;;;;;;;;;line2;;;;;;;;;;;;;;
+ 1333 00000D3E FA23 F50C       LSR              R5, R3, R12
+ 1334 00000D42 F7FF FFFE       BL               PRINT
+ 1335 00000D46 F7FF FFFE       BL               DELAY100
+ 1336 00000D4A FA2A F50C       LSR              R5, R10, R12
+ 1337 00000D4E F7FF FFFE       BL               PRINT
+ 1338 00000D52 F7FF FFFE       BL               DELAY100
+ 1339 00000D56 FA2A F50C       LSR              R5, R10, R12
+ 1340 00000D5A F7FF FFFE       BL               PRINT
+ 1341 00000D5E F7FF FFFE       BL               DELAY100
+ 1342 00000D62 FA2A F50C       LSR              R5, R10,  R12
+ 1343 00000D66 F7FF FFFE       BL               PRINT
+ 1344 00000D6A F7FF FFFE       BL               DELAY100
+ 1345 00000D6E FA2A F50C       LSR              R5, R10, R12
+ 1346 00000D72 F7FF FFFE       BL               PRINT
+ 1347 00000D76 F7FF FFFE       BL               DELAY100
+ 1348 00000D7A FA2A F50C       LSR              R5, R10,  R12
+ 1349 00000D7E F7FF FFFE       BL               PRINT
+ 1350 00000D82 F7FF FFFE       BL               DELAY100
+ 1351 00000D86 FA2A F50C       LSR              R5, R10, R12
+ 1352 00000D8A F7FF FFFE       BL               PRINT
+ 1353 00000D8E F7FF FFFE       BL               DELAY100
+ 1354 00000D92 FA2B F50C       LSR              R5, R11,  R12
+ 1355 00000D96 F7FF FFFE       BL               PRINT
+ 1356 00000D9A F7FF FFFE       BL               DELAY100
+ 1357 00000D9E         
+ 1358 00000D9E E8BD 1FFF       POP              {R0-R12}
+ 1359 00000DA2 F85D EB04       POP{LR}
+ 1360 00000DA6                 ENDP
+ 1361 00000DA6 4770            BX               LR
+ 1362 00000DA8         
+ 1363 00000DA8         
+ 1364 00000DA8         
+ 1365 00000DA8         PrintWarShip3
+                               PROC                         ;PRINTS THE THIRD W
+                                                            AR SHIP
+ 1366 00000DA8         
+
+
+
+ARM Macro Assembler    Page 26 
+
+
+ 1367 00000DA8 B500            PUSH             {LR}
+ 1368 00000DAA E92D 1FFF       PUSH             {R0-R12}
+ 1369 00000DAE         
+ 1370 00000DAE F8DF 8B18       LDR              R8, =SHIPWAR3X
+ 1371 00000DB2 F8D8 8000       LDR              R8, [R8]
+ 1372 00000DB6 F04F 0407       MOV              R4, #7      ;starts at 10th col
+                                                            umn(left limit) 
+ 1373 00000DBA F04F 094B       MOV              R9,#75
+ 1374 00000DBE FBB8 F9F9       UDIV             R9, R8,R9
+ 1375 00000DC2 444C            ADD              R4, R9
+ 1376 00000DC4 F7FF FFFE       BL               SetCursor_X
+ 1377 00000DC8         
+ 1378 00000DC8 F8DF 8B00       LDR              R8, =SHIPWAR3Y
+ 1379 00000DCC F8D8 8000       LDR              R8, [R8]
+ 1380 00000DD0 F04F 0401       MOV              R4, #1      ;starts at 1st row(
+                                                            upper limit)
+ 1381 00000DD4 F44F 69AB       MOV              R9,#1368
+ 1382 00000DD8 FBB8 F9F9       UDIV             R9, R8,R9
+ 1383 00000DDC 444C            ADD              R4, R9
+ 1384 00000DDE F7FF FFFE       BL               SetCursor_Y
+ 1385 00000DE2         
+ 1386 00000DE2         
+ 1387 00000DE2         ;;;;;;finding shift amount at y axis;;;;;;;;;;;;;;;
+ 1388 00000DE2 F5B8 6FAB       CMP              R8, #1368
+ 1389 00000DE6 BF88 F5A8 
+              68AB             SUBHI            R8, #1368
+ 1390 00000DEC F5B8 6FAB       CMP              R8, #1368
+ 1391 00000DF0 BF88 F5A8 
+              68AB             SUBHI            R8, #1368
+ 1392 00000DF6         
+ 1393 00000DF6 F04F 09A9       MOV              R9, #169
+ 1394 00000DFA FBB8 FCF9       UDIV             R12, R8, R9
+ 1395 00000DFE         
+ 1396 00000DFE         
+ 1397 00000DFE F04F 001C       MOV              R0,  #0x1C
+ 1398 00000E02 F04F 021E       MOV              R2,  #0x1E
+ 1399 00000E06 F04F 03FF       MOV              R3,  #0xFF
+ 1400 00000E0A F04F 0AFF       MOV              R10,  #0xFF
+ 1401 00000E0E F04F 0BFF       MOV              R11,  #0xFF
+ 1402 00000E12         ;;;;;;;;;line1;;;;;;;;;;;;;;
+ 1403 00000E12 FA03 F50C       LSL              R5, R3, R12
+ 1404 00000E16 F7FF FFFE       BL               PRINT
+ 1405 00000E1A F7FF FFFE       BL               DELAY100
+ 1406 00000E1E FA0A F50C       LSL              R5, R10, R12
+ 1407 00000E22 F7FF FFFE       BL               PRINT
+ 1408 00000E26 F7FF FFFE       BL               DELAY100
+ 1409 00000E2A FA0A F50C       LSL              R5, R10, R12
+ 1410 00000E2E F7FF FFFE       BL               PRINT
+ 1411 00000E32 F7FF FFFE       BL               DELAY100
+ 1412 00000E36 FA0A F50C       LSL              R5, R10,  R12
+ 1413 00000E3A F7FF FFFE       BL               PRINT
+ 1414 00000E3E F7FF FFFE       BL               DELAY100
+ 1415 00000E42 FA0A F50C       LSL              R5, R10, R12
+ 1416 00000E46 F7FF FFFE       BL               PRINT
+ 1417 00000E4A F7FF FFFE       BL               DELAY100
+ 1418 00000E4E FA0A F50C       LSL              R5, R10,  R12
+ 1419 00000E52 F7FF FFFE       BL               PRINT
+ 1420 00000E56 F7FF FFFE       BL               DELAY100
+ 1421 00000E5A FA0A F50C       LSL              R5, R10, R12
+
+
+
+ARM Macro Assembler    Page 27 
+
+
+ 1422 00000E5E F7FF FFFE       BL               PRINT
+ 1423 00000E62 F7FF FFFE       BL               DELAY100
+ 1424 00000E66 FA0B F50C       LSL              R5, R11,  R12
+ 1425 00000E6A F7FF FFFE       BL               PRINT
+ 1426 00000E6E F7FF FFFE       BL               DELAY100
+ 1427 00000E72 F104 0401       ADD              R4, #1
+ 1428 00000E76 F7FF FFFE       BL               SetCursor_Y
+ 1429 00000E7A         
+ 1430 00000E7A         ;;;;;;;Finding row (x axis);;;;;;
+ 1431 00000E7A F8DF 8A4C       LDR              R8, =SHIPWAR3X
+ 1432 00000E7E F8D8 8000       LDR              R8, [R8]
+ 1433 00000E82 F04F 0407       MOV              R4, #7      ;starts at 10th col
+                                                            umn(left limit) 
+ 1434 00000E86 F04F 094B       MOV              R9,#75
+ 1435 00000E8A FBB8 F9F9       UDIV             R9, R8,R9
+ 1436 00000E8E 444C            ADD              R4, R9
+ 1437 00000E90 F7FF FFFE       BL               SetCursor_X
+ 1438 00000E94         
+ 1439 00000E94 F04F 001C       MOV              R0,  #0x1C
+ 1440 00000E98 F04F 021E       MOV              R2,  #0x1E
+ 1441 00000E9C F04F 03FF       MOV              R3,  #0xFF
+ 1442 00000EA0 F04F 0AFF       MOV              R10, #0xFF
+ 1443 00000EA4 F04F 0BFF       MOV              R11, #0xFF
+ 1444 00000EA8 F1CC 0C08       RSB              R12, #8
+ 1445 00000EAC         
+ 1446 00000EAC         ;;;;;;;;;;;;;;;;;line2;;;;;;;;;;;;;;
+ 1447 00000EAC FA23 F50C       LSR              R5, R3, R12
+ 1448 00000EB0 F7FF FFFE       BL               PRINT
+ 1449 00000EB4 F7FF FFFE       BL               DELAY100
+ 1450 00000EB8 FA2A F50C       LSR              R5, R10, R12
+ 1451 00000EBC F7FF FFFE       BL               PRINT
+ 1452 00000EC0 F7FF FFFE       BL               DELAY100
+ 1453 00000EC4 FA2A F50C       LSR              R5, R10, R12
+ 1454 00000EC8 F7FF FFFE       BL               PRINT
+ 1455 00000ECC F7FF FFFE       BL               DELAY100
+ 1456 00000ED0 FA2A F50C       LSR              R5, R10,  R12
+ 1457 00000ED4 F7FF FFFE       BL               PRINT
+ 1458 00000ED8 F7FF FFFE       BL               DELAY100
+ 1459 00000EDC FA2A F50C       LSR              R5, R10, R12
+ 1460 00000EE0 F7FF FFFE       BL               PRINT
+ 1461 00000EE4 F7FF FFFE       BL               DELAY100
+ 1462 00000EE8 FA2A F50C       LSR              R5, R10,  R12
+ 1463 00000EEC F7FF FFFE       BL               PRINT
+ 1464 00000EF0 F7FF FFFE       BL               DELAY100
+ 1465 00000EF4 FA2A F50C       LSR              R5, R10, R12
+ 1466 00000EF8 F7FF FFFE       BL               PRINT
+ 1467 00000EFC F7FF FFFE       BL               DELAY100
+ 1468 00000F00 FA2B F50C       LSR              R5, R11,  R12
+ 1469 00000F04 F7FF FFFE       BL               PRINT
+ 1470 00000F08 F7FF FFFE       BL               DELAY100
+ 1471 00000F0C         
+ 1472 00000F0C E8BD 1FFF       POP              {R0-R12}
+ 1473 00000F10 F85D EB04       POP{LR}
+ 1474 00000F14                 ENDP
+ 1475 00000F14 4770            BX               LR
+ 1476 00000F16         
+ 1477 00000F16         
+ 1478 00000F16         
+ 1479 00000F16         
+
+
+
+ARM Macro Assembler    Page 28 
+
+
+ 1480 00000F16         
+ 1481 00000F16         PrintWarShip4
+                               PROC                         ;PRINTS THE FOURTH 
+                                                            WAR SHIP
+ 1482 00000F16         
+ 1483 00000F16 B500            PUSH             {LR}
+ 1484 00000F18 E92D 1FFF       PUSH             {R0-R12}
+ 1485 00000F1C         
+ 1486 00000F1C F8DF 89B0       LDR              R8, =SHIPWAR4X
+ 1487 00000F20 F8D8 8000       LDR              R8, [R8]
+ 1488 00000F24 F04F 0407       MOV              R4, #7      ;starts at 10th col
+                                                            umn(left limit) 
+ 1489 00000F28 F04F 094B       MOV              R9,#75
+ 1490 00000F2C FBB8 F9F9       UDIV             R9, R8,R9
+ 1491 00000F30 444C            ADD              R4, R9
+ 1492 00000F32 F7FF FFFE       BL               SetCursor_X
+ 1493 00000F36         
+ 1494 00000F36 F8DF 899C       LDR              R8, =SHIPWAR4Y
+ 1495 00000F3A F8D8 8000       LDR              R8, [R8]
+ 1496 00000F3E F04F 0401       MOV              R4, #1      ;starts at 1st row(
+                                                            upper limit)
+ 1497 00000F42 F44F 69AB       MOV              R9,#1368
+ 1498 00000F46 FBB8 F9F9       UDIV             R9, R8,R9
+ 1499 00000F4A 444C            ADD              R4, R9
+ 1500 00000F4C F7FF FFFE       BL               SetCursor_Y
+ 1501 00000F50         
+ 1502 00000F50         
+ 1503 00000F50         ;;;;;;finding shift amount at y axis;;;;;;;;;;;;;;;
+ 1504 00000F50 F5B8 6FAB       CMP              R8, #1368
+ 1505 00000F54 BF88 F5A8 
+              68AB             SUBHI            R8, #1368
+ 1506 00000F5A F5B8 6FAB       CMP              R8, #1368
+ 1507 00000F5E BF88 F5A8 
+              68AB             SUBHI            R8, #1368
+ 1508 00000F64         
+ 1509 00000F64 F04F 09A9       MOV              R9, #169
+ 1510 00000F68 FBB8 FCF9       UDIV             R12, R8, R9
+ 1511 00000F6C         
+ 1512 00000F6C         
+ 1513 00000F6C F04F 001C       MOV              R0,  #0x1C
+ 1514 00000F70 F04F 021E       MOV              R2,  #0x1E
+ 1515 00000F74 F04F 03FF       MOV              R3,  #0xFF
+ 1516 00000F78 F04F 0AFF       MOV              R10,  #0xFF
+ 1517 00000F7C F04F 0BFF       MOV              R11,  #0xFF
+ 1518 00000F80         ;;;;;;;;;line1;;;;;;;;;;;;;;
+ 1519 00000F80 FA03 F50C       LSL              R5, R3, R12
+ 1520 00000F84 F7FF FFFE       BL               PRINT
+ 1521 00000F88 F7FF FFFE       BL               DELAY100
+ 1522 00000F8C FA0A F50C       LSL              R5, R10, R12
+ 1523 00000F90 F7FF FFFE       BL               PRINT
+ 1524 00000F94 F7FF FFFE       BL               DELAY100
+ 1525 00000F98 FA0A F50C       LSL              R5, R10, R12
+ 1526 00000F9C F7FF FFFE       BL               PRINT
+ 1527 00000FA0 F7FF FFFE       BL               DELAY100
+ 1528 00000FA4 FA0A F50C       LSL              R5, R10,  R12
+ 1529 00000FA8 F7FF FFFE       BL               PRINT
+ 1530 00000FAC F7FF FFFE       BL               DELAY100
+ 1531 00000FB0 FA0A F50C       LSL              R5, R10, R12
+ 1532 00000FB4 F7FF FFFE       BL               PRINT
+
+
+
+ARM Macro Assembler    Page 29 
+
+
+ 1533 00000FB8 F7FF FFFE       BL               DELAY100
+ 1534 00000FBC FA0A F50C       LSL              R5, R10,  R12
+ 1535 00000FC0 F7FF FFFE       BL               PRINT
+ 1536 00000FC4 F7FF FFFE       BL               DELAY100
+ 1537 00000FC8 FA0A F50C       LSL              R5, R10, R12
+ 1538 00000FCC F7FF FFFE       BL               PRINT
+ 1539 00000FD0 F7FF FFFE       BL               DELAY100
+ 1540 00000FD4 FA0B F50C       LSL              R5, R11,  R12
+ 1541 00000FD8 F7FF FFFE       BL               PRINT
+ 1542 00000FDC F7FF FFFE       BL               DELAY100
+ 1543 00000FE0 F104 0401       ADD              R4, #1
+ 1544 00000FE4 F7FF FFFE       BL               SetCursor_Y
+ 1545 00000FE8         
+ 1546 00000FE8         ;;;;;;;Finding row (x axis);;;;;;
+ 1547 00000FE8 F8DF 88E4       LDR              R8, =SHIPWAR4X
+ 1548 00000FEC F8D8 8000       LDR              R8, [R8]
+ 1549 00000FF0 F04F 0407       MOV              R4, #7      ;starts at 10th col
+                                                            umn(left limit) 
+ 1550 00000FF4 F04F 094B       MOV              R9,#75
+ 1551 00000FF8 FBB8 F9F9       UDIV             R9, R8,R9
+ 1552 00000FFC 444C            ADD              R4, R9
+ 1553 00000FFE F7FF FFFE       BL               SetCursor_X
+ 1554 00001002         
+ 1555 00001002 F04F 001C       MOV              R0,  #0x1C
+ 1556 00001006 F04F 021E       MOV              R2,  #0x1E
+ 1557 0000100A F04F 03FF       MOV              R3,  #0xFF
+ 1558 0000100E F04F 0AFF       MOV              R10, #0xFF
+ 1559 00001012 F04F 0BFF       MOV              R11, #0xFF
+ 1560 00001016 F1CC 0C08       RSB              R12, #8
+ 1561 0000101A         
+ 1562 0000101A         ;;;;;;;;;;;;;;;;;line2;;;;;;;;;;;;;;
+ 1563 0000101A FA23 F50C       LSR              R5, R3, R12
+ 1564 0000101E F7FF FFFE       BL               PRINT
+ 1565 00001022 F7FF FFFE       BL               DELAY100
+ 1566 00001026 FA2A F50C       LSR              R5, R10, R12
+ 1567 0000102A F7FF FFFE       BL               PRINT
+ 1568 0000102E F7FF FFFE       BL               DELAY100
+ 1569 00001032 FA2A F50C       LSR              R5, R10, R12
+ 1570 00001036 F7FF FFFE       BL               PRINT
+ 1571 0000103A F7FF FFFE       BL               DELAY100
+ 1572 0000103E FA2A F50C       LSR              R5, R10,  R12
+ 1573 00001042 F7FF FFFE       BL               PRINT
+ 1574 00001046 F7FF FFFE       BL               DELAY100
+ 1575 0000104A FA2A F50C       LSR              R5, R10, R12
+ 1576 0000104E F7FF FFFE       BL               PRINT
+ 1577 00001052 F7FF FFFE       BL               DELAY100
+ 1578 00001056 FA2A F50C       LSR              R5, R10,  R12
+ 1579 0000105A F7FF FFFE       BL               PRINT
+ 1580 0000105E F7FF FFFE       BL               DELAY100
+ 1581 00001062 FA2A F50C       LSR              R5, R10, R12
+ 1582 00001066 F7FF FFFE       BL               PRINT
+ 1583 0000106A F7FF FFFE       BL               DELAY100
+ 1584 0000106E FA2B F50C       LSR              R5, R11,  R12
+ 1585 00001072 F7FF FFFE       BL               PRINT
+ 1586 00001076 F7FF FFFE       BL               DELAY100
+ 1587 0000107A         
+ 1588 0000107A E8BD 1FFF       POP              {R0-R12}
+ 1589 0000107E F85D EB04       POP{LR}
+ 1590 00001082                 ENDP
+
+
+
+ARM Macro Assembler    Page 30 
+
+
+ 1591 00001082 4770            BX               LR
+ 1592 00001084         
+ 1593 00001084 20000450 
+                       MINE1X  EQU              0x20000450
+ 1594 00001084 20000454 
+                       MINE1Y  EQU              0x20000454
+ 1595 00001084 20000458 
+                       MINE2X  EQU              0x20000458
+ 1596 00001084 2000045C 
+                       MINE2Y  EQU              0x2000045C
+ 1597 00001084 20000460 
+                       MINE3X  EQU              0x20000460
+ 1598 00001084 20000464 
+                       MINE3Y  EQU              0x20000464
+ 1599 00001084 20000468 
+                       MINE4X  EQU              0x20000468
+ 1600 00001084 2000046C 
+                       MINE4Y  EQU              0x2000046C
+ 1601 00001084         
+ 1602 00001084         
+ 1603 00001084         
+ 1604 00001084         
+ 1605 00001084         PrintMine1
+                               PROC                         ;PRINTS THE MINE1
+ 1606 00001084         
+ 1607 00001084 B500            PUSH             {LR}
+ 1608 00001086 E92D 1FFF       PUSH             {R0-R12}
+ 1609 0000108A         
+ 1610 0000108A F8DF 884C       LDR              R8, =MINE1X
+ 1611 0000108E F8D8 8000       LDR              R8, [R8]
+ 1612 00001092 F04F 0405       MOV              R4, #5      ;starts at 10th col
+                                                            umn(left limit) 
+ 1613 00001096 F04F 0942       MOV              R9,#66
+ 1614 0000109A FBB8 F9F9       UDIV             R9, R8,R9
+ 1615 0000109E 444C            ADD              R4, R9
+ 1616 000010A0 F104 0402       ADD              R4, #2
+ 1617 000010A4 F7FF FFFE       BL               SetCursor_X
+ 1618 000010A8         
+ 1619 000010A8 F8DF 8830       LDR              R8, =MINE1Y
+ 1620 000010AC F8D8 8000       LDR              R8, [R8]
+ 1621 000010B0 F04F 0401       MOV              R4, #1      ;starts at 1st row(
+                                                            upper limit)
+ 1622 000010B4 F240 491E       MOV              R9,#1054
+ 1623 000010B8 FBB8 F9F9       UDIV             R9, R8,R9
+ 1624 000010BC 444C            ADD              R4, R9
+ 1625 000010BE F7FF FFFE       BL               SetCursor_Y
+ 1626 000010C2         
+ 1627 000010C2         
+ 1628 000010C2         ;;;;;;finding shift amount at y axis;;;;;;;;;;;;;;;
+ 1629 000010C2 F5B8 6F84       CMP              R8, #1056
+ 1630 000010C6 BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 1631 000010CC         ;LDR R0, =866
+ 1632 000010CC F5B8 6F84       CMP              R8, #1056
+ 1633 000010D0 BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 1634 000010D6 F5B8 6F84       CMP              R8, #1056
+ 1635 000010DA BF88 F2A8 
+              481E             SUBHI            R8, #1054
+
+
+
+ARM Macro Assembler    Page 31 
+
+
+ 1636 000010E0 F5B8 6F84       CMP              R8, #1056
+ 1637 000010E4 BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 1638 000010EA F5B8 6F84       CMP              R8, #1056
+ 1639 000010EE BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 1640 000010F4 F5B8 6F84       CMP              R8, #1056
+ 1641 000010F8 BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 1642 000010FE         
+ 1643 000010FE F04F 0984       MOV              R9, #132
+ 1644 00001102 FBB8 FCF9       UDIV             R12, R8, R9
+ 1645 00001106         
+ 1646 00001106         
+ 1647 00001106 F04F 001C       MOV              R0,  #0x1C
+ 1648 0000110A F04F 021E       MOV              R2,  #0x1E
+ 1649 0000110E F04F 0301       MOV              R3,  #0x01
+ 1650 00001112 F04F 0AFF       MOV              R10,  #0xFF
+ 1651 00001116 F04F 0BFF       MOV              R11,  #0xFF
+ 1652 0000111A         ;;;;;;;;;line1;;;;;;;;;;;;;;
+ 1653 0000111A FA03 F50C       LSL              R5, R3, R12
+ 1654 0000111E F7FF FFFE       BL               PRINT
+ 1655 00001122 F7FF FFFE       BL               DELAY100
+ 1656 00001126         
+ 1657 00001126 F104 0401       ADD              R4, #1
+ 1658 0000112A F7FF FFFE       BL               SetCursor_Y
+ 1659 0000112E         
+ 1660 0000112E         ;;;;;;;Finding row (x axis);;;;;;
+ 1661 0000112E F8DF 87A8       LDR              R8, =MINE1X
+ 1662 00001132 F8D8 8000       LDR              R8, [R8]
+ 1663 00001136 F04F 0405       MOV              R4, #5      ;starts at 10th col
+                                                            umn(left limit) 
+ 1664 0000113A F04F 0942       MOV              R9,#66
+ 1665 0000113E FBB8 F9F9       UDIV             R9, R8,R9
+ 1666 00001142 444C            ADD              R4, R9
+ 1667 00001144 F104 0402       ADD              R4, #2
+ 1668 00001148 F7FF FFFE       BL               SetCursor_X
+ 1669 0000114C         
+ 1670 0000114C F04F 001C       MOV              R0,  #0x1C
+ 1671 00001150 F04F 021E       MOV              R2,  #0x1E
+ 1672 00001154 F04F 0301       MOV              R3,  #0x01
+ 1673 00001158 F04F 0AFF       MOV              R10, #0xFF
+ 1674 0000115C F04F 0BFF       MOV              R11, #0xFF
+ 1675 00001160         
+ 1676 00001160 F1BC 0F04       CMP              R12,#4
+ 1677 00001164 D32B            BLO              EXITMine1
+ 1678 00001166 D008            BEQ              Mine1CASE1
+ 1679 00001168 F1BC 0F05       CMP              R12,#5
+ 1680 0000116C D00C            BEQ              Mine1CASE2
+ 1681 0000116E F1BC 0F06       CMP              R12,#6
+ 1682 00001172 D010            BEQ              Mine1CASE3
+ 1683 00001174 F1BC 0F07       CMP              R12,#7
+ 1684 00001178 D014            BEQ              Mine1CASE4
+ 1685 0000117A         
+ 1686 0000117A         
+ 1687 0000117A F04F 0001 
+                       Mine1CASE1
+                               MOV              R0,  #0x01
+ 1688 0000117E F04F 0201       MOV              R2,  #0x01
+
+
+
+ARM Macro Assembler    Page 32 
+
+
+ 1689 00001182 F04F 0301       MOV              R3,  #0x01
+ 1690 00001186 E014            B                Mine1LINE2
+ 1691 00001188 F04F 0002 
+                       Mine1CASE2
+                               MOV              R0,  #0x02
+ 1692 0000118C F04F 0202       MOV              R2,  #0x02
+ 1693 00001190 F04F 0302       MOV              R3,  #0x02
+ 1694 00001194 E00D            B                Mine1LINE2
+ 1695 00001196 F04F 0004 
+                       Mine1CASE3
+                               MOV              R0,  #0x04
+ 1696 0000119A F04F 0204       MOV              R2,  #0x04
+ 1697 0000119E F04F 0304       MOV              R3,  #0x04
+ 1698 000011A2 E006            B                Mine1LINE2
+ 1699 000011A4 F04F 0008 
+                       Mine1CASE4
+                               MOV              R0,  #0x08
+ 1700 000011A8 F04F 0208       MOV              R2,  #0x08
+ 1701 000011AC F04F 0308       MOV              R3,  #0x08
+ 1702 000011B0 E7FF            B                Mine1LINE2
+ 1703 000011B2         
+ 1704 000011B2         
+ 1705 000011B2         
+ 1706 000011B2         ;;;;;;;;;;;;;;;;;line2;;;;;;;;;;;;;;
+ 1707 000011B2 FA23 F50C 
+                       Mine1LINE2
+                               LSR              R5, R3, R12
+ 1708 000011B6 F7FF FFFE       BL               PRINT
+ 1709 000011BA F7FF FFFE       BL               DELAY100
+ 1710 000011BE         
+ 1711 000011BE         
+ 1712 000011BE E8BD 1FFF 
+                       EXITMine1
+                               POP              {R0-R12}
+ 1713 000011C2 F85D EB04       POP{LR}
+ 1714 000011C6                 ENDP
+ 1715 000011C6 4770            BX               LR
+ 1716 000011C8         
+ 1717 000011C8         
+ 1718 000011C8         
+ 1719 000011C8         
+ 1720 000011C8         
+ 1721 000011C8         PrintMine2
+                               PROC                         ;PRINTS THE MINE2
+ 1722 000011C8         
+ 1723 000011C8 B500            PUSH             {LR}
+ 1724 000011CA E92D 1FFF       PUSH             {R0-R12}
+ 1725 000011CE         
+ 1726 000011CE F8DF 8710       LDR              R8, =MINE2X
+ 1727 000011D2 F8D8 8000       LDR              R8, [R8]
+ 1728 000011D6 F04F 0405       MOV              R4, #5      ;starts at 10th col
+                                                            umn(left limit) 
+ 1729 000011DA F04F 0942       MOV              R9,#66
+ 1730 000011DE FBB8 F9F9       UDIV             R9, R8,R9
+ 1731 000011E2 444C            ADD              R4, R9
+ 1732 000011E4 F104 0402       ADD              R4, #2
+ 1733 000011E8 F7FF FFFE       BL               SetCursor_X
+ 1734 000011EC         
+ 1735 000011EC F8DF 86F4       LDR              R8, =MINE2Y
+
+
+
+ARM Macro Assembler    Page 33 
+
+
+ 1736 000011F0 F8D8 8000       LDR              R8, [R8]
+ 1737 000011F4 F04F 0401       MOV              R4, #1      ;starts at 1st row(
+                                                            upper limit)
+ 1738 000011F8 F240 491E       MOV              R9,#1054
+ 1739 000011FC FBB8 F9F9       UDIV             R9, R8,R9
+ 1740 00001200 444C            ADD              R4, R9
+ 1741 00001202 F7FF FFFE       BL               SetCursor_Y
+ 1742 00001206         
+ 1743 00001206         
+ 1744 00001206         ;;;;;;finding shift amount at y axis;;;;;;;;;;;;;;;
+ 1745 00001206 F5B8 6F84       CMP              R8, #1056
+ 1746 0000120A BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 1747 00001210         ;LDR R0, =866
+ 1748 00001210 F5B8 6F84       CMP              R8, #1056
+ 1749 00001214 BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 1750 0000121A F5B8 6F84       CMP              R8, #1056
+ 1751 0000121E BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 1752 00001224 F5B8 6F84       CMP              R8, #1056
+ 1753 00001228 BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 1754 0000122E F5B8 6F84       CMP              R8, #1056
+ 1755 00001232 BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 1756 00001238 F5B8 6F84       CMP              R8, #1056
+ 1757 0000123C BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 1758 00001242         
+ 1759 00001242 F04F 0984       MOV              R9, #132
+ 1760 00001246 FBB8 FCF9       UDIV             R12, R8, R9
+ 1761 0000124A         
+ 1762 0000124A         
+ 1763 0000124A F04F 001C       MOV              R0,  #0x1C
+ 1764 0000124E F04F 021E       MOV              R2,  #0x1E
+ 1765 00001252 F04F 0301       MOV              R3,  #0x01
+ 1766 00001256 F04F 0AFF       MOV              R10,  #0xFF
+ 1767 0000125A F04F 0BFF       MOV              R11,  #0xFF
+ 1768 0000125E         ;;;;;;;;;line1;;;;;;;;;;;;;;
+ 1769 0000125E FA03 F50C       LSL              R5, R3, R12
+ 1770 00001262 F7FF FFFE       BL               PRINT
+ 1771 00001266 F7FF FFFE       BL               DELAY100
+ 1772 0000126A         
+ 1773 0000126A F104 0401       ADD              R4, #1
+ 1774 0000126E F7FF FFFE       BL               SetCursor_Y
+ 1775 00001272         
+ 1776 00001272         ;;;;;;;Finding row (x axis);;;;;;
+ 1777 00001272 F8DF 866C       LDR              R8, =MINE2X
+ 1778 00001276 F8D8 8000       LDR              R8, [R8]
+ 1779 0000127A F04F 0405       MOV              R4, #5      ;starts at 10th col
+                                                            umn(left limit) 
+ 1780 0000127E F04F 0942       MOV              R9,#66
+ 1781 00001282 FBB8 F9F9       UDIV             R9, R8,R9
+ 1782 00001286 444C            ADD              R4, R9
+ 1783 00001288 F104 0402       ADD              R4, #2
+ 1784 0000128C F7FF FFFE       BL               SetCursor_X
+ 1785 00001290         
+ 1786 00001290 F04F 001C       MOV              R0,  #0x1C
+
+
+
+ARM Macro Assembler    Page 34 
+
+
+ 1787 00001294 F04F 021E       MOV              R2,  #0x1E
+ 1788 00001298 F04F 0301       MOV              R3,  #0x01
+ 1789 0000129C F04F 0AFF       MOV              R10, #0xFF
+ 1790 000012A0 F04F 0BFF       MOV              R11, #0xFF
+ 1791 000012A4         
+ 1792 000012A4 F1BC 0F04       CMP              R12,#4
+ 1793 000012A8 D32B            BLO              EXITMine2
+ 1794 000012AA D008            BEQ              Mine2CASE1
+ 1795 000012AC F1BC 0F05       CMP              R12,#5
+ 1796 000012B0 D00C            BEQ              Mine2CASE2
+ 1797 000012B2 F1BC 0F06       CMP              R12,#6
+ 1798 000012B6 D010            BEQ              Mine2CASE3
+ 1799 000012B8 F1BC 0F07       CMP              R12,#7
+ 1800 000012BC D014            BEQ              Mine2CASE4
+ 1801 000012BE         
+ 1802 000012BE         
+ 1803 000012BE F04F 0001 
+                       Mine2CASE1
+                               MOV              R0,  #0x01
+ 1804 000012C2 F04F 0201       MOV              R2,  #0x01
+ 1805 000012C6 F04F 0301       MOV              R3,  #0x01
+ 1806 000012CA E772            B                Mine1LINE2
+ 1807 000012CC F04F 0002 
+                       Mine2CASE2
+                               MOV              R0,  #0x02
+ 1808 000012D0 F04F 0202       MOV              R2,  #0x02
+ 1809 000012D4 F04F 0302       MOV              R3,  #0x02
+ 1810 000012D8 E00D            B                Mine2LINE2
+ 1811 000012DA F04F 0004 
+                       Mine2CASE3
+                               MOV              R0,  #0x04
+ 1812 000012DE F04F 0204       MOV              R2,  #0x04
+ 1813 000012E2 F04F 0304       MOV              R3,  #0x04
+ 1814 000012E6 E006            B                Mine2LINE2
+ 1815 000012E8 F04F 0008 
+                       Mine2CASE4
+                               MOV              R0,  #0x08
+ 1816 000012EC F04F 0208       MOV              R2,  #0x08
+ 1817 000012F0 F04F 0308       MOV              R3,  #0x08
+ 1818 000012F4 E7FF            B                Mine2LINE2
+ 1819 000012F6         
+ 1820 000012F6         
+ 1821 000012F6         
+ 1822 000012F6         ;;;;;;;;;;;;;;;;;line2;;;;;;;;;;;;;;
+ 1823 000012F6 FA23 F50C 
+                       Mine2LINE2
+                               LSR              R5, R3, R12
+ 1824 000012FA F7FF FFFE       BL               PRINT
+ 1825 000012FE F7FF FFFE       BL               DELAY100
+ 1826 00001302         
+ 1827 00001302         
+ 1828 00001302 E8BD 1FFF 
+                       EXITMine2
+                               POP              {R0-R12}
+ 1829 00001306 F85D EB04       POP{LR}
+ 1830 0000130A                 ENDP
+ 1831 0000130A 4770            BX               LR
+ 1832 0000130C         
+ 1833 0000130C         
+
+
+
+ARM Macro Assembler    Page 35 
+
+
+ 1834 0000130C         
+ 1835 0000130C         
+ 1836 0000130C         
+ 1837 0000130C         PrintMine3
+                               PROC                         ;PRINTS THE MINE3
+ 1838 0000130C         
+ 1839 0000130C B500            PUSH             {LR}
+ 1840 0000130E E92D 1FFF       PUSH             {R0-R12}
+ 1841 00001312         
+ 1842 00001312 F8DF 85D4       LDR              R8, =MINE3X
+ 1843 00001316 F8D8 8000       LDR              R8, [R8]
+ 1844 0000131A F04F 0405       MOV              R4, #5      ;starts at 10th col
+                                                            umn(left limit) 
+ 1845 0000131E F04F 0942       MOV              R9,#66
+ 1846 00001322 FBB8 F9F9       UDIV             R9, R8,R9
+ 1847 00001326 444C            ADD              R4, R9
+ 1848 00001328 F104 0402       ADD              R4, #2
+ 1849 0000132C F7FF FFFE       BL               SetCursor_X
+ 1850 00001330         
+ 1851 00001330 F8DF 85B8       LDR              R8, =MINE3Y
+ 1852 00001334 F8D8 8000       LDR              R8, [R8]
+ 1853 00001338 F04F 0401       MOV              R4, #1      ;starts at 1st row(
+                                                            upper limit)
+ 1854 0000133C F240 491E       MOV              R9,#1054
+ 1855 00001340 FBB8 F9F9       UDIV             R9, R8,R9
+ 1856 00001344 444C            ADD              R4, R9
+ 1857 00001346 F7FF FFFE       BL               SetCursor_Y
+ 1858 0000134A         
+ 1859 0000134A         
+ 1860 0000134A         ;;;;;;finding shift amount at y axis;;;;;;;;;;;;;;;
+ 1861 0000134A F5B8 6F84       CMP              R8, #1056
+ 1862 0000134E BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 1863 00001354         ;LDR R0, =866
+ 1864 00001354 F5B8 6F84       CMP              R8, #1056
+ 1865 00001358 BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 1866 0000135E F5B8 6F84       CMP              R8, #1056
+ 1867 00001362 BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 1868 00001368 F5B8 6F84       CMP              R8, #1056
+ 1869 0000136C BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 1870 00001372 F5B8 6F84       CMP              R8, #1056
+ 1871 00001376 BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 1872 0000137C F5B8 6F84       CMP              R8, #1056
+ 1873 00001380 BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 1874 00001386         
+ 1875 00001386 F04F 0984       MOV              R9, #132
+ 1876 0000138A FBB8 FCF9       UDIV             R12, R8, R9
+ 1877 0000138E         
+ 1878 0000138E         
+ 1879 0000138E F04F 001C       MOV              R0,  #0x1C
+ 1880 00001392 F04F 021E       MOV              R2,  #0x1E
+ 1881 00001396 F04F 0301       MOV              R3,  #0x01
+ 1882 0000139A F04F 0AFF       MOV              R10,  #0xFF
+ 1883 0000139E F04F 0BFF       MOV              R11,  #0xFF
+
+
+
+ARM Macro Assembler    Page 36 
+
+
+ 1884 000013A2         ;;;;;;;;;line1;;;;;;;;;;;;;;
+ 1885 000013A2 FA03 F50C       LSL              R5, R3, R12
+ 1886 000013A6 F7FF FFFE       BL               PRINT
+ 1887 000013AA F7FF FFFE       BL               DELAY100
+ 1888 000013AE         
+ 1889 000013AE F104 0401       ADD              R4, #1
+ 1890 000013B2 F7FF FFFE       BL               SetCursor_Y
+ 1891 000013B6         
+ 1892 000013B6         ;;;;;;;Finding row (x axis);;;;;;
+ 1893 000013B6 F8DF 8530       LDR              R8, =MINE3X
+ 1894 000013BA F8D8 8000       LDR              R8, [R8]
+ 1895 000013BE F04F 0405       MOV              R4, #5      ;starts at 10th col
+                                                            umn(left limit) 
+ 1896 000013C2 F04F 0942       MOV              R9,#66
+ 1897 000013C6 FBB8 F9F9       UDIV             R9, R8,R9
+ 1898 000013CA 444C            ADD              R4, R9
+ 1899 000013CC F104 0402       ADD              R4, #2
+ 1900 000013D0 F7FF FFFE       BL               SetCursor_X
+ 1901 000013D4         
+ 1902 000013D4 F04F 001C       MOV              R0,  #0x1C
+ 1903 000013D8 F04F 021E       MOV              R2,  #0x1E
+ 1904 000013DC F04F 0301       MOV              R3,  #0x01
+ 1905 000013E0 F04F 0AFF       MOV              R10, #0xFF
+ 1906 000013E4 F04F 0BFF       MOV              R11, #0xFF
+ 1907 000013E8         
+ 1908 000013E8 F1BC 0F04       CMP              R12,#4
+ 1909 000013EC D32B            BLO              EXITMine3
+ 1910 000013EE D008            BEQ              Mine3CASE1
+ 1911 000013F0 F1BC 0F05       CMP              R12,#5
+ 1912 000013F4 D00C            BEQ              Mine3CASE2
+ 1913 000013F6 F1BC 0F06       CMP              R12,#6
+ 1914 000013FA D010            BEQ              Mine3CASE3
+ 1915 000013FC F1BC 0F07       CMP              R12,#7
+ 1916 00001400 D014            BEQ              Mine3CASE4
+ 1917 00001402         
+ 1918 00001402         
+ 1919 00001402 F04F 0001 
+                       Mine3CASE1
+                               MOV              R0,  #0x01
+ 1920 00001406 F04F 0201       MOV              R2,  #0x01
+ 1921 0000140A F04F 0301       MOV              R3,  #0x01
+ 1922 0000140E E014            B                Mine3LINE2
+ 1923 00001410 F04F 0002 
+                       Mine3CASE2
+                               MOV              R0,  #0x02
+ 1924 00001414 F04F 0202       MOV              R2,  #0x02
+ 1925 00001418 F04F 0302       MOV              R3,  #0x02
+ 1926 0000141C E00D            B                Mine3LINE2
+ 1927 0000141E F04F 0004 
+                       Mine3CASE3
+                               MOV              R0,  #0x04
+ 1928 00001422 F04F 0204       MOV              R2,  #0x04
+ 1929 00001426 F04F 0304       MOV              R3,  #0x04
+ 1930 0000142A E006            B                Mine3LINE2
+ 1931 0000142C F04F 0008 
+                       Mine3CASE4
+                               MOV              R0,  #0x08
+ 1932 00001430 F04F 0208       MOV              R2,  #0x08
+ 1933 00001434 F04F 0308       MOV              R3,  #0x08
+
+
+
+ARM Macro Assembler    Page 37 
+
+
+ 1934 00001438 E7FF            B                Mine3LINE2
+ 1935 0000143A         
+ 1936 0000143A         
+ 1937 0000143A         
+ 1938 0000143A         ;;;;;;;;;;;;;;;;;line2;;;;;;;;;;;;;;
+ 1939 0000143A FA23 F50C 
+                       Mine3LINE2
+                               LSR              R5, R3, R12
+ 1940 0000143E F7FF FFFE       BL               PRINT
+ 1941 00001442 F7FF FFFE       BL               DELAY100
+ 1942 00001446         
+ 1943 00001446         
+ 1944 00001446 E8BD 1FFF 
+                       EXITMine3
+                               POP              {R0-R12}
+ 1945 0000144A F85D EB04       POP{LR}
+ 1946 0000144E                 ENDP
+ 1947 0000144E 4770            BX               LR
+ 1948 00001450         
+ 1949 00001450         
+ 1950 00001450         PrintMine4
+                               PROC                         ;PRINTS THE MINE4
+ 1951 00001450         
+ 1952 00001450 B500            PUSH             {LR}
+ 1953 00001452 E92D 1FFF       PUSH             {R0-R12}
+ 1954 00001456         
+ 1955 00001456 F8DF 8498       LDR              R8, =MINE4X
+ 1956 0000145A F8D8 8000       LDR              R8, [R8]
+ 1957 0000145E F04F 0405       MOV              R4, #5      ;starts at 10th col
+                                                            umn(left limit) 
+ 1958 00001462 F04F 0942       MOV              R9,#66
+ 1959 00001466 FBB8 F9F9       UDIV             R9, R8,R9
+ 1960 0000146A 444C            ADD              R4, R9
+ 1961 0000146C F104 0402       ADD              R4, #2
+ 1962 00001470 F7FF FFFE       BL               SetCursor_X
+ 1963 00001474         
+ 1964 00001474 F8DF 847C       LDR              R8, =MINE4Y
+ 1965 00001478 F8D8 8000       LDR              R8, [R8]
+ 1966 0000147C F04F 0401       MOV              R4, #1      ;starts at 1st row(
+                                                            upper limit)
+ 1967 00001480 F240 491E       MOV              R9,#1054
+ 1968 00001484 FBB8 F9F9       UDIV             R9, R8,R9
+ 1969 00001488 444C            ADD              R4, R9
+ 1970 0000148A F7FF FFFE       BL               SetCursor_Y
+ 1971 0000148E         
+ 1972 0000148E         
+ 1973 0000148E         ;;;;;;finding shift amount at y axis;;;;;;;;;;;;;;;
+ 1974 0000148E F5B8 6F84       CMP              R8, #1056
+ 1975 00001492 BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 1976 00001498         ;LDR R0, =866
+ 1977 00001498 F5B8 6F84       CMP              R8, #1056
+ 1978 0000149C BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 1979 000014A2 F5B8 6F84       CMP              R8, #1056
+ 1980 000014A6 BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 1981 000014AC F5B8 6F84       CMP              R8, #1056
+ 1982 000014B0 BF88 F2A8 
+
+
+
+ARM Macro Assembler    Page 38 
+
+
+              481E             SUBHI            R8, #1054
+ 1983 000014B6 F5B8 6F84       CMP              R8, #1056
+ 1984 000014BA BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 1985 000014C0 F5B8 6F84       CMP              R8, #1056
+ 1986 000014C4 BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 1987 000014CA         
+ 1988 000014CA F04F 0984       MOV              R9, #132
+ 1989 000014CE FBB8 FCF9       UDIV             R12, R8, R9
+ 1990 000014D2         
+ 1991 000014D2         
+ 1992 000014D2 F04F 001C       MOV              R0,  #0x1C
+ 1993 000014D6 F04F 021E       MOV              R2,  #0x1E
+ 1994 000014DA F04F 0301       MOV              R3,  #0x01
+ 1995 000014DE F04F 0AFF       MOV              R10,  #0xFF
+ 1996 000014E2 F04F 0BFF       MOV              R11,  #0xFF
+ 1997 000014E6         ;;;;;;;;;line1;;;;;;;;;;;;;;
+ 1998 000014E6 FA03 F50C       LSL              R5, R3, R12
+ 1999 000014EA F7FF FFFE       BL               PRINT
+ 2000 000014EE F7FF FFFE       BL               DELAY100
+ 2001 000014F2         
+ 2002 000014F2 F104 0401       ADD              R4, #1
+ 2003 000014F6 F7FF FFFE       BL               SetCursor_Y
+ 2004 000014FA         
+ 2005 000014FA         ;;;;;;;Finding row (x axis);;;;;;
+ 2006 000014FA F8DF 83F4       LDR              R8, =MINE4X
+ 2007 000014FE F8D8 8000       LDR              R8, [R8]
+ 2008 00001502 F04F 0405       MOV              R4, #5      ;starts at 10th col
+                                                            umn(left limit) 
+ 2009 00001506 F04F 0942       MOV              R9,#66
+ 2010 0000150A FBB8 F9F9       UDIV             R9, R8,R9
+ 2011 0000150E 444C            ADD              R4, R9
+ 2012 00001510 F104 0402       ADD              R4, #2
+ 2013 00001514 F7FF FFFE       BL               SetCursor_X
+ 2014 00001518         
+ 2015 00001518 F04F 001C       MOV              R0,  #0x1C
+ 2016 0000151C F04F 021E       MOV              R2,  #0x1E
+ 2017 00001520 F04F 0301       MOV              R3,  #0x01
+ 2018 00001524 F04F 0AFF       MOV              R10, #0xFF
+ 2019 00001528 F04F 0BFF       MOV              R11, #0xFF
+ 2020 0000152C         
+ 2021 0000152C F1BC 0F04       CMP              R12,#4
+ 2022 00001530 F4FF AE45       BLO              EXITMine1
+ 2023 00001534 D008            BEQ              Mine4CASE1
+ 2024 00001536 F1BC 0F05       CMP              R12,#5
+ 2025 0000153A D00C            BEQ              Mine4CASE2
+ 2026 0000153C F1BC 0F06       CMP              R12,#6
+ 2027 00001540 D010            BEQ              Mine4CASE3
+ 2028 00001542 F1BC 0F07       CMP              R12,#7
+ 2029 00001546 D014            BEQ              Mine4CASE4
+ 2030 00001548         
+ 2031 00001548         
+ 2032 00001548 F04F 0001 
+                       Mine4CASE1
+                               MOV              R0,  #0x01
+ 2033 0000154C F04F 0201       MOV              R2,  #0x01
+ 2034 00001550 F04F 0301       MOV              R3,  #0x01
+ 2035 00001554 E014            B                Mine4LINE2
+
+
+
+ARM Macro Assembler    Page 39 
+
+
+ 2036 00001556 F04F 0002 
+                       Mine4CASE2
+                               MOV              R0,  #0x02
+ 2037 0000155A F04F 0202       MOV              R2,  #0x02
+ 2038 0000155E F04F 0302       MOV              R3,  #0x02
+ 2039 00001562 E00D            B                Mine4LINE2
+ 2040 00001564 F04F 0004 
+                       Mine4CASE3
+                               MOV              R0,  #0x04
+ 2041 00001568 F04F 0204       MOV              R2,  #0x04
+ 2042 0000156C F04F 0304       MOV              R3,  #0x04
+ 2043 00001570 E006            B                Mine4LINE2
+ 2044 00001572 F04F 0008 
+                       Mine4CASE4
+                               MOV              R0,  #0x08
+ 2045 00001576 F04F 0208       MOV              R2,  #0x08
+ 2046 0000157A F04F 0308       MOV              R3,  #0x08
+ 2047 0000157E E7FF            B                Mine4LINE2
+ 2048 00001580         
+ 2049 00001580         
+ 2050 00001580         
+ 2051 00001580         ;;;;;;;;;;;;;;;;;line2;;;;;;;;;;;;;;
+ 2052 00001580 FA23 F50C 
+                       Mine4LINE2
+                               LSR              R5, R3, R12
+ 2053 00001584 F7FF FFFE       BL               PRINT
+ 2054 00001588 F7FF FFFE       BL               DELAY100
+ 2055 0000158C         
+ 2056 0000158C         
+ 2057 0000158C E8BD 1FFF 
+                       EXITMine4
+                               POP              {R0-R12}
+ 2058 00001590 F85D EB04       POP{LR}
+ 2059 00001594                 ENDP
+ 2060 00001594 4770            BX               LR
+ 2061 00001596         
+ 2062 00001596         
+ 2063 00001596         PrintCursorShip
+                               PROC                         ;PRINTS THE CURSOR 
+                                                            IN ATTACK PHASE
+ 2064 00001596         
+ 2065 00001596 B500            PUSH             {LR}
+ 2066 00001598 E92D 1FFF       PUSH             {R0-R12}
+ 2067 0000159C         
+ 2068 0000159C         ;;;;;;;Finding row (x axis);;;;;;
+ 2069 0000159C F7FF FFFE       BL               READ_POT2
+ 2070 000015A0 F04F 0405       MOV              R4, #5      ;starts at 10th col
+                                                            umn(left limit) 
+ 2071 000015A4 F04F 094B       MOV              R9,#75
+ 2072 000015A8 FBB8 F9F9       UDIV             R9, R8,R9
+ 2073 000015AC 444C            ADD              R4, R9
+ 2074 000015AE F7FF FFFE       BL               SetCursor_X
+ 2075 000015B2         ;MOV R4, #15
+ 2076 000015B2         ;BL SetCursor_X
+ 2077 000015B2         
+ 2078 000015B2         ;;;;;finding column(y axis);;;;;;;;;;;;;;
+ 2079 000015B2 F7FF FFFE       BL               READ_POT1
+ 2080 000015B6 F04F 0401       MOV              R4, #1      ;starts at 1st row(
+                                                            upper limit)
+
+
+
+ARM Macro Assembler    Page 40 
+
+
+ 2081 000015BA F44F 69AB       MOV              R9,#1368
+ 2082 000015BE FBB8 F9F9       UDIV             R9, R8,R9
+ 2083 000015C2 444C            ADD              R4, R9
+ 2084 000015C4         
+ 2085 000015C4 F7FF FFFE       BL               SetCursor_Y
+ 2086 000015C8         
+ 2087 000015C8         
+ 2088 000015C8         ;;;;;;finding shift amount at y axis;;;;;;;;;;;;;;;
+ 2089 000015C8 F5B8 6FAB       CMP              R8, #1368
+ 2090 000015CC BF88 F5A8 
+              68AB             SUBHI            R8, #1368
+ 2091 000015D2 F5B8 6FAB       CMP              R8, #1368
+ 2092 000015D6 BF88 F5A8 
+              68AB             SUBHI            R8, #1368
+ 2093 000015DC         
+ 2094 000015DC F04F 09A9       MOV              R9, #169
+ 2095 000015E0 FBB8 FCF9       UDIV             R12, R8, R9
+ 2096 000015E4         
+ 2097 000015E4         
+ 2098 000015E4 F04F 001C       MOV              R0,  #0x1C
+ 2099 000015E8 F04F 021E       MOV              R2,  #0x1E
+ 2100 000015EC F04F 03FF       MOV              R3,  #0xFF
+ 2101 000015F0 F04F 069F       MOV              R6,  #0x9F
+ 2102 000015F4 F04F 079D       MOV              R7,  #0x9D
+ 2103 000015F8 F04F 0A81       MOV              R10,  #0x81
+ 2104 000015FC F04F 0BFF       MOV              R11,  #0xFF
+ 2105 00001600         ; MOV R12,  #3 
+ 2106 00001600         
+ 2107 00001600 FA00 F50C 
+                       CURSOR11
+                               LSL              R5, R0, R12
+ 2108 00001604 F7FF FFFE       BL               PRINT
+ 2109 00001608 F7FF FFFE       BL               DELAY100
+ 2110 0000160C FA02 F50C       LSL              R5, R2, R12
+ 2111 00001610 F7FF FFFE       BL               PRINT
+ 2112 00001614 F7FF FFFE       BL               DELAY100
+ 2113 00001618 FA03 F50C       LSL              R5, R3, R12
+ 2114 0000161C F7FF FFFE       BL               PRINT
+ 2115 00001620 F7FF FFFE       BL               DELAY100
+ 2116 00001624 FA06 F50C       LSL              R5, R6, R12
+ 2117 00001628 F7FF FFFE       BL               PRINT
+ 2118 0000162C F7FF FFFE       BL               DELAY100
+ 2119 00001630 FA07 F50C       LSL              R5, R7, R12
+ 2120 00001634 F7FF FFFE       BL               PRINT
+ 2121 00001638 F7FF FFFE       BL               DELAY100
+ 2122 0000163C         
+ 2123 0000163C FA0A F50C       LSL              R5, R10,  R12
+ 2124 00001640 F7FF FFFE       BL               PRINT
+ 2125 00001644         
+ 2126 00001644 F7FF FFFE       BL               DELAY100
+ 2127 00001648 FA0A F50C       LSL              R5, R10, R12
+ 2128 0000164C F7FF FFFE       BL               PRINT
+ 2129 00001650         
+ 2130 00001650 F7FF FFFE       BL               DELAY100
+ 2131 00001654 FA0A F50C       LSL              R5, R10,  R12
+ 2132 00001658 F7FF FFFE       BL               PRINT
+ 2133 0000165C         
+ 2134 0000165C F7FF FFFE       BL               DELAY100
+ 2135 00001660 FA0A F50C       LSL              R5, R10, R12
+
+
+
+ARM Macro Assembler    Page 41 
+
+
+ 2136 00001664 F7FF FFFE       BL               PRINT
+ 2137 00001668         
+ 2138 00001668 F7FF FFFE       BL               DELAY100
+ 2139 0000166C FA0B F50C       LSL              R5, R11,  R12
+ 2140 00001670 F7FF FFFE       BL               PRINT
+ 2141 00001674 F7FF FFFE       BL               DELAY100
+ 2142 00001678         
+ 2143 00001678         
+ 2144 00001678         
+ 2145 00001678         
+ 2146 00001678 F104 0401       ADD              R4, #1
+ 2147 0000167C F7FF FFFE       BL               SetCursor_Y
+ 2148 00001680         
+ 2149 00001680         
+ 2150 00001680         ;;;;;;;Finding row (x axis);;;;;;
+ 2151 00001680 F7FF FFFE       BL               READ_POT2
+ 2152 00001684 F04F 0405       MOV              R4, #5      ;starts at 10th col
+                                                            umn(left limit) 
+ 2153 00001688 F04F 094B       MOV              R9,#75
+ 2154 0000168C FBB8 F9F9       UDIV             R9, R8,R9
+ 2155 00001690 444C            ADD              R4, R9
+ 2156 00001692 F7FF FFFE       BL               SetCursor_X
+ 2157 00001696         ;  MOV R4, #15
+ 2158 00001696         ;  BL SetCursor_X 
+ 2159 00001696         
+ 2160 00001696 F04F 001C       MOV              R0,  #0x1C
+ 2161 0000169A F04F 021E       MOV              R2,  #0x1E
+ 2162 0000169E F04F 03FF       MOV              R3,  #0xFF
+ 2163 000016A2 F04F 069F       MOV              R6,  #0x9F
+ 2164 000016A6 F04F 079D       MOV              R7,  #0x9D
+ 2165 000016AA F04F 0A81       MOV              R10,  #0x81
+ 2166 000016AE F04F 0BFF       MOV              R11,  #0xFF
+ 2167 000016B2 F1CC 0C08       RSB              R12, #8
+ 2168 000016B6         
+ 2169 000016B6 FA20 F50C 
+                       CURSOR22
+                               LSR              R5, R0, R12
+ 2170 000016BA F7FF FFFE       BL               PRINT
+ 2171 000016BE F7FF FFFE       BL               DELAY100
+ 2172 000016C2 FA22 F50C       LSR              R5, R2, R12
+ 2173 000016C6 F7FF FFFE       BL               PRINT
+ 2174 000016CA F7FF FFFE       BL               DELAY100
+ 2175 000016CE FA23 F50C       LSR              R5, R3, R12
+ 2176 000016D2 F7FF FFFE       BL               PRINT
+ 2177 000016D6 F7FF FFFE       BL               DELAY100
+ 2178 000016DA FA26 F50C       LSR              R5, R6, R12
+ 2179 000016DE F7FF FFFE       BL               PRINT
+ 2180 000016E2 F7FF FFFE       BL               DELAY100
+ 2181 000016E6 FA27 F50C       LSR              R5, R7, R12
+ 2182 000016EA F7FF FFFE       BL               PRINT
+ 2183 000016EE F7FF FFFE       BL               DELAY100
+ 2184 000016F2         
+ 2185 000016F2 FA2A F50C       LSR              R5, R10,  R12
+ 2186 000016F6 F7FF FFFE       BL               PRINT
+ 2187 000016FA         
+ 2188 000016FA F7FF FFFE       BL               DELAY100
+ 2189 000016FE FA2A F50C       LSR              R5, R10, R12
+ 2190 00001702 F7FF FFFE       BL               PRINT
+ 2191 00001706         
+
+
+
+ARM Macro Assembler    Page 42 
+
+
+ 2192 00001706 F7FF FFFE       BL               DELAY100
+ 2193 0000170A FA2A F50C       LSR              R5, R10,  R12
+ 2194 0000170E F7FF FFFE       BL               PRINT
+ 2195 00001712         
+ 2196 00001712 F7FF FFFE       BL               DELAY100
+ 2197 00001716 FA2A F50C       LSR              R5, R10, R12
+ 2198 0000171A F7FF FFFE       BL               PRINT
+ 2199 0000171E         
+ 2200 0000171E F7FF FFFE       BL               DELAY100
+ 2201 00001722 FA2B F50C       LSR              R5, R11,  R12
+ 2202 00001726 F7FF FFFE       BL               PRINT
+ 2203 0000172A F7FF FFFE       BL               DELAY100
+ 2204 0000172E         
+ 2205 0000172E         
+ 2206 0000172E E8BD 1FFF       POP              {R0-R12}
+ 2207 00001732 F85D EB04       POP{LR}
+ 2208 00001736                 ENDP
+ 2209 00001736 4770            BX               LR
+ 2210 00001738         
+ 2211 00001738         
+ 2212 00001738         PrintCursor2
+                               PROC
+ 2213 00001738         
+ 2214 00001738 B500            PUSH             {LR}
+ 2215 0000173A E92D 1FFF       PUSH             {R0-R12}
+ 2216 0000173E         
+ 2217 0000173E         ;;;;;;;Finding row (x axis);;;;;;
+ 2218 0000173E F7FF FFFE       BL               READ_POT2
+ 2219 00001742 F04F 0405       MOV              R4, #5      ;starts at 10th col
+                                                            umn(left limit) 
+ 2220 00001746 F04F 0942       MOV              R9,#66
+ 2221 0000174A FBB8 F9F9       UDIV             R9, R8,R9   ;4055/64=63 
+ 2222 0000174E 444C            ADD              R4, R9
+ 2223 00001750 F7FF FFFE       BL               SetCursor_X
+ 2224 00001754         ;MOV R4, #15
+ 2225 00001754         ;BL SetCursor_X
+ 2226 00001754         
+ 2227 00001754         ;;;;;finding column(y axis);;;;;;;;;;;;;;
+ 2228 00001754 F7FF FFFE       BL               READ_POT1
+ 2229 00001758 F04F 0401       MOV              R4, #1      ;starts at 1st row(
+                                                            upper limit)
+ 2230 0000175C F240 491E       MOV              R9,#1054
+ 2231 00001760 FBB8 F9F9       UDIV             R9, R8,R9
+ 2232 00001764 444C            ADD              R4, R9
+ 2233 00001766         
+ 2234 00001766 F7FF FFFE       BL               SetCursor_Y
+ 2235 0000176A         
+ 2236 0000176A         
+ 2237 0000176A         ;;;;;;finding shift amount at y axis;;;;;;;;;;;;;;;
+ 2238 0000176A         ; LDR R0, =866
+ 2239 0000176A F5B8 6F84       CMP              R8, #1056
+ 2240 0000176E BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 2241 00001774         ;LDR R0, =866
+ 2242 00001774 F5B8 6F84       CMP              R8, #1056
+ 2243 00001778 BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 2244 0000177E F5B8 6F84       CMP              R8, #1056
+ 2245 00001782 BF88 F2A8 
+
+
+
+ARM Macro Assembler    Page 43 
+
+
+              481E             SUBHI            R8, #1054
+ 2246 00001788 F5B8 6F84       CMP              R8, #1056
+ 2247 0000178C BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 2248 00001792 F5B8 6F84       CMP              R8, #1056
+ 2249 00001796 BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 2250 0000179C F5B8 6F84       CMP              R8, #1056
+ 2251 000017A0 BF88 F2A8 
+              481E             SUBHI            R8, #1054
+ 2252 000017A6         
+ 2253 000017A6 F04F 0984       MOV              R9, #132
+ 2254 000017AA FBB8 FCF9       UDIV             R12, R8, R9
+ 2255 000017AE         
+ 2256 000017AE         
+ 2257 000017AE F04F 001C       MOV              R0,  #0x1C
+ 2258 000017B2 F04F 021E       MOV              R2,  #0x1E
+ 2259 000017B6 F04F 031F       MOV              R3,  #0x1F
+ 2260 000017BA         
+ 2261 000017BA         ; MOV R6,  #0x9F 
+ 2262 000017BA         ; MOV R7,  #0x9D 
+ 2263 000017BA         ; MOV R10,  #0x81 
+ 2264 000017BA         ; MOV R11,  #0xFF 
+ 2265 000017BA         ; MOV R12,  #3 
+ 2266 000017BA         
+ 2267 000017BA         
+ 2268 000017BA         
+ 2269 000017BA F7FF FFFE 
+                       CURSOR111
+                               BL               DELAY100
+ 2270 000017BE FA00 F50C       LSL              R5, R0, R12
+ 2271 000017C2 F7FF FFFE       BL               PRINT
+ 2272 000017C6 F7FF FFFE       BL               DELAY100
+ 2273 000017CA FA02 F50C       LSL              R5, R2, R12
+ 2274 000017CE F7FF FFFE       BL               PRINT
+ 2275 000017D2 F7FF FFFE       BL               DELAY100
+ 2276 000017D6 FA03 F50C       LSL              R5, R3, R12
+ 2277 000017DA F7FF FFFE       BL               PRINT
+ 2278 000017DE F7FF FFFE       BL               DELAY100
+ 2279 000017E2 FA02 F50C       LSL              R5, R2, R12
+ 2280 000017E6 F7FF FFFE       BL               PRINT
+ 2281 000017EA F7FF FFFE       BL               DELAY100
+ 2282 000017EE F04F 001C       MOV              R0,  #0x1C
+ 2283 000017F2 FA00 F50C       LSL              R5, R0, R12
+ 2284 000017F6 F7FF FFFE       BL               PRINT
+ 2285 000017FA F7FF FFFE       BL               DELAY100
+ 2286 000017FE         
+ 2287 000017FE F104 0401       ADD              R4, #1
+ 2288 00001802 F7FF FFFE       BL               SetCursor_Y
+ 2289 00001806         
+ 2290 00001806         
+ 2291 00001806         ;;;;;;;Finding row (x axis);;;;;;
+ 2292 00001806 F7FF FFFE       BL               READ_POT2
+ 2293 0000180A F04F 0405       MOV              R4, #5      ;starts at 10th col
+                                                            umn(left limit) 
+ 2294 0000180E F04F 0942       MOV              R9,#66
+ 2295 00001812 FBB8 F9F9       UDIV             R9, R8,R9
+ 2296 00001816 444C            ADD              R4, R9
+ 2297 00001818 F7FF FFFE       BL               SetCursor_X
+
+
+
+ARM Macro Assembler    Page 44 
+
+
+ 2298 0000181C         ;  MOV R4, #15
+ 2299 0000181C         ;  BL SetCursor_X 
+ 2300 0000181C         
+ 2301 0000181C F04F 001C       MOV              R0,  #0x1C
+ 2302 00001820 F04F 021E       MOV              R2,  #0x1E
+ 2303 00001824 F04F 031F       MOV              R3,  #0x1F
+ 2304 00001828         
+ 2305 00001828         
+ 2306 00001828         
+ 2307 00001828 F1BC 0F04       CMP              R12,#4
+ 2308 0000182C D33E            BLO              EXIT
+ 2309 0000182E D008            BEQ              CASE11
+ 2310 00001830 F1BC 0F05       CMP              R12,#5
+ 2311 00001834 D00C            BEQ              CASE22
+ 2312 00001836 F1BC 0F06       CMP              R12,#6
+ 2313 0000183A D010            BEQ              CASE33
+ 2314 0000183C F1BC 0F07       CMP              R12,#7
+ 2315 00001840 D014            BEQ              CASE44
+ 2316 00001842         
+ 2317 00001842         
+ 2318 00001842 F04F 0001 
+                       CASE11  MOV              R0,  #0x01
+ 2319 00001846 F04F 0201       MOV              R2,  #0x01
+ 2320 0000184A F04F 0301       MOV              R3,  #0x01
+ 2321 0000184E E014            B                CURSOR222
+ 2322 00001850 F04F 0003 
+                       CASE22  MOV              R0,  #0x03
+ 2323 00001854 F04F 0203       MOV              R2,  #0x03
+ 2324 00001858 F04F 0303       MOV              R3,  #0x03
+ 2325 0000185C E00D            B                CURSOR222
+ 2326 0000185E F04F 0007 
+                       CASE33  MOV              R0,  #0x07
+ 2327 00001862 F04F 0207       MOV              R2,  #0x07
+ 2328 00001866 F04F 0307       MOV              R3,  #0x07
+ 2329 0000186A E006            B                CURSOR222
+ 2330 0000186C F04F 000E 
+                       CASE44  MOV              R0,  #0x0E
+ 2331 00001870 F04F 020E       MOV              R2,  #0x0E
+ 2332 00001874 F04F 030F       MOV              R3,  #0x0F
+ 2333 00001878 E7FF            B                CURSOR222
+ 2334 0000187A         
+ 2335 0000187A         
+ 2336 0000187A         CURSOR222
+ 2337 0000187A 4615            MOV              R5, R2
+ 2338 0000187C F7FF FFFE       BL               PRINT
+ 2339 00001880 F7FF FFFE       BL               DELAY100
+ 2340 00001884 461D            MOV              R5, R3
+ 2341 00001886 F7FF FFFE       BL               PRINT
+ 2342 0000188A F7FF FFFE       BL               DELAY100
+ 2343 0000188E 461D            MOV              R5, R3
+ 2344 00001890 F7FF FFFE       BL               PRINT
+ 2345 00001894 F7FF FFFE       BL               DELAY100
+ 2346 00001898 461D            MOV              R5, R3
+ 2347 0000189A F7FF FFFE       BL               PRINT
+ 2348 0000189E F7FF FFFE       BL               DELAY100
+ 2349 000018A2 4615            MOV              R5, R2
+ 2350 000018A4 F7FF FFFE       BL               PRINT
+ 2351 000018A8 F7FF FFFE       BL               DELAY100
+ 2352 000018AC         
+
+
+
+ARM Macro Assembler    Page 45 
+
+
+ 2353 000018AC         
+ 2354 000018AC E8BD 1FFF 
+                       EXIT    POP              {R0-R12}
+ 2355 000018B0 F85D EB04       POP{LR}
+ 2356 000018B4                 ENDP
+ 2357 000018B4 4770            BX               LR
+ 2358 000018B6         
+ 2359 000018B6         
+ 2360 000018B6 00 00           ALIGN
+ 2361 000018B8                 END
+              20000420 
+              20000424 
+              20000428 
+              2000042C 
+              20000430 
+              20000434 
+              20000438 
+              2000043C 
+              20000450 
+              20000454 
+              20000458 
+              2000045C 
+              20000460 
+              20000464 
+              20000468 
+              2000046C 
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
+erwork --depend=.\objects\nokiacommands.d -o.\objects\nokiacommands.o -I.\RTE\_
+Target_1 -IC:\Keil_v5\ARM\PACK\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123 -IC:\
+Keil_v5\ARM\CMSIS\Include --predefine="__EVAL SETA 1" --predefine="__UVISION_VE
+RSION SETA 526" --predefine="TM4C123GH6PM SETA 1" --list=.\listings\nokiacomman
+ds.lst NokiaCommands.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+CASE11 00001842
+
+Symbol: CASE11
+   Definitions
+      At line 2318 in file NokiaCommands.s
+   Uses
+      At line 2309 in file NokiaCommands.s
+Comment: CASE11 used once
+CASE22 00001850
+
+Symbol: CASE22
+   Definitions
+      At line 2322 in file NokiaCommands.s
+   Uses
+      At line 2311 in file NokiaCommands.s
+Comment: CASE22 used once
+CASE33 0000185E
+
+Symbol: CASE33
+   Definitions
+      At line 2326 in file NokiaCommands.s
+   Uses
+      At line 2313 in file NokiaCommands.s
+Comment: CASE33 used once
+CASE44 0000186C
+
+Symbol: CASE44
+   Definitions
+      At line 2330 in file NokiaCommands.s
+   Uses
+      At line 2315 in file NokiaCommands.s
+Comment: CASE44 used once
+CURSOR11 00001600
+
+Symbol: CURSOR11
+   Definitions
+      At line 2107 in file NokiaCommands.s
+   Uses
+      None
+Comment: CURSOR11 unused
+CURSOR111 000017BA
+
+Symbol: CURSOR111
+   Definitions
+      At line 2269 in file NokiaCommands.s
+   Uses
+      None
+Comment: CURSOR111 unused
+CURSOR22 000016B6
+
+Symbol: CURSOR22
+   Definitions
+      At line 2169 in file NokiaCommands.s
+   Uses
+      None
+Comment: CURSOR22 unused
+CURSOR222 0000187A
+
+Symbol: CURSOR222
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Relocatable symbols
+
+   Definitions
+      At line 2336 in file NokiaCommands.s
+   Uses
+      At line 2321 in file NokiaCommands.s
+      At line 2325 in file NokiaCommands.s
+      At line 2329 in file NokiaCommands.s
+      At line 2333 in file NokiaCommands.s
+
+ClearMap 00000030
+
+Symbol: ClearMap
+   Definitions
+      At line 61 in file NokiaCommands.s
+   Uses
+      At line 15 in file NokiaCommands.s
+Comment: ClearMap used once
+EXIT 000018AC
+
+Symbol: EXIT
+   Definitions
+      At line 2354 in file NokiaCommands.s
+   Uses
+      At line 2308 in file NokiaCommands.s
+Comment: EXIT used once
+EXITMine1 000011BE
+
+Symbol: EXITMine1
+   Definitions
+      At line 1712 in file NokiaCommands.s
+   Uses
+      At line 1677 in file NokiaCommands.s
+      At line 2022 in file NokiaCommands.s
+
+EXITMine2 00001302
+
+Symbol: EXITMine2
+   Definitions
+      At line 1828 in file NokiaCommands.s
+   Uses
+      At line 1793 in file NokiaCommands.s
+Comment: EXITMine2 used once
+EXITMine3 00001446
+
+Symbol: EXITMine3
+   Definitions
+      At line 1944 in file NokiaCommands.s
+   Uses
+      At line 1909 in file NokiaCommands.s
+Comment: EXITMine3 used once
+EXITMine4 0000158C
+
+Symbol: EXITMine4
+   Definitions
+      At line 2057 in file NokiaCommands.s
+   Uses
+      None
+Comment: EXITMine4 unused
+Mine1CASE1 0000117A
+
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Relocatable symbols
+
+Symbol: Mine1CASE1
+   Definitions
+      At line 1687 in file NokiaCommands.s
+   Uses
+      At line 1678 in file NokiaCommands.s
+Comment: Mine1CASE1 used once
+Mine1CASE2 00001188
+
+Symbol: Mine1CASE2
+   Definitions
+      At line 1691 in file NokiaCommands.s
+   Uses
+      At line 1680 in file NokiaCommands.s
+Comment: Mine1CASE2 used once
+Mine1CASE3 00001196
+
+Symbol: Mine1CASE3
+   Definitions
+      At line 1695 in file NokiaCommands.s
+   Uses
+      At line 1682 in file NokiaCommands.s
+Comment: Mine1CASE3 used once
+Mine1CASE4 000011A4
+
+Symbol: Mine1CASE4
+   Definitions
+      At line 1699 in file NokiaCommands.s
+   Uses
+      At line 1684 in file NokiaCommands.s
+Comment: Mine1CASE4 used once
+Mine1LINE2 000011B2
+
+Symbol: Mine1LINE2
+   Definitions
+      At line 1707 in file NokiaCommands.s
+   Uses
+      At line 1690 in file NokiaCommands.s
+      At line 1694 in file NokiaCommands.s
+      At line 1698 in file NokiaCommands.s
+      At line 1702 in file NokiaCommands.s
+      At line 1806 in file NokiaCommands.s
+
+Mine2CASE1 000012BE
+
+Symbol: Mine2CASE1
+   Definitions
+      At line 1803 in file NokiaCommands.s
+   Uses
+      At line 1794 in file NokiaCommands.s
+Comment: Mine2CASE1 used once
+Mine2CASE2 000012CC
+
+Symbol: Mine2CASE2
+   Definitions
+      At line 1807 in file NokiaCommands.s
+   Uses
+      At line 1796 in file NokiaCommands.s
+Comment: Mine2CASE2 used once
+Mine2CASE3 000012DA
+
+
+
+ARM Macro Assembler    Page 4 Alphabetic symbol ordering
+Relocatable symbols
+
+
+Symbol: Mine2CASE3
+   Definitions
+      At line 1811 in file NokiaCommands.s
+   Uses
+      At line 1798 in file NokiaCommands.s
+Comment: Mine2CASE3 used once
+Mine2CASE4 000012E8
+
+Symbol: Mine2CASE4
+   Definitions
+      At line 1815 in file NokiaCommands.s
+   Uses
+      At line 1800 in file NokiaCommands.s
+Comment: Mine2CASE4 used once
+Mine2LINE2 000012F6
+
+Symbol: Mine2LINE2
+   Definitions
+      At line 1823 in file NokiaCommands.s
+   Uses
+      At line 1810 in file NokiaCommands.s
+      At line 1814 in file NokiaCommands.s
+      At line 1818 in file NokiaCommands.s
+
+Mine3CASE1 00001402
+
+Symbol: Mine3CASE1
+   Definitions
+      At line 1919 in file NokiaCommands.s
+   Uses
+      At line 1910 in file NokiaCommands.s
+Comment: Mine3CASE1 used once
+Mine3CASE2 00001410
+
+Symbol: Mine3CASE2
+   Definitions
+      At line 1923 in file NokiaCommands.s
+   Uses
+      At line 1912 in file NokiaCommands.s
+Comment: Mine3CASE2 used once
+Mine3CASE3 0000141E
+
+Symbol: Mine3CASE3
+   Definitions
+      At line 1927 in file NokiaCommands.s
+   Uses
+      At line 1914 in file NokiaCommands.s
+Comment: Mine3CASE3 used once
+Mine3CASE4 0000142C
+
+Symbol: Mine3CASE4
+   Definitions
+      At line 1931 in file NokiaCommands.s
+   Uses
+      At line 1916 in file NokiaCommands.s
+Comment: Mine3CASE4 used once
+Mine3LINE2 0000143A
+
+
+
+
+ARM Macro Assembler    Page 5 Alphabetic symbol ordering
+Relocatable symbols
+
+Symbol: Mine3LINE2
+   Definitions
+      At line 1939 in file NokiaCommands.s
+   Uses
+      At line 1922 in file NokiaCommands.s
+      At line 1926 in file NokiaCommands.s
+      At line 1930 in file NokiaCommands.s
+      At line 1934 in file NokiaCommands.s
+
+Mine4CASE1 00001548
+
+Symbol: Mine4CASE1
+   Definitions
+      At line 2032 in file NokiaCommands.s
+   Uses
+      At line 2023 in file NokiaCommands.s
+Comment: Mine4CASE1 used once
+Mine4CASE2 00001556
+
+Symbol: Mine4CASE2
+   Definitions
+      At line 2036 in file NokiaCommands.s
+   Uses
+      At line 2025 in file NokiaCommands.s
+Comment: Mine4CASE2 used once
+Mine4CASE3 00001564
+
+Symbol: Mine4CASE3
+   Definitions
+      At line 2040 in file NokiaCommands.s
+   Uses
+      At line 2027 in file NokiaCommands.s
+Comment: Mine4CASE3 used once
+Mine4CASE4 00001572
+
+Symbol: Mine4CASE4
+   Definitions
+      At line 2044 in file NokiaCommands.s
+   Uses
+      At line 2029 in file NokiaCommands.s
+Comment: Mine4CASE4 used once
+Mine4LINE2 00001580
+
+Symbol: Mine4LINE2
+   Definitions
+      At line 2052 in file NokiaCommands.s
+   Uses
+      At line 2035 in file NokiaCommands.s
+      At line 2039 in file NokiaCommands.s
+      At line 2043 in file NokiaCommands.s
+      At line 2047 in file NokiaCommands.s
+
+NokiaClear 00000000
+
+Symbol: NokiaClear
+   Definitions
+      At line 39 in file NokiaCommands.s
+   Uses
+      At line 10 in file NokiaCommands.s
+
+
+
+ARM Macro Assembler    Page 6 Alphabetic symbol ordering
+Relocatable symbols
+
+Comment: NokiaClear used once
+NokiaCommands 00000000
+
+Symbol: NokiaCommands
+   Definitions
+      At line 36 in file NokiaCommands.s
+   Uses
+      At line 9 in file NokiaCommands.s
+Comment: NokiaCommands used once
+PRINT 00000378
+
+Symbol: PRINT
+   Definitions
+      At line 378 in file NokiaCommands.s
+   Uses
+      At line 28 in file NokiaCommands.s
+      At line 50 in file NokiaCommands.s
+      At line 75 in file NokiaCommands.s
+      At line 82 in file NokiaCommands.s
+      At line 89 in file NokiaCommands.s
+      At line 96 in file NokiaCommands.s
+      At line 107 in file NokiaCommands.s
+      At line 114 in file NokiaCommands.s
+      At line 121 in file NokiaCommands.s
+      At line 128 in file NokiaCommands.s
+      At line 145 in file NokiaCommands.s
+      At line 152 in file NokiaCommands.s
+      At line 159 in file NokiaCommands.s
+      At line 166 in file NokiaCommands.s
+      At line 175 in file NokiaCommands.s
+      At line 182 in file NokiaCommands.s
+      At line 189 in file NokiaCommands.s
+      At line 196 in file NokiaCommands.s
+      At line 217 in file NokiaCommands.s
+      At line 225 in file NokiaCommands.s
+      At line 233 in file NokiaCommands.s
+      At line 241 in file NokiaCommands.s
+      At line 351 in file NokiaCommands.s
+      At line 354 in file NokiaCommands.s
+      At line 357 in file NokiaCommands.s
+      At line 360 in file NokiaCommands.s
+      At line 363 in file NokiaCommands.s
+      At line 430 in file NokiaCommands.s
+      At line 450 in file NokiaCommands.s
+      At line 464 in file NokiaCommands.s
+      At line 472 in file NokiaCommands.s
+      At line 480 in file NokiaCommands.s
+      At line 488 in file NokiaCommands.s
+      At line 501 in file NokiaCommands.s
+      At line 509 in file NokiaCommands.s
+      At line 517 in file NokiaCommands.s
+      At line 525 in file NokiaCommands.s
+      At line 585 in file NokiaCommands.s
+      At line 588 in file NokiaCommands.s
+      At line 591 in file NokiaCommands.s
+      At line 594 in file NokiaCommands.s
+      At line 597 in file NokiaCommands.s
+      At line 600 in file NokiaCommands.s
+      At line 603 in file NokiaCommands.s
+
+
+
+ARM Macro Assembler    Page 7 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 606 in file NokiaCommands.s
+      At line 629 in file NokiaCommands.s
+      At line 632 in file NokiaCommands.s
+      At line 635 in file NokiaCommands.s
+      At line 638 in file NokiaCommands.s
+      At line 641 in file NokiaCommands.s
+      At line 644 in file NokiaCommands.s
+      At line 647 in file NokiaCommands.s
+      At line 650 in file NokiaCommands.s
+      At line 698 in file NokiaCommands.s
+      At line 701 in file NokiaCommands.s
+      At line 704 in file NokiaCommands.s
+      At line 707 in file NokiaCommands.s
+      At line 710 in file NokiaCommands.s
+      At line 713 in file NokiaCommands.s
+      At line 716 in file NokiaCommands.s
+      At line 719 in file NokiaCommands.s
+      At line 742 in file NokiaCommands.s
+      At line 745 in file NokiaCommands.s
+      At line 748 in file NokiaCommands.s
+      At line 751 in file NokiaCommands.s
+      At line 754 in file NokiaCommands.s
+      At line 757 in file NokiaCommands.s
+      At line 760 in file NokiaCommands.s
+      At line 763 in file NokiaCommands.s
+      At line 812 in file NokiaCommands.s
+      At line 815 in file NokiaCommands.s
+      At line 818 in file NokiaCommands.s
+      At line 821 in file NokiaCommands.s
+      At line 824 in file NokiaCommands.s
+      At line 827 in file NokiaCommands.s
+      At line 830 in file NokiaCommands.s
+      At line 833 in file NokiaCommands.s
+      At line 856 in file NokiaCommands.s
+      At line 859 in file NokiaCommands.s
+      At line 862 in file NokiaCommands.s
+      At line 865 in file NokiaCommands.s
+      At line 868 in file NokiaCommands.s
+      At line 871 in file NokiaCommands.s
+      At line 874 in file NokiaCommands.s
+      At line 877 in file NokiaCommands.s
+      At line 928 in file NokiaCommands.s
+      At line 931 in file NokiaCommands.s
+      At line 934 in file NokiaCommands.s
+      At line 937 in file NokiaCommands.s
+      At line 940 in file NokiaCommands.s
+      At line 943 in file NokiaCommands.s
+      At line 946 in file NokiaCommands.s
+      At line 949 in file NokiaCommands.s
+      At line 972 in file NokiaCommands.s
+      At line 975 in file NokiaCommands.s
+      At line 978 in file NokiaCommands.s
+      At line 981 in file NokiaCommands.s
+      At line 984 in file NokiaCommands.s
+      At line 987 in file NokiaCommands.s
+      At line 990 in file NokiaCommands.s
+      At line 993 in file NokiaCommands.s
+      At line 1178 in file NokiaCommands.s
+      At line 1181 in file NokiaCommands.s
+
+
+
+ARM Macro Assembler    Page 8 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 1184 in file NokiaCommands.s
+      At line 1187 in file NokiaCommands.s
+      At line 1190 in file NokiaCommands.s
+      At line 1193 in file NokiaCommands.s
+      At line 1196 in file NokiaCommands.s
+      At line 1199 in file NokiaCommands.s
+      At line 1222 in file NokiaCommands.s
+      At line 1225 in file NokiaCommands.s
+      At line 1228 in file NokiaCommands.s
+      At line 1231 in file NokiaCommands.s
+      At line 1234 in file NokiaCommands.s
+      At line 1237 in file NokiaCommands.s
+      At line 1240 in file NokiaCommands.s
+      At line 1243 in file NokiaCommands.s
+      At line 1290 in file NokiaCommands.s
+      At line 1293 in file NokiaCommands.s
+      At line 1296 in file NokiaCommands.s
+      At line 1299 in file NokiaCommands.s
+      At line 1302 in file NokiaCommands.s
+      At line 1305 in file NokiaCommands.s
+      At line 1308 in file NokiaCommands.s
+      At line 1311 in file NokiaCommands.s
+      At line 1334 in file NokiaCommands.s
+      At line 1337 in file NokiaCommands.s
+      At line 1340 in file NokiaCommands.s
+      At line 1343 in file NokiaCommands.s
+      At line 1346 in file NokiaCommands.s
+      At line 1349 in file NokiaCommands.s
+      At line 1352 in file NokiaCommands.s
+      At line 1355 in file NokiaCommands.s
+      At line 1404 in file NokiaCommands.s
+      At line 1407 in file NokiaCommands.s
+      At line 1410 in file NokiaCommands.s
+      At line 1413 in file NokiaCommands.s
+      At line 1416 in file NokiaCommands.s
+      At line 1419 in file NokiaCommands.s
+      At line 1422 in file NokiaCommands.s
+      At line 1425 in file NokiaCommands.s
+      At line 1448 in file NokiaCommands.s
+      At line 1451 in file NokiaCommands.s
+      At line 1454 in file NokiaCommands.s
+      At line 1457 in file NokiaCommands.s
+      At line 1460 in file NokiaCommands.s
+      At line 1463 in file NokiaCommands.s
+      At line 1466 in file NokiaCommands.s
+      At line 1469 in file NokiaCommands.s
+      At line 1520 in file NokiaCommands.s
+      At line 1523 in file NokiaCommands.s
+      At line 1526 in file NokiaCommands.s
+      At line 1529 in file NokiaCommands.s
+      At line 1532 in file NokiaCommands.s
+      At line 1535 in file NokiaCommands.s
+      At line 1538 in file NokiaCommands.s
+      At line 1541 in file NokiaCommands.s
+      At line 1564 in file NokiaCommands.s
+      At line 1567 in file NokiaCommands.s
+      At line 1570 in file NokiaCommands.s
+      At line 1573 in file NokiaCommands.s
+      At line 1576 in file NokiaCommands.s
+
+
+
+ARM Macro Assembler    Page 9 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 1579 in file NokiaCommands.s
+      At line 1582 in file NokiaCommands.s
+      At line 1585 in file NokiaCommands.s
+      At line 1654 in file NokiaCommands.s
+      At line 1708 in file NokiaCommands.s
+      At line 1770 in file NokiaCommands.s
+      At line 1824 in file NokiaCommands.s
+      At line 1886 in file NokiaCommands.s
+      At line 1940 in file NokiaCommands.s
+      At line 1999 in file NokiaCommands.s
+      At line 2053 in file NokiaCommands.s
+      At line 2108 in file NokiaCommands.s
+      At line 2111 in file NokiaCommands.s
+      At line 2114 in file NokiaCommands.s
+      At line 2117 in file NokiaCommands.s
+      At line 2120 in file NokiaCommands.s
+      At line 2124 in file NokiaCommands.s
+      At line 2128 in file NokiaCommands.s
+      At line 2132 in file NokiaCommands.s
+      At line 2136 in file NokiaCommands.s
+      At line 2140 in file NokiaCommands.s
+      At line 2170 in file NokiaCommands.s
+      At line 2173 in file NokiaCommands.s
+      At line 2176 in file NokiaCommands.s
+      At line 2179 in file NokiaCommands.s
+      At line 2182 in file NokiaCommands.s
+      At line 2186 in file NokiaCommands.s
+      At line 2190 in file NokiaCommands.s
+      At line 2194 in file NokiaCommands.s
+      At line 2198 in file NokiaCommands.s
+      At line 2202 in file NokiaCommands.s
+      At line 2271 in file NokiaCommands.s
+      At line 2274 in file NokiaCommands.s
+      At line 2277 in file NokiaCommands.s
+      At line 2280 in file NokiaCommands.s
+      At line 2284 in file NokiaCommands.s
+      At line 2338 in file NokiaCommands.s
+      At line 2341 in file NokiaCommands.s
+      At line 2344 in file NokiaCommands.s
+      At line 2347 in file NokiaCommands.s
+      At line 2350 in file NokiaCommands.s
+
+PrintCursor 00000334
+
+Symbol: PrintCursor
+   Definitions
+      At line 339 in file NokiaCommands.s
+   Uses
+      At line 13 in file NokiaCommands.s
+Comment: PrintCursor used once
+PrintCursor2 00001738
+
+Symbol: PrintCursor2
+   Definitions
+      At line 2212 in file NokiaCommands.s
+   Uses
+      At line 29 in file NokiaCommands.s
+Comment: PrintCursor2 used once
+PrintCursorShip 00001596
+
+
+
+ARM Macro Assembler    Page 10 Alphabetic symbol ordering
+Relocatable symbols
+
+
+Symbol: PrintCursorShip
+   Definitions
+      At line 2063 in file NokiaCommands.s
+   Uses
+      At line 19 in file NokiaCommands.s
+Comment: PrintCursorShip used once
+PrintMap 000003A4
+
+Symbol: PrintMap
+   Definitions
+      At line 414 in file NokiaCommands.s
+   Uses
+      At line 14 in file NokiaCommands.s
+Comment: PrintMap used once
+PrintMine1 00001084
+
+Symbol: PrintMine1
+   Definitions
+      At line 1605 in file NokiaCommands.s
+   Uses
+      At line 32 in file NokiaCommands.s
+Comment: PrintMine1 used once
+PrintMine2 000011C8
+
+Symbol: PrintMine2
+   Definitions
+      At line 1721 in file NokiaCommands.s
+   Uses
+      At line 33 in file NokiaCommands.s
+Comment: PrintMine2 used once
+PrintMine3 0000130C
+
+Symbol: PrintMine3
+   Definitions
+      At line 1837 in file NokiaCommands.s
+   Uses
+      At line 34 in file NokiaCommands.s
+Comment: PrintMine3 used once
+PrintMine4 00001450
+
+Symbol: PrintMine4
+   Definitions
+      At line 1950 in file NokiaCommands.s
+   Uses
+      At line 35 in file NokiaCommands.s
+Comment: PrintMine4 used once
+PrintShip 000004F0
+
+Symbol: PrintShip
+   Definitions
+      At line 546 in file NokiaCommands.s
+   Uses
+      At line 20 in file NokiaCommands.s
+Comment: PrintShip used once
+PrintShip2 00000668
+
+Symbol: PrintShip2
+   Definitions
+
+
+
+ARM Macro Assembler    Page 11 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 659 in file NokiaCommands.s
+   Uses
+      At line 21 in file NokiaCommands.s
+Comment: PrintShip2 used once
+PrintShip3 000007D6
+
+Symbol: PrintShip3
+   Definitions
+      At line 773 in file NokiaCommands.s
+   Uses
+      At line 22 in file NokiaCommands.s
+Comment: PrintShip3 used once
+PrintShip4 00000954
+
+Symbol: PrintShip4
+   Definitions
+      At line 889 in file NokiaCommands.s
+   Uses
+      At line 23 in file NokiaCommands.s
+Comment: PrintShip4 used once
+PrintWarShip 00000ACC
+
+Symbol: PrintWarShip
+   Definitions
+      At line 1139 in file NokiaCommands.s
+   Uses
+      At line 24 in file NokiaCommands.s
+Comment: PrintWarShip used once
+PrintWarShip2 00000C3A
+
+Symbol: PrintWarShip2
+   Definitions
+      At line 1251 in file NokiaCommands.s
+   Uses
+      At line 25 in file NokiaCommands.s
+Comment: PrintWarShip2 used once
+PrintWarShip3 00000DA8
+
+Symbol: PrintWarShip3
+   Definitions
+      At line 1365 in file NokiaCommands.s
+   Uses
+      At line 26 in file NokiaCommands.s
+Comment: PrintWarShip3 used once
+PrintWarShip4 00000F16
+
+Symbol: PrintWarShip4
+   Definitions
+      At line 1481 in file NokiaCommands.s
+   Uses
+      At line 27 in file NokiaCommands.s
+Comment: PrintWarShip4 used once
+SetCursor_X 000002BC
+
+Symbol: SetCursor_X
+   Definitions
+      At line 290 in file NokiaCommands.s
+   Uses
+      At line 11 in file NokiaCommands.s
+
+
+
+ARM Macro Assembler    Page 12 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 70 in file NokiaCommands.s
+      At line 78 in file NokiaCommands.s
+      At line 85 in file NokiaCommands.s
+      At line 92 in file NokiaCommands.s
+      At line 103 in file NokiaCommands.s
+      At line 110 in file NokiaCommands.s
+      At line 117 in file NokiaCommands.s
+      At line 124 in file NokiaCommands.s
+      At line 140 in file NokiaCommands.s
+      At line 148 in file NokiaCommands.s
+      At line 155 in file NokiaCommands.s
+      At line 162 in file NokiaCommands.s
+      At line 171 in file NokiaCommands.s
+      At line 178 in file NokiaCommands.s
+      At line 185 in file NokiaCommands.s
+      At line 192 in file NokiaCommands.s
+      At line 213 in file NokiaCommands.s
+      At line 221 in file NokiaCommands.s
+      At line 229 in file NokiaCommands.s
+      At line 237 in file NokiaCommands.s
+      At line 424 in file NokiaCommands.s
+      At line 444 in file NokiaCommands.s
+      At line 460 in file NokiaCommands.s
+      At line 468 in file NokiaCommands.s
+      At line 476 in file NokiaCommands.s
+      At line 484 in file NokiaCommands.s
+      At line 497 in file NokiaCommands.s
+      At line 505 in file NokiaCommands.s
+      At line 513 in file NokiaCommands.s
+      At line 521 in file NokiaCommands.s
+      At line 557 in file NokiaCommands.s
+      At line 618 in file NokiaCommands.s
+      At line 670 in file NokiaCommands.s
+      At line 731 in file NokiaCommands.s
+      At line 784 in file NokiaCommands.s
+      At line 845 in file NokiaCommands.s
+      At line 900 in file NokiaCommands.s
+      At line 961 in file NokiaCommands.s
+      At line 1150 in file NokiaCommands.s
+      At line 1211 in file NokiaCommands.s
+      At line 1262 in file NokiaCommands.s
+      At line 1323 in file NokiaCommands.s
+      At line 1376 in file NokiaCommands.s
+      At line 1437 in file NokiaCommands.s
+      At line 1492 in file NokiaCommands.s
+      At line 1553 in file NokiaCommands.s
+      At line 1617 in file NokiaCommands.s
+      At line 1668 in file NokiaCommands.s
+      At line 1733 in file NokiaCommands.s
+      At line 1784 in file NokiaCommands.s
+      At line 1849 in file NokiaCommands.s
+      At line 1900 in file NokiaCommands.s
+      At line 1962 in file NokiaCommands.s
+      At line 2013 in file NokiaCommands.s
+      At line 2074 in file NokiaCommands.s
+      At line 2156 in file NokiaCommands.s
+      At line 2223 in file NokiaCommands.s
+      At line 2297 in file NokiaCommands.s
+
+
+
+
+ARM Macro Assembler    Page 13 Alphabetic symbol ordering
+Relocatable symbols
+
+SetCursor_Y 000002F8
+
+Symbol: SetCursor_Y
+   Definitions
+      At line 315 in file NokiaCommands.s
+   Uses
+      At line 12 in file NokiaCommands.s
+      At line 72 in file NokiaCommands.s
+      At line 80 in file NokiaCommands.s
+      At line 87 in file NokiaCommands.s
+      At line 94 in file NokiaCommands.s
+      At line 105 in file NokiaCommands.s
+      At line 112 in file NokiaCommands.s
+      At line 119 in file NokiaCommands.s
+      At line 126 in file NokiaCommands.s
+      At line 142 in file NokiaCommands.s
+      At line 150 in file NokiaCommands.s
+      At line 157 in file NokiaCommands.s
+      At line 164 in file NokiaCommands.s
+      At line 173 in file NokiaCommands.s
+      At line 180 in file NokiaCommands.s
+      At line 187 in file NokiaCommands.s
+      At line 194 in file NokiaCommands.s
+      At line 215 in file NokiaCommands.s
+      At line 223 in file NokiaCommands.s
+      At line 231 in file NokiaCommands.s
+      At line 239 in file NokiaCommands.s
+      At line 427 in file NokiaCommands.s
+      At line 447 in file NokiaCommands.s
+      At line 462 in file NokiaCommands.s
+      At line 470 in file NokiaCommands.s
+      At line 478 in file NokiaCommands.s
+      At line 486 in file NokiaCommands.s
+      At line 499 in file NokiaCommands.s
+      At line 507 in file NokiaCommands.s
+      At line 515 in file NokiaCommands.s
+      At line 523 in file NokiaCommands.s
+      At line 565 in file NokiaCommands.s
+      At line 609 in file NokiaCommands.s
+      At line 678 in file NokiaCommands.s
+      At line 722 in file NokiaCommands.s
+      At line 792 in file NokiaCommands.s
+      At line 836 in file NokiaCommands.s
+      At line 908 in file NokiaCommands.s
+      At line 952 in file NokiaCommands.s
+      At line 1158 in file NokiaCommands.s
+      At line 1202 in file NokiaCommands.s
+      At line 1270 in file NokiaCommands.s
+      At line 1314 in file NokiaCommands.s
+      At line 1384 in file NokiaCommands.s
+      At line 1428 in file NokiaCommands.s
+      At line 1500 in file NokiaCommands.s
+      At line 1544 in file NokiaCommands.s
+      At line 1625 in file NokiaCommands.s
+      At line 1658 in file NokiaCommands.s
+      At line 1741 in file NokiaCommands.s
+      At line 1774 in file NokiaCommands.s
+      At line 1857 in file NokiaCommands.s
+      At line 1890 in file NokiaCommands.s
+
+
+
+ARM Macro Assembler    Page 14 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 1970 in file NokiaCommands.s
+      At line 2003 in file NokiaCommands.s
+      At line 2085 in file NokiaCommands.s
+      At line 2147 in file NokiaCommands.s
+      At line 2234 in file NokiaCommands.s
+      At line 2288 in file NokiaCommands.s
+
+WAITCOMMAND 0000028C
+
+Symbol: WAITCOMMAND
+   Definitions
+      At line 263 in file NokiaCommands.s
+   Uses
+      At line 16 in file NokiaCommands.s
+      At line 298 in file NokiaCommands.s
+      At line 303 in file NokiaCommands.s
+      At line 323 in file NokiaCommands.s
+      At line 328 in file NokiaCommands.s
+
+WAITDATA 000002A2
+
+Symbol: WAITDATA
+   Definitions
+      At line 276 in file NokiaCommands.s
+   Uses
+      At line 17 in file NokiaCommands.s
+      At line 48 in file NokiaCommands.s
+      At line 210 in file NokiaCommands.s
+      At line 386 in file NokiaCommands.s
+      At line 398 in file NokiaCommands.s
+
+loopBotSide 000003E0
+
+Symbol: loopBotSide
+   Definitions
+      At line 442 in file NokiaCommands.s
+   Uses
+      At line 454 in file NokiaCommands.s
+Comment: loopBotSide used once
+loopClMap 0000020A
+
+Symbol: loopClMap
+   Definitions
+      At line 210 in file NokiaCommands.s
+   Uses
+      At line 246 in file NokiaCommands.s
+Comment: loopClMap used once
+loopClear 00000012
+
+Symbol: loopClear
+   Definitions
+      At line 48 in file NokiaCommands.s
+   Uses
+      At line 52 in file NokiaCommands.s
+Comment: loopClear used once
+loopTopSide 000003B2
+
+Symbol: loopTopSide
+   Definitions
+
+
+
+ARM Macro Assembler    Page 15 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 422 in file NokiaCommands.s
+   Uses
+      At line 434 in file NokiaCommands.s
+Comment: loopTopSide used once
+main 00000000
+
+Symbol: main
+   Definitions
+      At line 7 in file NokiaCommands.s
+   Uses
+      None
+Comment: main unused
+wcommand 00000290
+
+Symbol: wcommand
+   Definitions
+      At line 266 in file NokiaCommands.s
+   Uses
+      At line 269 in file NokiaCommands.s
+Comment: wcommand used once
+wdata 000002A6
+
+Symbol: wdata
+   Definitions
+      At line 279 in file NokiaCommands.s
+   Uses
+      At line 282 in file NokiaCommands.s
+Comment: wdata used once
+64 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Absolute symbols
+
+DC 40004100
+
+Symbol: DC
+   Definitions
+      At line 4 in file NokiaCommands.s
+   Uses
+      At line 42 in file NokiaCommands.s
+      At line 64 in file NokiaCommands.s
+      At line 294 in file NokiaCommands.s
+      At line 304 in file NokiaCommands.s
+      At line 319 in file NokiaCommands.s
+      At line 329 in file NokiaCommands.s
+      At line 381 in file NokiaCommands.s
+
+MINE1X 20000450
+
+Symbol: MINE1X
+   Definitions
+      At line 1593 in file NokiaCommands.s
+   Uses
+      At line 1610 in file NokiaCommands.s
+      At line 1661 in file NokiaCommands.s
+
+MINE1Y 20000454
+
+Symbol: MINE1Y
+   Definitions
+      At line 1594 in file NokiaCommands.s
+   Uses
+      At line 1619 in file NokiaCommands.s
+Comment: MINE1Y used once
+MINE2X 20000458
+
+Symbol: MINE2X
+   Definitions
+      At line 1595 in file NokiaCommands.s
+   Uses
+      At line 1726 in file NokiaCommands.s
+      At line 1777 in file NokiaCommands.s
+
+MINE2Y 2000045C
+
+Symbol: MINE2Y
+   Definitions
+      At line 1596 in file NokiaCommands.s
+   Uses
+      At line 1735 in file NokiaCommands.s
+Comment: MINE2Y used once
+MINE3X 20000460
+
+Symbol: MINE3X
+   Definitions
+      At line 1597 in file NokiaCommands.s
+   Uses
+      At line 1842 in file NokiaCommands.s
+      At line 1893 in file NokiaCommands.s
+
+MINE3Y 20000464
+
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Absolute symbols
+
+Symbol: MINE3Y
+   Definitions
+      At line 1598 in file NokiaCommands.s
+   Uses
+      At line 1851 in file NokiaCommands.s
+Comment: MINE3Y used once
+MINE4X 20000468
+
+Symbol: MINE4X
+   Definitions
+      At line 1599 in file NokiaCommands.s
+   Uses
+      At line 1955 in file NokiaCommands.s
+      At line 2006 in file NokiaCommands.s
+
+MINE4Y 2000046C
+
+Symbol: MINE4Y
+   Definitions
+      At line 1600 in file NokiaCommands.s
+   Uses
+      At line 1964 in file NokiaCommands.s
+Comment: MINE4Y used once
+PIN_RESET 40004200
+
+Symbol: PIN_RESET
+   Definitions
+      At line 1 in file NokiaCommands.s
+   Uses
+      None
+Comment: PIN_RESET unused
+SHIP1X 20000400
+
+Symbol: SHIP1X
+   Definitions
+      At line 537 in file NokiaCommands.s
+   Uses
+      At line 551 in file NokiaCommands.s
+      At line 612 in file NokiaCommands.s
+
+SHIP1Y 20000404
+
+Symbol: SHIP1Y
+   Definitions
+      At line 538 in file NokiaCommands.s
+   Uses
+      At line 559 in file NokiaCommands.s
+Comment: SHIP1Y used once
+SHIP2X 20000408
+
+Symbol: SHIP2X
+   Definitions
+      At line 539 in file NokiaCommands.s
+   Uses
+      At line 664 in file NokiaCommands.s
+      At line 725 in file NokiaCommands.s
+
+SHIP2Y 2000040C
+
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Absolute symbols
+
+Symbol: SHIP2Y
+   Definitions
+      At line 540 in file NokiaCommands.s
+   Uses
+      At line 672 in file NokiaCommands.s
+Comment: SHIP2Y used once
+SHIP3X 20000410
+
+Symbol: SHIP3X
+   Definitions
+      At line 541 in file NokiaCommands.s
+   Uses
+      At line 778 in file NokiaCommands.s
+      At line 839 in file NokiaCommands.s
+
+SHIP3Y 20000414
+
+Symbol: SHIP3Y
+   Definitions
+      At line 542 in file NokiaCommands.s
+   Uses
+      At line 786 in file NokiaCommands.s
+Comment: SHIP3Y used once
+SHIP4X 20000418
+
+Symbol: SHIP4X
+   Definitions
+      At line 543 in file NokiaCommands.s
+   Uses
+      At line 894 in file NokiaCommands.s
+      At line 955 in file NokiaCommands.s
+
+SHIP4Y 2000041C
+
+Symbol: SHIP4Y
+   Definitions
+      At line 544 in file NokiaCommands.s
+   Uses
+      At line 902 in file NokiaCommands.s
+Comment: SHIP4Y used once
+SHIPWAR1X 20000420
+
+Symbol: SHIPWAR1X
+   Definitions
+      At line 1003 in file NokiaCommands.s
+   Uses
+      At line 1144 in file NokiaCommands.s
+      At line 1205 in file NokiaCommands.s
+
+SHIPWAR1Y 20000424
+
+Symbol: SHIPWAR1Y
+   Definitions
+      At line 1004 in file NokiaCommands.s
+   Uses
+      At line 1152 in file NokiaCommands.s
+Comment: SHIPWAR1Y used once
+SHIPWAR2X 20000428
+
+
+
+
+ARM Macro Assembler    Page 4 Alphabetic symbol ordering
+Absolute symbols
+
+Symbol: SHIPWAR2X
+   Definitions
+      At line 1005 in file NokiaCommands.s
+   Uses
+      At line 1256 in file NokiaCommands.s
+      At line 1317 in file NokiaCommands.s
+
+SHIPWAR2Y 2000042C
+
+Symbol: SHIPWAR2Y
+   Definitions
+      At line 1006 in file NokiaCommands.s
+   Uses
+      At line 1264 in file NokiaCommands.s
+Comment: SHIPWAR2Y used once
+SHIPWAR3X 20000430
+
+Symbol: SHIPWAR3X
+   Definitions
+      At line 1007 in file NokiaCommands.s
+   Uses
+      At line 1370 in file NokiaCommands.s
+      At line 1431 in file NokiaCommands.s
+
+SHIPWAR3Y 20000434
+
+Symbol: SHIPWAR3Y
+   Definitions
+      At line 1008 in file NokiaCommands.s
+   Uses
+      At line 1378 in file NokiaCommands.s
+Comment: SHIPWAR3Y used once
+SHIPWAR4X 20000438
+
+Symbol: SHIPWAR4X
+   Definitions
+      At line 1009 in file NokiaCommands.s
+   Uses
+      At line 1486 in file NokiaCommands.s
+      At line 1547 in file NokiaCommands.s
+
+SHIPWAR4Y 2000043C
+
+Symbol: SHIPWAR4Y
+   Definitions
+      At line 1010 in file NokiaCommands.s
+   Uses
+      At line 1494 in file NokiaCommands.s
+Comment: SHIPWAR4Y used once
+SSI0_DR_R 40008008
+
+Symbol: SSI0_DR_R
+   Definitions
+      At line 2 in file NokiaCommands.s
+   Uses
+      At line 299 in file NokiaCommands.s
+      At line 324 in file NokiaCommands.s
+      At line 387 in file NokiaCommands.s
+
+
+
+
+ARM Macro Assembler    Page 5 Alphabetic symbol ordering
+Absolute symbols
+
+SSI0_SR_R 4000800C
+
+Symbol: SSI0_SR_R
+   Definitions
+      At line 3 in file NokiaCommands.s
+   Uses
+      At line 266 in file NokiaCommands.s
+      At line 279 in file NokiaCommands.s
+
+28 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+DELAY100 00000000
+
+Symbol: DELAY100
+   Definitions
+      At line 18 in file NokiaCommands.s
+   Uses
+      At line 73 in file NokiaCommands.s
+      At line 76 in file NokiaCommands.s
+      At line 83 in file NokiaCommands.s
+      At line 90 in file NokiaCommands.s
+      At line 97 in file NokiaCommands.s
+      At line 108 in file NokiaCommands.s
+      At line 115 in file NokiaCommands.s
+      At line 122 in file NokiaCommands.s
+      At line 129 in file NokiaCommands.s
+      At line 143 in file NokiaCommands.s
+      At line 146 in file NokiaCommands.s
+      At line 153 in file NokiaCommands.s
+      At line 160 in file NokiaCommands.s
+      At line 167 in file NokiaCommands.s
+      At line 176 in file NokiaCommands.s
+      At line 183 in file NokiaCommands.s
+      At line 190 in file NokiaCommands.s
+      At line 197 in file NokiaCommands.s
+      At line 219 in file NokiaCommands.s
+      At line 227 in file NokiaCommands.s
+      At line 235 in file NokiaCommands.s
+      At line 242 in file NokiaCommands.s
+      At line 352 in file NokiaCommands.s
+      At line 355 in file NokiaCommands.s
+      At line 358 in file NokiaCommands.s
+      At line 361 in file NokiaCommands.s
+      At line 364 in file NokiaCommands.s
+      At line 428 in file NokiaCommands.s
+      At line 432 in file NokiaCommands.s
+      At line 448 in file NokiaCommands.s
+      At line 452 in file NokiaCommands.s
+      At line 466 in file NokiaCommands.s
+      At line 474 in file NokiaCommands.s
+      At line 482 in file NokiaCommands.s
+      At line 489 in file NokiaCommands.s
+      At line 503 in file NokiaCommands.s
+      At line 511 in file NokiaCommands.s
+      At line 519 in file NokiaCommands.s
+      At line 526 in file NokiaCommands.s
+      At line 586 in file NokiaCommands.s
+      At line 589 in file NokiaCommands.s
+      At line 592 in file NokiaCommands.s
+      At line 595 in file NokiaCommands.s
+      At line 598 in file NokiaCommands.s
+      At line 601 in file NokiaCommands.s
+      At line 604 in file NokiaCommands.s
+      At line 607 in file NokiaCommands.s
+      At line 630 in file NokiaCommands.s
+      At line 633 in file NokiaCommands.s
+      At line 636 in file NokiaCommands.s
+      At line 639 in file NokiaCommands.s
+      At line 642 in file NokiaCommands.s
+      At line 645 in file NokiaCommands.s
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+External symbols
+
+      At line 648 in file NokiaCommands.s
+      At line 651 in file NokiaCommands.s
+      At line 699 in file NokiaCommands.s
+      At line 702 in file NokiaCommands.s
+      At line 705 in file NokiaCommands.s
+      At line 708 in file NokiaCommands.s
+      At line 711 in file NokiaCommands.s
+      At line 714 in file NokiaCommands.s
+      At line 717 in file NokiaCommands.s
+      At line 720 in file NokiaCommands.s
+      At line 743 in file NokiaCommands.s
+      At line 746 in file NokiaCommands.s
+      At line 749 in file NokiaCommands.s
+      At line 752 in file NokiaCommands.s
+      At line 755 in file NokiaCommands.s
+      At line 758 in file NokiaCommands.s
+      At line 761 in file NokiaCommands.s
+      At line 764 in file NokiaCommands.s
+      At line 813 in file NokiaCommands.s
+      At line 816 in file NokiaCommands.s
+      At line 819 in file NokiaCommands.s
+      At line 822 in file NokiaCommands.s
+      At line 825 in file NokiaCommands.s
+      At line 828 in file NokiaCommands.s
+      At line 831 in file NokiaCommands.s
+      At line 834 in file NokiaCommands.s
+      At line 857 in file NokiaCommands.s
+      At line 860 in file NokiaCommands.s
+      At line 863 in file NokiaCommands.s
+      At line 866 in file NokiaCommands.s
+      At line 869 in file NokiaCommands.s
+      At line 872 in file NokiaCommands.s
+      At line 875 in file NokiaCommands.s
+      At line 878 in file NokiaCommands.s
+      At line 929 in file NokiaCommands.s
+      At line 932 in file NokiaCommands.s
+      At line 935 in file NokiaCommands.s
+      At line 938 in file NokiaCommands.s
+      At line 941 in file NokiaCommands.s
+      At line 944 in file NokiaCommands.s
+      At line 947 in file NokiaCommands.s
+      At line 950 in file NokiaCommands.s
+      At line 973 in file NokiaCommands.s
+      At line 976 in file NokiaCommands.s
+      At line 979 in file NokiaCommands.s
+      At line 982 in file NokiaCommands.s
+      At line 985 in file NokiaCommands.s
+      At line 988 in file NokiaCommands.s
+      At line 991 in file NokiaCommands.s
+      At line 994 in file NokiaCommands.s
+      At line 1179 in file NokiaCommands.s
+      At line 1182 in file NokiaCommands.s
+      At line 1185 in file NokiaCommands.s
+      At line 1188 in file NokiaCommands.s
+      At line 1191 in file NokiaCommands.s
+      At line 1194 in file NokiaCommands.s
+      At line 1197 in file NokiaCommands.s
+      At line 1200 in file NokiaCommands.s
+      At line 1223 in file NokiaCommands.s
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+External symbols
+
+      At line 1226 in file NokiaCommands.s
+      At line 1229 in file NokiaCommands.s
+      At line 1232 in file NokiaCommands.s
+      At line 1235 in file NokiaCommands.s
+      At line 1238 in file NokiaCommands.s
+      At line 1241 in file NokiaCommands.s
+      At line 1244 in file NokiaCommands.s
+      At line 1291 in file NokiaCommands.s
+      At line 1294 in file NokiaCommands.s
+      At line 1297 in file NokiaCommands.s
+      At line 1300 in file NokiaCommands.s
+      At line 1303 in file NokiaCommands.s
+      At line 1306 in file NokiaCommands.s
+      At line 1309 in file NokiaCommands.s
+      At line 1312 in file NokiaCommands.s
+      At line 1335 in file NokiaCommands.s
+      At line 1338 in file NokiaCommands.s
+      At line 1341 in file NokiaCommands.s
+      At line 1344 in file NokiaCommands.s
+      At line 1347 in file NokiaCommands.s
+      At line 1350 in file NokiaCommands.s
+      At line 1353 in file NokiaCommands.s
+      At line 1356 in file NokiaCommands.s
+      At line 1405 in file NokiaCommands.s
+      At line 1408 in file NokiaCommands.s
+      At line 1411 in file NokiaCommands.s
+      At line 1414 in file NokiaCommands.s
+      At line 1417 in file NokiaCommands.s
+      At line 1420 in file NokiaCommands.s
+      At line 1423 in file NokiaCommands.s
+      At line 1426 in file NokiaCommands.s
+      At line 1449 in file NokiaCommands.s
+      At line 1452 in file NokiaCommands.s
+      At line 1455 in file NokiaCommands.s
+      At line 1458 in file NokiaCommands.s
+      At line 1461 in file NokiaCommands.s
+      At line 1464 in file NokiaCommands.s
+      At line 1467 in file NokiaCommands.s
+      At line 1470 in file NokiaCommands.s
+      At line 1521 in file NokiaCommands.s
+      At line 1524 in file NokiaCommands.s
+      At line 1527 in file NokiaCommands.s
+      At line 1530 in file NokiaCommands.s
+      At line 1533 in file NokiaCommands.s
+      At line 1536 in file NokiaCommands.s
+      At line 1539 in file NokiaCommands.s
+      At line 1542 in file NokiaCommands.s
+      At line 1565 in file NokiaCommands.s
+      At line 1568 in file NokiaCommands.s
+      At line 1571 in file NokiaCommands.s
+      At line 1574 in file NokiaCommands.s
+      At line 1577 in file NokiaCommands.s
+      At line 1580 in file NokiaCommands.s
+      At line 1583 in file NokiaCommands.s
+      At line 1586 in file NokiaCommands.s
+      At line 1655 in file NokiaCommands.s
+      At line 1709 in file NokiaCommands.s
+      At line 1771 in file NokiaCommands.s
+      At line 1825 in file NokiaCommands.s
+
+
+
+ARM Macro Assembler    Page 4 Alphabetic symbol ordering
+External symbols
+
+      At line 1887 in file NokiaCommands.s
+      At line 1941 in file NokiaCommands.s
+      At line 2000 in file NokiaCommands.s
+      At line 2054 in file NokiaCommands.s
+      At line 2109 in file NokiaCommands.s
+      At line 2112 in file NokiaCommands.s
+      At line 2115 in file NokiaCommands.s
+      At line 2118 in file NokiaCommands.s
+      At line 2121 in file NokiaCommands.s
+      At line 2126 in file NokiaCommands.s
+      At line 2130 in file NokiaCommands.s
+      At line 2134 in file NokiaCommands.s
+      At line 2138 in file NokiaCommands.s
+      At line 2141 in file NokiaCommands.s
+      At line 2171 in file NokiaCommands.s
+      At line 2174 in file NokiaCommands.s
+      At line 2177 in file NokiaCommands.s
+      At line 2180 in file NokiaCommands.s
+      At line 2183 in file NokiaCommands.s
+      At line 2188 in file NokiaCommands.s
+      At line 2192 in file NokiaCommands.s
+      At line 2196 in file NokiaCommands.s
+      At line 2200 in file NokiaCommands.s
+      At line 2203 in file NokiaCommands.s
+      At line 2269 in file NokiaCommands.s
+      At line 2272 in file NokiaCommands.s
+      At line 2275 in file NokiaCommands.s
+      At line 2278 in file NokiaCommands.s
+      At line 2281 in file NokiaCommands.s
+      At line 2285 in file NokiaCommands.s
+      At line 2339 in file NokiaCommands.s
+      At line 2342 in file NokiaCommands.s
+      At line 2345 in file NokiaCommands.s
+      At line 2348 in file NokiaCommands.s
+      At line 2351 in file NokiaCommands.s
+
+READ_POT1 00000000
+
+Symbol: READ_POT1
+   Definitions
+      At line 30 in file NokiaCommands.s
+   Uses
+      At line 2079 in file NokiaCommands.s
+      At line 2228 in file NokiaCommands.s
+
+READ_POT2 00000000
+
+Symbol: READ_POT2
+   Definitions
+      At line 31 in file NokiaCommands.s
+   Uses
+      At line 2069 in file NokiaCommands.s
+      At line 2151 in file NokiaCommands.s
+      At line 2218 in file NokiaCommands.s
+      At line 2292 in file NokiaCommands.s
+
+3 symbols
+449 symbols in table

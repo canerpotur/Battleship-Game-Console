@@ -1,0 +1,19 @@
+--cpu=Cortex-M4.fp
+".\objects\nokia.o"
+".\objects\startup.o"
+".\objects\delay100.o"
+".\objects\config_nokia.o"
+".\objects\nokiacommands.o"
+".\objects\read_pot1.o"
+".\objects\init_nokia.o"
+".\objects\read_pot2.o"
+".\objects\init_switches.o"
+".\objects\init_systick_timer.o"
+".\objects\init_counter.o"
+".\objects\delay100m.o"
+".\objects\draw_lose.o"
+".\objects\draw_win.o"
+".\objects\mine_check.o"
+--ro-base 0x00000000 --entry 0x00000000 --rw-base 0x20000000 --entry Reset_Handler --first __Vectors --strict --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Listings\nokia.map" -o .\Objects\nokia.axf

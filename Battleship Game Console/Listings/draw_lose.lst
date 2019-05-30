@@ -1,0 +1,1755 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ;LABEL  DIRECTIVE VALUE  COMMENT
+    2 00000000                 AREA             main   , READONLY, CODE
+    3 00000000                 THUMB                        ; Subsequent instru
+                                                            ctions are Thumb
+    4 00000000         
+    5 00000000                 EXPORT           DRAW_LOSE
+    6 00000000         
+    7 00000000                 EXTERN           PRINT
+    8 00000000                 EXTERN           SetCursor_X
+    9 00000000                 EXTERN           SetCursor_Y
+   10 00000000         
+   11 00000000         DRAW_LOSE
+                               PROC
+   12 00000000 B500            PUSH             {LR}
+   13 00000002 E92D 1FFF       PUSH             {R0-R12}
+   14 00000006 F04F 0400       MOV              R4, #0
+   15 0000000A F7FF FFFE       BL               SetCursor_X ;CLEAR 7-68  
+   16 0000000E F04F 0400       MOV              R4, #0
+   17 00000012 F7FF FFFE       BL               SetCursor_Y
+   18 00000016         
+   19 00000016 F04F 0500       MOV              R5, #0x00
+   20 0000001A F7FF FFFE       BL               PRINT
+   21 0000001E F04F 0500       MOV              R5, #0x00
+   22 00000022 F7FF FFFE       BL               PRINT
+   23 00000026 F04F 0500       MOV              R5, #0x00
+   24 0000002A F7FF FFFE       BL               PRINT
+   25 0000002E F04F 0500       MOV              R5, #0x00
+   26 00000032 F7FF FFFE       BL               PRINT
+   27 00000036 F04F 0500       MOV              R5, #0x00
+   28 0000003A F7FF FFFE       BL               PRINT
+   29 0000003E F04F 0500       MOV              R5, #0x00
+   30 00000042 F7FF FFFE       BL               PRINT
+   31 00000046 F04F 0500       MOV              R5, #0x00
+   32 0000004A F7FF FFFE       BL               PRINT
+   33 0000004E F04F 0500       MOV              R5, #0x00
+   34 00000052 F7FF FFFE       BL               PRINT
+   35 00000056 F04F 0520       MOV              R5, #0x20
+   36 0000005A F7FF FFFE       BL               PRINT
+   37 0000005E F04F 0540       MOV              R5, #0x40
+   38 00000062 F7FF FFFE       BL               PRINT
+   39 00000066 F04F 0580       MOV              R5, #0x80
+   40 0000006A F7FF FFFE       BL               PRINT
+   41 0000006E F04F 0500       MOV              R5, #0x00
+   42 00000072 F7FF FFFE       BL               PRINT
+   43 00000076 F04F 0580       MOV              R5, #0x80
+   44 0000007A F7FF FFFE       BL               PRINT
+   45 0000007E F04F 0540       MOV              R5, #0x40
+   46 00000082 F7FF FFFE       BL               PRINT
+   47 00000086 F04F 0520       MOV              R5, #0x20
+   48 0000008A F7FF FFFE       BL               PRINT
+   49 0000008E F04F 0500       MOV              R5, #0x00
+   50 00000092 F7FF FFFE       BL               PRINT
+   51 00000096 F04F 0500       MOV              R5, #0x00
+   52 0000009A F7FF FFFE       BL               PRINT
+   53 0000009E F04F 0580       MOV              R5, #0x80
+   54 000000A2 F7FF FFFE       BL               PRINT
+   55 000000A6 F04F 0540       MOV              R5, #0x40
+   56 000000AA F7FF FFFE       BL               PRINT
+   57 000000AE F04F 0520       MOV              R5, #0x20
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   58 000000B2 F7FF FFFE       BL               PRINT
+   59 000000B6 F04F 0520       MOV              R5, #0x20
+   60 000000BA F7FF FFFE       BL               PRINT
+   61 000000BE F04F 0520       MOV              R5, #0x20
+   62 000000C2 F7FF FFFE       BL               PRINT
+   63 000000C6 F04F 0520       MOV              R5, #0x20
+   64 000000CA F7FF FFFE       BL               PRINT
+   65 000000CE F04F 0540       MOV              R5, #0x40
+   66 000000D2 F7FF FFFE       BL               PRINT
+   67 000000D6 F04F 0580       MOV              R5, #0x80
+   68 000000DA F7FF FFFE       BL               PRINT
+   69 000000DE F04F 0500       MOV              R5, #0x00
+   70 000000E2 F7FF FFFE       BL               PRINT
+   71 000000E6 F04F 0500       MOV              R5, #0x00
+   72 000000EA F7FF FFFE       BL               PRINT
+   73 000000EE F04F 05E0       MOV              R5, #0xE0
+   74 000000F2 F7FF FFFE       BL               PRINT
+   75 000000F6 F04F 0500       MOV              R5, #0x00
+   76 000000FA F7FF FFFE       BL               PRINT
+   77 000000FE F04F 0500       MOV              R5, #0x00
+   78 00000102 F7FF FFFE       BL               PRINT
+   79 00000106 F04F 0500       MOV              R5, #0x00
+   80 0000010A F7FF FFFE       BL               PRINT
+   81 0000010E F04F 0500       MOV              R5, #0x00
+   82 00000112 F7FF FFFE       BL               PRINT
+   83 00000116 F04F 05E0       MOV              R5, #0xE0
+   84 0000011A F7FF FFFE       BL               PRINT
+   85 0000011E F04F 0500       MOV              R5, #0x00
+   86 00000122 F7FF FFFE       BL               PRINT
+   87 00000126 F04F 0500       MOV              R5, #0x00
+   88 0000012A F7FF FFFE       BL               PRINT
+   89 0000012E F04F 0500       MOV              R5, #0x00
+   90 00000132 F7FF FFFE       BL               PRINT
+   91 00000136 F04F 0500       MOV              R5, #0x00
+   92 0000013A F7FF FFFE       BL               PRINT
+   93 0000013E F04F 0500       MOV              R5, #0x00
+   94 00000142 F7FF FFFE       BL               PRINT
+   95 00000146 F04F 0500       MOV              R5, #0x00
+   96 0000014A F7FF FFFE       BL               PRINT
+   97 0000014E F04F 0500       MOV              R5, #0x00
+   98 00000152 F7FF FFFE       BL               PRINT
+   99 00000156 F04F 05E0       MOV              R5, #0xE0
+  100 0000015A F7FF FFFE       BL               PRINT
+  101 0000015E F04F 0500       MOV              R5, #0x00
+  102 00000162 F7FF FFFE       BL               PRINT
+  103 00000166 F04F 0500       MOV              R5, #0x00
+  104 0000016A F7FF FFFE       BL               PRINT
+  105 0000016E F04F 0500       MOV              R5, #0x00
+  106 00000172 F7FF FFFE       BL               PRINT
+  107 00000176 F04F 0500       MOV              R5, #0x00
+  108 0000017A F7FF FFFE       BL               PRINT
+  109 0000017E F04F 0500       MOV              R5, #0x00
+  110 00000182 F7FF FFFE       BL               PRINT
+  111 00000186 F04F 0580       MOV              R5, #0x80
+  112 0000018A F7FF FFFE       BL               PRINT
+  113 0000018E F04F 0540       MOV              R5, #0x40
+  114 00000192 F7FF FFFE       BL               PRINT
+  115 00000196 F04F 0520       MOV              R5, #0x20
+  116 0000019A F7FF FFFE       BL               PRINT
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+  117 0000019E F04F 0520       MOV              R5, #0x20
+  118 000001A2 F7FF FFFE       BL               PRINT
+  119 000001A6 F04F 0520       MOV              R5, #0x20
+  120 000001AA F7FF FFFE       BL               PRINT
+  121 000001AE F04F 0520       MOV              R5, #0x20
+  122 000001B2 F7FF FFFE       BL               PRINT
+  123 000001B6 F04F 0540       MOV              R5, #0x40
+  124 000001BA F7FF FFFE       BL               PRINT
+  125 000001BE F04F 0580       MOV              R5, #0x80
+  126 000001C2 F7FF FFFE       BL               PRINT
+  127 000001C6 F04F 0500       MOV              R5, #0x00
+  128 000001CA F7FF FFFE       BL               PRINT
+  129 000001CE F04F 0500       MOV              R5, #0x00
+  130 000001D2 F7FF FFFE       BL               PRINT
+  131 000001D6 F04F 05C0       MOV              R5, #0xC0
+  132 000001DA F7FF FFFE       BL               PRINT
+  133 000001DE F04F 0520       MOV              R5, #0x20
+  134 000001E2 F7FF FFFE       BL               PRINT
+  135 000001E6 F04F 0520       MOV              R5, #0x20
+  136 000001EA F7FF FFFE       BL               PRINT
+  137 000001EE F04F 0520       MOV              R5, #0x20
+  138 000001F2 F7FF FFFE       BL               PRINT
+  139 000001F6 F04F 0500       MOV              R5, #0x00
+  140 000001FA F7FF FFFE       BL               PRINT
+  141 000001FE F04F 0500       MOV              R5, #0x00
+  142 00000202 F7FF FFFE       BL               PRINT
+  143 00000206 F04F 05E0       MOV              R5, #0xE0
+  144 0000020A F7FF FFFE       BL               PRINT
+  145 0000020E F04F 0520       MOV              R5, #0x20
+  146 00000212 F7FF FFFE       BL               PRINT
+  147 00000216 F04F 0520       MOV              R5, #0x20
+  148 0000021A F7FF FFFE       BL               PRINT
+  149 0000021E F04F 0520       MOV              R5, #0x20
+  150 00000222 F7FF FFFE       BL               PRINT
+  151 00000226 F04F 0520       MOV              R5, #0x20
+  152 0000022A F7FF FFFE       BL               PRINT
+  153 0000022E F04F 0500       MOV              R5, #0x00
+  154 00000232 F7FF FFFE       BL               PRINT
+  155 00000236 F04F 0500       MOV              R5, #0x00
+  156 0000023A F7FF FFFE       BL               PRINT
+  157 0000023E F04F 0500       MOV              R5, #0x00
+  158 00000242 F7FF FFFE       BL               PRINT
+  159 00000246 F04F 0500       MOV              R5, #0x00
+  160 0000024A F7FF FFFE       BL               PRINT
+  161 0000024E F04F 0500       MOV              R5, #0x00
+  162 00000252 F7FF FFFE       BL               PRINT
+  163 00000256 F04F 05E0       MOV              R5, #0xE0
+  164 0000025A F7FF FFFE       BL               PRINT
+  165 0000025E F04F 05E0       MOV              R5, #0xE0
+  166 00000262 F7FF FFFE       BL               PRINT
+  167 00000266 F04F 0500       MOV              R5, #0x00
+  168 0000026A F7FF FFFE       BL               PRINT
+  169 0000026E F04F 05E0       MOV              R5, #0xE0
+  170 00000272 F7FF FFFE       BL               PRINT
+  171 00000276 F04F 05E0       MOV              R5, #0xE0
+  172 0000027A F7FF FFFE       BL               PRINT
+  173 0000027E F04F 0500       MOV              R5, #0x00
+  174 00000282 F7FF FFFE       BL               PRINT
+  175 00000286 F04F 0500       MOV              R5, #0x00
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+  176 0000028A F7FF FFFE       BL               PRINT
+  177 0000028E F04F 0500       MOV              R5, #0x00
+  178 00000292 F7FF FFFE       BL               PRINT
+  179 00000296 F04F 0500       MOV              R5, #0x00
+  180 0000029A F7FF FFFE       BL               PRINT
+  181 0000029E F04F 0500       MOV              R5, #0x00
+  182 000002A2 F7FF FFFE       BL               PRINT
+  183 000002A6 F04F 0500       MOV              R5, #0x00
+  184 000002AA F7FF FFFE       BL               PRINT
+  185 000002AE F04F 0500       MOV              R5, #0x00
+  186 000002B2 F7FF FFFE       BL               PRINT
+  187 000002B6 F04F 0500       MOV              R5, #0x00
+  188 000002BA F7FF FFFE       BL               PRINT
+  189 000002BE F04F 0500       MOV              R5, #0x00
+  190 000002C2 F7FF FFFE       BL               PRINT
+  191 000002C6 F04F 0500       MOV              R5, #0x00
+  192 000002CA F7FF FFFE       BL               PRINT
+  193 000002CE F04F 0500       MOV              R5, #0x00
+  194 000002D2 F7FF FFFE       BL               PRINT
+  195 000002D6 F04F 0500       MOV              R5, #0x00
+  196 000002DA F7FF FFFE       BL               PRINT
+  197 000002DE F04F 0500       MOV              R5, #0x00
+  198 000002E2 F7FF FFFE       BL               PRINT
+  199 000002E6 F04F 0500       MOV              R5, #0x00
+  200 000002EA F7FF FFFE       BL               PRINT
+  201 000002EE F04F 0500       MOV              R5, #0x00
+  202 000002F2 F7FF FFFE       BL               PRINT
+  203 000002F6 F04F 0500       MOV              R5, #0x00
+  204 000002FA F7FF FFFE       BL               PRINT
+  205 000002FE F04F 0500       MOV              R5, #0x00
+  206 00000302 F7FF FFFE       BL               PRINT
+  207 00000306 F04F 0500       MOV              R5, #0x00
+  208 0000030A F7FF FFFE       BL               PRINT
+  209 0000030E F04F 050F       MOV              R5, #0x0F
+  210 00000312 F7FF FFFE       BL               PRINT
+  211 00000316 F04F 0500       MOV              R5, #0x00
+  212 0000031A F7FF FFFE       BL               PRINT
+  213 0000031E F04F 0500       MOV              R5, #0x00
+  214 00000322 F7FF FFFE       BL               PRINT
+  215 00000326 F04F 0500       MOV              R5, #0x00
+  216 0000032A F7FF FFFE       BL               PRINT
+  217 0000032E F04F 0500       MOV              R5, #0x00
+  218 00000332 F7FF FFFE       BL               PRINT
+  219 00000336 F04F 0500       MOV              R5, #0x00
+  220 0000033A F7FF FFFE       BL               PRINT
+  221 0000033E F04F 0503       MOV              R5, #0x03
+  222 00000342 F7FF FFFE       BL               PRINT
+  223 00000346 F04F 0504       MOV              R5, #0x04
+  224 0000034A F7FF FFFE       BL               PRINT
+  225 0000034E F04F 0508       MOV              R5, #0x08
+  226 00000352 F7FF FFFE       BL               PRINT
+  227 00000356 F04F 0508       MOV              R5, #0x08
+  228 0000035A F7FF FFFE       BL               PRINT
+  229 0000035E F04F 0508       MOV              R5, #0x08
+  230 00000362 F7FF FFFE       BL               PRINT
+  231 00000366 F04F 0508       MOV              R5, #0x08
+  232 0000036A F7FF FFFE       BL               PRINT
+  233 0000036E F04F 0504       MOV              R5, #0x04
+  234 00000372 F7FF FFFE       BL               PRINT
+
+
+
+ARM Macro Assembler    Page 5 
+
+
+  235 00000376 F04F 0503       MOV              R5, #0x03
+  236 0000037A F7FF FFFE       BL               PRINT
+  237 0000037E F04F 0500       MOV              R5, #0x00
+  238 00000382 F7FF FFFE       BL               PRINT
+  239 00000386 F04F 0500       MOV              R5, #0x00
+  240 0000038A F7FF FFFE       BL               PRINT
+  241 0000038E F04F 050F       MOV              R5, #0x0F
+  242 00000392 F7FF FFFE       BL               PRINT
+  243 00000396 F04F 0508       MOV              R5, #0x08
+  244 0000039A F7FF FFFE       BL               PRINT
+  245 0000039E F04F 0508       MOV              R5, #0x08
+  246 000003A2 F7FF FFFE       BL               PRINT
+  247 000003A6 F04F 0508       MOV              R5, #0x08
+  248 000003AA F7FF FFFE       BL               PRINT
+  249 000003AE F04F 0508       MOV              R5, #0x08
+  250 000003B2 F7FF FFFE       BL               PRINT
+  251 000003B6 F04F 050F       MOV              R5, #0x0F
+  252 000003BA F7FF FFFE       BL               PRINT
+  253 000003BE F04F 0500       MOV              R5, #0x00
+  254 000003C2 F7FF FFFE       BL               PRINT
+  255 000003C6 F04F 0500       MOV              R5, #0x00
+  256 000003CA F7FF FFFE       BL               PRINT
+  257 000003CE F04F 0500       MOV              R5, #0x00
+  258 000003D2 F7FF FFFE       BL               PRINT
+  259 000003D6 F04F 05F0       MOV              R5, #0xF0
+  260 000003DA F7FF FFFE       BL               PRINT
+  261 000003DE F04F 05E0       MOV              R5, #0xE0
+  262 000003E2 F7FF FFFE       BL               PRINT
+  263 000003E6 F04F 05C0       MOV              R5, #0xC0
+  264 000003EA F7FF FFFE       BL               PRINT
+  265 000003EE F04F 0580       MOV              R5, #0x80
+  266 000003F2 F7FF FFFE       BL               PRINT
+  267 000003F6 F04F 050F       MOV              R5, #0x0F
+  268 000003FA F7FF FFFE       BL               PRINT
+  269 000003FE F04F 0508       MOV              R5, #0x08
+  270 00000402 F7FF FFFE       BL               PRINT
+  271 00000406 F04F 0508       MOV              R5, #0x08
+  272 0000040A F7FF FFFE       BL               PRINT
+  273 0000040E F04F 0508       MOV              R5, #0x08
+  274 00000412 F7FF FFFE       BL               PRINT
+  275 00000416 F04F 0508       MOV              R5, #0x08
+  276 0000041A F7FF FFFE       BL               PRINT
+  277 0000041E F04F 0500       MOV              R5, #0x00
+  278 00000422 F7FF FFFE       BL               PRINT
+  279 00000426 F04F 0503       MOV              R5, #0x03
+  280 0000042A F7FF FFFE       BL               PRINT
+  281 0000042E F04F 0504       MOV              R5, #0x04
+  282 00000432 F7FF FFFE       BL               PRINT
+  283 00000436 F04F 0508       MOV              R5, #0x08
+  284 0000043A F7FF FFFE       BL               PRINT
+  285 0000043E F04F 0508       MOV              R5, #0x08
+  286 00000442 F7FF FFFE       BL               PRINT
+  287 00000446 F04F 0508       MOV              R5, #0x08
+  288 0000044A F7FF FFFE       BL               PRINT
+  289 0000044E F04F 0508       MOV              R5, #0x08
+  290 00000452 F7FF FFFE       BL               PRINT
+  291 00000456 F04F 0504       MOV              R5, #0x04
+  292 0000045A F7FF FFFE       BL               PRINT
+  293 0000045E F04F 0503       MOV              R5, #0x03
+
+
+
+ARM Macro Assembler    Page 6 
+
+
+  294 00000462 F7FF FFFE       BL               PRINT
+  295 00000466 F04F 0500       MOV              R5, #0x00
+  296 0000046A F7FF FFFE       BL               PRINT
+  297 0000046E F04F 0500       MOV              R5, #0x00
+  298 00000472 F7FF FFFE       BL               PRINT
+  299 00000476 F04F 0508       MOV              R5, #0x08
+  300 0000047A F7FF FFFE       BL               PRINT
+  301 0000047E F04F 0509       MOV              R5, #0x09
+  302 00000482 F7FF FFFE       BL               PRINT
+  303 00000486 F04F 0509       MOV              R5, #0x09
+  304 0000048A F7FF FFFE       BL               PRINT
+  305 0000048E F04F 0506       MOV              R5, #0x06
+  306 00000492 F7FF FFFE       BL               PRINT
+  307 00000496 F04F 0500       MOV              R5, #0x00
+  308 0000049A F7FF FFFE       BL               PRINT
+  309 0000049E F04F 0500       MOV              R5, #0x00
+  310 000004A2 F7FF FFFE       BL               PRINT
+  311 000004A6 F04F 050F       MOV              R5, #0x0F
+  312 000004AA F7FF FFFE       BL               PRINT
+  313 000004AE F04F 0509       MOV              R5, #0x09
+  314 000004B2 F7FF FFFE       BL               PRINT
+  315 000004B6 F04F 0509       MOV              R5, #0x09
+  316 000004BA F7FF FFFE       BL               PRINT
+  317 000004BE F04F 0509       MOV              R5, #0x09
+  318 000004C2 F7FF FFFE       BL               PRINT
+  319 000004C6 F04F 0508       MOV              R5, #0x08
+  320 000004CA F7FF FFFE       BL               PRINT
+  321 000004CE F04F 0500       MOV              R5, #0x00
+  322 000004D2 F7FF FFFE       BL               PRINT
+  323 000004D6 F04F 0500       MOV              R5, #0x00
+  324 000004DA F7FF FFFE       BL               PRINT
+  325 000004DE F04F 0500       MOV              R5, #0x00
+  326 000004E2 F7FF FFFE       BL               PRINT
+  327 000004E6 F04F 0500       MOV              R5, #0x00
+  328 000004EA F7FF FFFE       BL               PRINT
+  329 000004EE F04F 0500       MOV              R5, #0x00
+  330 000004F2 F7FF FFFE       BL               PRINT
+  331 000004F6 F04F 050B       MOV              R5, #0x0B
+  332 000004FA F7FF FFFE       BL               PRINT
+  333 000004FE F04F 050B       MOV              R5, #0x0B
+  334 00000502 F7FF FFFE       BL               PRINT
+  335 00000506 F04F 0500       MOV              R5, #0x00
+  336 0000050A F7FF FFFE       BL               PRINT
+  337 0000050E F04F 050B       MOV              R5, #0x0B
+  338 00000512 F7FF FFFE       BL               PRINT
+  339 00000516 F04F 050B       MOV              R5, #0x0B
+  340 0000051A F7FF FFFE       BL               PRINT
+  341 0000051E F04F 0500       MOV              R5, #0x00
+  342 00000522 F7FF FFFE       BL               PRINT
+  343 00000526 F04F 0500       MOV              R5, #0x00
+  344 0000052A F7FF FFFE       BL               PRINT
+  345 0000052E F04F 0500       MOV              R5, #0x00
+  346 00000532 F7FF FFFE       BL               PRINT
+  347 00000536 F04F 0500       MOV              R5, #0x00
+  348 0000053A F7FF FFFE       BL               PRINT
+  349 0000053E F04F 0500       MOV              R5, #0x00
+  350 00000542 F7FF FFFE       BL               PRINT
+  351 00000546 F04F 0500       MOV              R5, #0x00
+  352 0000054A F7FF FFFE       BL               PRINT
+
+
+
+ARM Macro Assembler    Page 7 
+
+
+  353 0000054E F04F 0500       MOV              R5, #0x00
+  354 00000552 F7FF FFFE       BL               PRINT
+  355 00000556 F04F 0500       MOV              R5, #0x00
+  356 0000055A F7FF FFFE       BL               PRINT
+  357 0000055E F04F 0500       MOV              R5, #0x00
+  358 00000562 F7FF FFFE       BL               PRINT
+  359 00000566 F04F 0500       MOV              R5, #0x00
+  360 0000056A F7FF FFFE       BL               PRINT
+  361 0000056E F04F 0500       MOV              R5, #0x00
+  362 00000572 F7FF FFFE       BL               PRINT
+  363 00000576 F04F 0500       MOV              R5, #0x00
+  364 0000057A F7FF FFFE       BL               PRINT
+  365 0000057E F04F 0500       MOV              R5, #0x00
+  366 00000582 F7FF FFFE       BL               PRINT
+  367 00000586 F04F 0500       MOV              R5, #0x00
+  368 0000058A F7FF FFFE       BL               PRINT
+  369 0000058E F04F 0500       MOV              R5, #0x00
+  370 00000592 F7FF FFFE       BL               PRINT
+  371 00000596 F04F 0500       MOV              R5, #0x00
+  372 0000059A F7FF FFFE       BL               PRINT
+  373 0000059E F04F 0500       MOV              R5, #0x00
+  374 000005A2 F7FF FFFE       BL               PRINT
+  375 000005A6 F04F 0500       MOV              R5, #0x00
+  376 000005AA F7FF FFFE       BL               PRINT
+  377 000005AE F04F 0500       MOV              R5, #0x00
+  378 000005B2 F7FF FFFE       BL               PRINT
+  379 000005B6 F04F 0500       MOV              R5, #0x00
+  380 000005BA F7FF FFFE       BL               PRINT
+  381 000005BE F04F 0500       MOV              R5, #0x00
+  382 000005C2 F7FF FFFE       BL               PRINT
+  383 000005C6 F04F 0500       MOV              R5, #0x00
+  384 000005CA F7FF FFFE       BL               PRINT
+  385 000005CE F04F 0500       MOV              R5, #0x00
+  386 000005D2 F7FF FFFE       BL               PRINT
+  387 000005D6 F04F 0500       MOV              R5, #0x00
+  388 000005DA F7FF FFFE       BL               PRINT
+  389 000005DE F04F 0500       MOV              R5, #0x00
+  390 000005E2 F7FF FFFE       BL               PRINT
+  391 000005E6 F04F 0500       MOV              R5, #0x00
+  392 000005EA F7FF FFFE       BL               PRINT
+  393 000005EE F04F 0500       MOV              R5, #0x00
+  394 000005F2 F7FF FFFE       BL               PRINT
+  395 000005F6 F04F 0500       MOV              R5, #0x00
+  396 000005FA F7FF FFFE       BL               PRINT
+  397 000005FE F04F 0500       MOV              R5, #0x00
+  398 00000602 F7FF FFFE       BL               PRINT
+  399 00000606 F04F 0500       MOV              R5, #0x00
+  400 0000060A F7FF FFFE       BL               PRINT
+  401 0000060E F04F 0500       MOV              R5, #0x00
+  402 00000612 F7FF FFFE       BL               PRINT
+  403 00000616 F04F 0500       MOV              R5, #0x00
+  404 0000061A F7FF FFFE       BL               PRINT
+  405 0000061E F04F 0500       MOV              R5, #0x00
+  406 00000622 F7FF FFFE       BL               PRINT
+  407 00000626 F04F 0500       MOV              R5, #0x00
+  408 0000062A F7FF FFFE       BL               PRINT
+  409 0000062E F04F 0500       MOV              R5, #0x00
+  410 00000632 F7FF FFFE       BL               PRINT
+  411 00000636 F04F 0500       MOV              R5, #0x00
+
+
+
+ARM Macro Assembler    Page 8 
+
+
+  412 0000063A F7FF FFFE       BL               PRINT
+  413 0000063E F04F 0500       MOV              R5, #0x00
+  414 00000642 F7FF FFFE       BL               PRINT
+  415 00000646 F04F 0580       MOV              R5, #0x80
+  416 0000064A F7FF FFFE       BL               PRINT
+  417 0000064E F04F 05C0       MOV              R5, #0xC0
+  418 00000652 F7FF FFFE       BL               PRINT
+  419 00000656 F04F 05E0       MOV              R5, #0xE0
+  420 0000065A F7FF FFFE       BL               PRINT
+  421 0000065E F04F 0500       MOV              R5, #0x00
+  422 00000662 F7FF FFFE       BL               PRINT
+  423 00000666 F04F 0500       MOV              R5, #0x00
+  424 0000066A F7FF FFFE       BL               PRINT
+  425 0000066E F04F 0500       MOV              R5, #0x00
+  426 00000672 F7FF FFFE       BL               PRINT
+  427 00000676 F04F 05FF       MOV              R5, #0xFF
+  428 0000067A F7FF FFFE       BL               PRINT
+  429 0000067E F04F 05FF       MOV              R5, #0xFF
+  430 00000682 F7FF FFFE       BL               PRINT
+  431 00000686 F04F 05FF       MOV              R5, #0xFF
+  432 0000068A F7FF FFFE       BL               PRINT
+  433 0000068E F04F 05FF       MOV              R5, #0xFF
+  434 00000692 F7FF FFFE       BL               PRINT
+  435 00000696 F04F 05FF       MOV              R5, #0xFF
+  436 0000069A F7FF FFFE       BL               PRINT
+  437 0000069E F04F 05FE       MOV              R5, #0xFE
+  438 000006A2 F7FF FFFE       BL               PRINT
+  439 000006A6 F04F 05FC       MOV              R5, #0xFC
+  440 000006AA F7FF FFFE       BL               PRINT
+  441 000006AE F04F 05F8       MOV              R5, #0xF8
+  442 000006B2 F7FF FFFE       BL               PRINT
+  443 000006B6 F04F 05F0       MOV              R5, #0xF0
+  444 000006BA F7FF FFFE       BL               PRINT
+  445 000006BE F04F 05E0       MOV              R5, #0xE0
+  446 000006C2 F7FF FFFE       BL               PRINT
+  447 000006C6 F04F 05C0       MOV              R5, #0xC0
+  448 000006CA F7FF FFFE       BL               PRINT
+  449 000006CE F04F 0580       MOV              R5, #0x80
+  450 000006D2 F7FF FFFE       BL               PRINT
+  451 000006D6 F04F 0500       MOV              R5, #0x00
+  452 000006DA F7FF FFFE       BL               PRINT
+  453 000006DE F04F 0500       MOV              R5, #0x00
+  454 000006E2 F7FF FFFE       BL               PRINT
+  455 000006E6 F04F 0500       MOV              R5, #0x00
+  456 000006EA F7FF FFFE       BL               PRINT
+  457 000006EE F04F 0500       MOV              R5, #0x00
+  458 000006F2 F7FF FFFE       BL               PRINT
+  459 000006F6 F04F 0500       MOV              R5, #0x00
+  460 000006FA F7FF FFFE       BL               PRINT
+  461 000006FE F04F 0500       MOV              R5, #0x00
+  462 00000702 F7FF FFFE       BL               PRINT
+  463 00000706 F04F 0500       MOV              R5, #0x00
+  464 0000070A F7FF FFFE       BL               PRINT
+  465 0000070E F04F 0500       MOV              R5, #0x00
+  466 00000712 F7FF FFFE       BL               PRINT
+  467 00000716 F04F 0500       MOV              R5, #0x00
+  468 0000071A F7FF FFFE       BL               PRINT
+  469 0000071E F04F 0500       MOV              R5, #0x00
+  470 00000722 F7FF FFFE       BL               PRINT
+
+
+
+ARM Macro Assembler    Page 9 
+
+
+  471 00000726 F04F 0500       MOV              R5, #0x00
+  472 0000072A F7FF FFFE       BL               PRINT
+  473 0000072E F04F 0500       MOV              R5, #0x00
+  474 00000732 F7FF FFFE       BL               PRINT
+  475 00000736 F04F 0500       MOV              R5, #0x00
+  476 0000073A F7FF FFFE       BL               PRINT
+  477 0000073E F04F 0500       MOV              R5, #0x00
+  478 00000742 F7FF FFFE       BL               PRINT
+  479 00000746 F04F 0500       MOV              R5, #0x00
+  480 0000074A F7FF FFFE       BL               PRINT
+  481 0000074E F04F 050C       MOV              R5, #0x0C
+  482 00000752 F7FF FFFE       BL               PRINT
+  483 00000756 F04F 059E       MOV              R5, #0x9E
+  484 0000075A F7FF FFFE       BL               PRINT
+  485 0000075E F04F 05DE       MOV              R5, #0xDE
+  486 00000762 F7FF FFFE       BL               PRINT
+  487 00000766 F04F 05CC       MOV              R5, #0xCC
+  488 0000076A F7FF FFFE       BL               PRINT
+  489 0000076E F04F 05C0       MOV              R5, #0xC0
+  490 00000772 F7FF FFFE       BL               PRINT
+  491 00000776 F04F 05CC       MOV              R5, #0xCC
+  492 0000077A F7FF FFFE       BL               PRINT
+  493 0000077E F04F 05DE       MOV              R5, #0xDE
+  494 00000782 F7FF FFFE       BL               PRINT
+  495 00000786 F04F 059E       MOV              R5, #0x9E
+  496 0000078A F7FF FFFE       BL               PRINT
+  497 0000078E F04F 050C       MOV              R5, #0x0C
+  498 00000792 F7FF FFFE       BL               PRINT
+  499 00000796 F04F 0500       MOV              R5, #0x00
+  500 0000079A F7FF FFFE       BL               PRINT
+  501 0000079E F04F 0500       MOV              R5, #0x00
+  502 000007A2 F7FF FFFE       BL               PRINT
+  503 000007A6 F04F 0500       MOV              R5, #0x00
+  504 000007AA F7FF FFFE       BL               PRINT
+  505 000007AE F04F 0500       MOV              R5, #0x00
+  506 000007B2 F7FF FFFE       BL               PRINT
+  507 000007B6 F04F 0500       MOV              R5, #0x00
+  508 000007BA F7FF FFFE       BL               PRINT
+  509 000007BE F04F 0500       MOV              R5, #0x00
+  510 000007C2 F7FF FFFE       BL               PRINT
+  511 000007C6 F04F 0500       MOV              R5, #0x00
+  512 000007CA F7FF FFFE       BL               PRINT
+  513 000007CE F04F 0500       MOV              R5, #0x00
+  514 000007D2         ;BL PRINT
+  515 000007D2 F04F 0500       MOV              R5, #0x00
+  516 000007D6 F7FF FFFE       BL               PRINT
+  517 000007DA F04F 0500       MOV              R5, #0x00
+  518 000007DE F7FF FFFE       BL               PRINT
+  519 000007E2 F04F 0500       MOV              R5, #0x00
+  520 000007E6 F7FF FFFE       BL               PRINT
+  521 000007EA F04F 0500       MOV              R5, #0x00
+  522 000007EE F7FF FFFE       BL               PRINT
+  523 000007F2 F04F 0500       MOV              R5, #0x00
+  524 000007F6 F7FF FFFE       BL               PRINT
+  525 000007FA F04F 0500       MOV              R5, #0x00
+  526 000007FE F7FF FFFE       BL               PRINT
+  527 00000802 F04F 0500       MOV              R5, #0x00
+  528 00000806 F7FF FFFE       BL               PRINT
+  529 0000080A F04F 0500       MOV              R5, #0x00
+
+
+
+ARM Macro Assembler    Page 10 
+
+
+  530 0000080E F7FF FFFE       BL               PRINT
+  531 00000812 F04F 0500       MOV              R5, #0x00
+  532 00000816 F7FF FFFE       BL               PRINT
+  533 0000081A F04F 0500       MOV              R5, #0x00
+  534 0000081E F7FF FFFE       BL               PRINT
+  535 00000822 F04F 0500       MOV              R5, #0x00
+  536 00000826 F7FF FFFE       BL               PRINT
+  537 0000082A F04F 0500       MOV              R5, #0x00
+  538 0000082E F7FF FFFE       BL               PRINT
+  539 00000832 F04F 0500       MOV              R5, #0x00
+  540 00000836 F7FF FFFE       BL               PRINT
+  541 0000083A F04F 0500       MOV              R5, #0x00
+  542 0000083E F7FF FFFE       BL               PRINT
+  543 00000842 F04F 0500       MOV              R5, #0x00
+  544 00000846 F7FF FFFE       BL               PRINT
+  545 0000084A F04F 0500       MOV              R5, #0x00
+  546 0000084E F7FF FFFE       BL               PRINT
+  547 00000852 F04F 0500       MOV              R5, #0x00
+  548 00000856 F7FF FFFE       BL               PRINT
+  549 0000085A F04F 0500       MOV              R5, #0x00
+  550 0000085E F7FF FFFE       BL               PRINT
+  551 00000862 F04F 0500       MOV              R5, #0x00
+  552 00000866 F7FF FFFE       BL               PRINT
+  553 0000086A F04F 0500       MOV              R5, #0x00
+  554 0000086E F7FF FFFE       BL               PRINT
+  555 00000872 F04F 0500       MOV              R5, #0x00
+  556 00000876 F7FF FFFE       BL               PRINT
+  557 0000087A F04F 0500       MOV              R5, #0x00
+  558 0000087E F7FF FFFE       BL               PRINT
+  559 00000882 F04F 0500       MOV              R5, #0x00
+  560 00000886 F7FF FFFE       BL               PRINT
+  561 0000088A F04F 0500       MOV              R5, #0x00
+  562 0000088E F7FF FFFE       BL               PRINT
+  563 00000892 F04F 0520       MOV              R5, #0x20
+  564 00000896 F7FF FFFE       BL               PRINT
+  565 0000089A F04F 0560       MOV              R5, #0x60
+  566 0000089E F7FF FFFE       BL               PRINT
+  567 000008A2 F04F 05E0       MOV              R5, #0xE0
+  568 000008A6 F7FF FFFE       BL               PRINT
+  569 000008AA F04F 05E0       MOV              R5, #0xE0
+  570 000008AE F7FF FFFE       BL               PRINT
+  571 000008B2 F04F 05E0       MOV              R5, #0xE0
+  572 000008B6 F7FF FFFE       BL               PRINT
+  573 000008BA F04F 05E0       MOV              R5, #0xE0
+  574 000008BE F7FF FFFE       BL               PRINT
+  575 000008C2 F04F 05E0       MOV              R5, #0xE0
+  576 000008C6 F7FF FFFE       BL               PRINT
+  577 000008CA F04F 05E8       MOV              R5, #0xE8
+  578 000008CE F7FF FFFE       BL               PRINT
+  579 000008D2 F04F 05EC       MOV              R5, #0xEC
+  580 000008D6 F7FF FFFE       BL               PRINT
+  581 000008DA F04F 05EE       MOV              R5, #0xEE
+  582 000008DE F7FF FFFE       BL               PRINT
+  583 000008E2 F04F 05EF       MOV              R5, #0xEF
+  584 000008E6 F7FF FFFE       BL               PRINT
+  585 000008EA F04F 05EF       MOV              R5, #0xEF
+  586 000008EE F7FF FFFE       BL               PRINT
+  587 000008F2 F04F 05EF       MOV              R5, #0xEF
+  588 000008F6 F7FF FFFE       BL               PRINT
+
+
+
+ARM Macro Assembler    Page 11 
+
+
+  589 000008FA F04F 05EF       MOV              R5, #0xEF
+  590 000008FE F7FF FFFE       BL               PRINT
+  591 00000902 F04F 05E0       MOV              R5, #0xE0
+  592 00000906 F7FF FFFE       BL               PRINT
+  593 0000090A F04F 05E0       MOV              R5, #0xE0
+  594 0000090E F7FF FFFE       BL               PRINT
+  595 00000912 F04F 05E0       MOV              R5, #0xE0
+  596 00000916 F7FF FFFE       BL               PRINT
+  597 0000091A F04F 05EF       MOV              R5, #0xEF
+  598 0000091E F7FF FFFE       BL               PRINT
+  599 00000922 F04F 05EF       MOV              R5, #0xEF
+  600 00000926 F7FF FFFE       BL               PRINT
+  601 0000092A F04F 05EF       MOV              R5, #0xEF
+  602 0000092E F7FF FFFE       BL               PRINT
+  603 00000932 F04F 05EF       MOV              R5, #0xEF
+  604 00000936 F7FF FFFE       BL               PRINT
+  605 0000093A F04F 05EF       MOV              R5, #0xEF
+  606 0000093E F7FF FFFE       BL               PRINT
+  607 00000942 F04F 05EF       MOV              R5, #0xEF
+  608 00000946 F7FF FFFE       BL               PRINT
+  609 0000094A F04F 05EF       MOV              R5, #0xEF
+  610 0000094E F7FF FFFE       BL               PRINT
+  611 00000952 F04F 05EF       MOV              R5, #0xEF
+  612 00000956 F7FF FFFE       BL               PRINT
+  613 0000095A F04F 05EF       MOV              R5, #0xEF
+  614 0000095E F7FF FFFE       BL               PRINT
+  615 00000962 F04F 05EF       MOV              R5, #0xEF
+  616 00000966 F7FF FFFE       BL               PRINT
+  617 0000096A F04F 05EF       MOV              R5, #0xEF
+  618 0000096E F7FF FFFE       BL               PRINT
+  619 00000972 F04F 05EF       MOV              R5, #0xEF
+  620 00000976 F7FF FFFE       BL               PRINT
+  621 0000097A F04F 05EF       MOV              R5, #0xEF
+  622 0000097E F7FF FFFE       BL               PRINT
+  623 00000982 F04F 05EE       MOV              R5, #0xEE
+  624 00000986 F7FF FFFE       BL               PRINT
+  625 0000098A F04F 05EC       MOV              R5, #0xEC
+  626 0000098E F7FF FFFE       BL               PRINT
+  627 00000992 F04F 05E8       MOV              R5, #0xE8
+  628 00000996 F7FF FFFE       BL               PRINT
+  629 0000099A F04F 05E0       MOV              R5, #0xE0
+  630 0000099E F7FF FFFE       BL               PRINT
+  631 000009A2 F04F 05E0       MOV              R5, #0xE0
+  632 000009A6 F7FF FFFE       BL               PRINT
+  633 000009AA F04F 05E0       MOV              R5, #0xE0
+  634 000009AE F7FF FFFE       BL               PRINT
+  635 000009B2 F04F 05E0       MOV              R5, #0xE0
+  636 000009B6 F7FF FFFE       BL               PRINT
+  637 000009BA F04F 05E0       MOV              R5, #0xE0
+  638 000009BE F7FF FFFE       BL               PRINT
+  639 000009C2 F04F 05E0       MOV              R5, #0xE0
+  640 000009C6 F7FF FFFE       BL               PRINT
+  641 000009CA F04F 05E0       MOV              R5, #0xE0
+  642 000009CE F7FF FFFE       BL               PRINT
+  643 000009D2 F04F 05E0       MOV              R5, #0xE0
+  644 000009D6 F7FF FFFE       BL               PRINT
+  645 000009DA F04F 05E0       MOV              R5, #0xE0
+  646 000009DE F7FF FFFE       BL               PRINT
+  647 000009E2 F04F 05E0       MOV              R5, #0xE0
+
+
+
+ARM Macro Assembler    Page 12 
+
+
+  648 000009E6 F7FF FFFE       BL               PRINT
+  649 000009EA F04F 05E0       MOV              R5, #0xE0
+  650 000009EE F7FF FFFE       BL               PRINT
+  651 000009F2 F04F 05E1       MOV              R5, #0xE1
+  652 000009F6 F7FF FFFE       BL               PRINT
+  653 000009FA F04F 05E1       MOV              R5, #0xE1
+  654 000009FE F7FF FFFE       BL               PRINT
+  655 00000A02 F04F 05E0       MOV              R5, #0xE0
+  656 00000A06 F7FF FFFE       BL               PRINT
+  657 00000A0A F04F 05E0       MOV              R5, #0xE0
+  658 00000A0E F7FF FFFE       BL               PRINT
+  659 00000A12 F04F 0560       MOV              R5, #0x60
+  660 00000A16 F7FF FFFE       BL               PRINT
+  661 00000A1A F04F 0500       MOV              R5, #0x00
+  662 00000A1E F7FF FFFE       BL               PRINT
+  663 00000A22 F04F 0500       MOV              R5, #0x00
+  664 00000A26 F7FF FFFE       BL               PRINT
+  665 00000A2A F04F 0501       MOV              R5, #0x01
+  666 00000A2E F7FF FFFE       BL               PRINT
+  667 00000A32 F04F 0501       MOV              R5, #0x01
+  668 00000A36 F7FF FFFE       BL               PRINT
+  669 00000A3A F04F 0500       MOV              R5, #0x00
+  670 00000A3E F7FF FFFE       BL               PRINT
+  671 00000A42 F04F 0500       MOV              R5, #0x00
+  672 00000A46 F7FF FFFE       BL               PRINT
+  673 00000A4A F04F 0500       MOV              R5, #0x00
+  674 00000A4E F7FF FFFE       BL               PRINT
+  675 00000A52 F04F 0500       MOV              R5, #0x00
+  676 00000A56 F7FF FFFE       BL               PRINT
+  677 00000A5A F04F 0500       MOV              R5, #0x00
+  678 00000A5E F7FF FFFE       BL               PRINT
+  679 00000A62 F04F 0500       MOV              R5, #0x00
+  680 00000A66 F7FF FFFE       BL               PRINT
+  681 00000A6A F04F 0500       MOV              R5, #0x00
+  682 00000A6E F7FF FFFE       BL               PRINT
+  683 00000A72 F04F 0500       MOV              R5, #0x00
+  684 00000A76 F7FF FFFE       BL               PRINT
+  685 00000A7A F04F 0500       MOV              R5, #0x00
+  686 00000A7E F7FF FFFE       BL               PRINT
+  687 00000A82 F04F 0500       MOV              R5, #0x00
+  688 00000A86 F7FF FFFE       BL               PRINT
+  689 00000A8A F04F 0500       MOV              R5, #0x00
+  690 00000A8E F7FF FFFE       BL               PRINT
+  691 00000A92 F04F 0500       MOV              R5, #0x00
+  692 00000A96 F7FF FFFE       BL               PRINT
+  693 00000A9A F04F 0500       MOV              R5, #0x00
+  694 00000A9E F7FF FFFE       BL               PRINT
+  695 00000AA2 F04F 0500       MOV              R5, #0x00
+  696 00000AA6 F7FF FFFE       BL               PRINT
+  697 00000AAA F04F 0500       MOV              R5, #0x00
+  698 00000AAE F7FF FFFE       BL               PRINT
+  699 00000AB2 F04F 0500       MOV              R5, #0x00
+  700 00000AB6 F7FF FFFE       BL               PRINT
+  701 00000ABA F04F 0500       MOV              R5, #0x00
+  702 00000ABE F7FF FFFE       BL               PRINT
+  703 00000AC2 F04F 0500       MOV              R5, #0x00
+  704 00000AC6 F7FF FFFE       BL               PRINT
+  705 00000ACA F04F 0500       MOV              R5, #0x00
+  706 00000ACE F7FF FFFE       BL               PRINT
+
+
+
+ARM Macro Assembler    Page 13 
+
+
+  707 00000AD2 F04F 0500       MOV              R5, #0x00
+  708 00000AD6 F7FF FFFE       BL               PRINT
+  709 00000ADA F04F 0500       MOV              R5, #0x00
+  710 00000ADE F7FF FFFE       BL               PRINT
+  711 00000AE2 F04F 0500       MOV              R5, #0x00
+  712 00000AE6 F7FF FFFE       BL               PRINT
+  713 00000AEA F04F 05C0       MOV              R5, #0xC0
+  714 00000AEE F7FF FFFE       BL               PRINT
+  715 00000AF2 F04F 0580       MOV              R5, #0x80
+  716 00000AF6 F7FF FFFE       BL               PRINT
+  717 00000AFA F04F 0580       MOV              R5, #0x80
+  718 00000AFE F7FF FFFE       BL               PRINT
+  719 00000B02 F04F 0500       MOV              R5, #0x00
+  720 00000B06 F7FF FFFE       BL               PRINT
+  721 00000B0A F04F 0500       MOV              R5, #0x00
+  722 00000B0E F7FF FFFE       BL               PRINT
+  723 00000B12 F04F 0580       MOV              R5, #0x80
+  724 00000B16 F7FF FFFE       BL               PRINT
+  725 00000B1A F04F 05C0       MOV              R5, #0xC0
+  726 00000B1E F7FF FFFE       BL               PRINT
+  727 00000B22 F04F 05C0       MOV              R5, #0xC0
+  728 00000B26 F7FF FFFE       BL               PRINT
+  729 00000B2A F04F 0580       MOV              R5, #0x80
+  730 00000B2E F7FF FFFE       BL               PRINT
+  731 00000B32 F04F 0500       MOV              R5, #0x00
+  732 00000B36 F7FF FFFE       BL               PRINT
+  733 00000B3A F04F 0500       MOV              R5, #0x00
+  734 00000B3E F7FF FFFE       BL               PRINT
+  735 00000B42 F04F 0580       MOV              R5, #0x80
+  736 00000B46 F7FF FFFE       BL               PRINT
+  737 00000B4A F04F 05C1       MOV              R5, #0xC1
+  738 00000B4E F7FF FFFE       BL               PRINT
+  739 00000B52 F04F 05C3       MOV              R5, #0xC3
+  740 00000B56 F7FF FFFE       BL               PRINT
+  741 00000B5A F04F 0587       MOV              R5, #0x87
+  742 00000B5E F7FF FFFE       BL               PRINT
+  743 00000B62 F04F 050F       MOV              R5, #0x0F
+  744 00000B66 F7FF FFFE       BL               PRINT
+  745 00000B6A F04F 051F       MOV              R5, #0x1F
+  746 00000B6E F7FF FFFE       BL               PRINT
+  747 00000B72 F04F 05BF       MOV              R5, #0xBF
+  748 00000B76 F7FF FFFE       BL               PRINT
+  749 00000B7A F04F 05FF       MOV              R5, #0xFF
+  750 00000B7E F7FF FFFE       BL               PRINT
+  751 00000B82 F04F 05FF       MOV              R5, #0xFF
+  752 00000B86 F7FF FFFE       BL               PRINT
+  753 00000B8A F04F 05BF       MOV              R5, #0xBF
+  754 00000B8E F7FF FFFE       BL               PRINT
+  755 00000B92 F04F 053F       MOV              R5, #0x3F
+  756 00000B96 F7FF FFFE       BL               PRINT
+  757 00000B9A F04F 053F       MOV              R5, #0x3F
+  758 00000B9E F7FF FFFE       BL               PRINT
+  759 00000BA2 F04F 05BF       MOV              R5, #0xBF
+  760 00000BA6 F7FF FFFE       BL               PRINT
+  761 00000BAA F04F 05FF       MOV              R5, #0xFF
+  762 00000BAE F7FF FFFE       BL               PRINT
+  763 00000BB2 F04F 05FF       MOV              R5, #0xFF
+  764 00000BB6 F7FF FFFE       BL               PRINT
+  765 00000BBA F04F 05BF       MOV              R5, #0xBF
+
+
+
+ARM Macro Assembler    Page 14 
+
+
+  766 00000BBE F7FF FFFE       BL               PRINT
+  767 00000BC2 F04F 053F       MOV              R5, #0x3F
+  768 00000BC6 F7FF FFFE       BL               PRINT
+  769 00000BCA F04F 053F       MOV              R5, #0x3F
+  770 00000BCE F7FF FFFE       BL               PRINT
+  771 00000BD2 F04F 05BF       MOV              R5, #0xBF
+  772 00000BD6 F7FF FFFE       BL               PRINT
+  773 00000BDA F04F 05FF       MOV              R5, #0xFF
+  774 00000BDE F7FF FFFE       BL               PRINT
+  775 00000BE2 F04F 05FF       MOV              R5, #0xFF
+  776 00000BE6 F7FF FFFE       BL               PRINT
+  777 00000BEA F04F 05BF       MOV              R5, #0xBF
+  778 00000BEE F7FF FFFE       BL               PRINT
+  779 00000BF2 F04F 053F       MOV              R5, #0x3F
+  780 00000BF6 F7FF FFFE       BL               PRINT
+  781 00000BFA F04F 053F       MOV              R5, #0x3F
+  782 00000BFE F7FF FFFE       BL               PRINT
+  783 00000C02 F04F 05BF       MOV              R5, #0xBF
+  784 00000C06 F7FF FFFE       BL               PRINT
+  785 00000C0A F04F 05FF       MOV              R5, #0xFF
+  786 00000C0E F7FF FFFE       BL               PRINT
+  787 00000C12 F04F 05FF       MOV              R5, #0xFF
+  788 00000C16 F7FF FFFE       BL               PRINT
+  789 00000C1A F04F 05BF       MOV              R5, #0xBF
+  790 00000C1E F7FF FFFE       BL               PRINT
+  791 00000C22 F04F 053F       MOV              R5, #0x3F
+  792 00000C26 F7FF FFFE       BL               PRINT
+  793 00000C2A F04F 053F       MOV              R5, #0x3F
+  794 00000C2E F7FF FFFE       BL               PRINT
+  795 00000C32 F04F 05BF       MOV              R5, #0xBF
+  796 00000C36 F7FF FFFE       BL               PRINT
+  797 00000C3A F04F 05FF       MOV              R5, #0xFF
+  798 00000C3E F7FF FFFE       BL               PRINT
+  799 00000C42 F04F 05BF       MOV              R5, #0xBF
+  800 00000C46 F7FF FFFE       BL               PRINT
+  801 00000C4A F04F 053F       MOV              R5, #0x3F
+  802 00000C4E F7FF FFFE       BL               PRINT
+  803 00000C52 F04F 053F       MOV              R5, #0x3F
+  804 00000C56 F7FF FFFE       BL               PRINT
+  805 00000C5A F04F 05BF       MOV              R5, #0xBF
+  806 00000C5E F7FF FFFE       BL               PRINT
+  807 00000C62 F04F 05FF       MOV              R5, #0xFF
+  808 00000C66 F7FF FFFE       BL               PRINT
+  809 00000C6A F04F 05FF       MOV              R5, #0xFF
+  810 00000C6E F7FF FFFE       BL               PRINT
+  811 00000C72 F04F 05BF       MOV              R5, #0xBF
+  812 00000C76 F7FF FFFE       BL               PRINT
+  813 00000C7A F04F 051F       MOV              R5, #0x1F
+  814 00000C7E F7FF FFFE       BL               PRINT
+  815 00000C82 F04F 050F       MOV              R5, #0x0F
+  816 00000C86 F7FF FFFE       BL               PRINT
+  817 00000C8A F04F 0587       MOV              R5, #0x87
+  818 00000C8E F7FF FFFE       BL               PRINT
+  819 00000C92 F04F 05C3       MOV              R5, #0xC3
+  820 00000C96 F7FF FFFE       BL               PRINT
+  821 00000C9A F04F 05C1       MOV              R5, #0xC1
+  822 00000C9E F7FF FFFE       BL               PRINT
+  823 00000CA2 F04F 0580       MOV              R5, #0x80
+  824 00000CA6 F7FF FFFE       BL               PRINT
+
+
+
+ARM Macro Assembler    Page 15 
+
+
+  825 00000CAA F04F 0500       MOV              R5, #0x00
+  826 00000CAE F7FF FFFE       BL               PRINT
+  827 00000CB2 F04F 0500       MOV              R5, #0x00
+  828 00000CB6 F7FF FFFE       BL               PRINT
+  829 00000CBA F04F 0580       MOV              R5, #0x80
+  830 00000CBE F7FF FFFE       BL               PRINT
+  831 00000CC2 F04F 05C0       MOV              R5, #0xC0
+  832 00000CC6 F7FF FFFE       BL               PRINT
+  833 00000CCA F04F 05C0       MOV              R5, #0xC0
+  834 00000CCE F7FF FFFE       BL               PRINT
+  835 00000CD2 F04F 0580       MOV              R5, #0x80
+  836 00000CD6 F7FF FFFE       BL               PRINT
+  837 00000CDA F04F 0500       MOV              R5, #0x00
+  838 00000CDE F7FF FFFE       BL               PRINT
+  839 00000CE2 F04F 0500       MOV              R5, #0x00
+  840 00000CE6 F7FF FFFE       BL               PRINT
+  841 00000CEA F04F 0500       MOV              R5, #0x00
+  842 00000CEE F7FF FFFE       BL               PRINT
+  843 00000CF2 F04F 0500       MOV              R5, #0x00
+  844 00000CF6 F7FF FFFE       BL               PRINT
+  845 00000CFA F04F 0500       MOV              R5, #0x00
+  846 00000CFE F7FF FFFE       BL               PRINT
+  847 00000D02 F04F 0500       MOV              R5, #0x00
+  848 00000D06 F7FF FFFE       BL               PRINT
+  849 00000D0A F04F 0500       MOV              R5, #0x00
+  850 00000D0E F7FF FFFE       BL               PRINT
+  851 00000D12 F04F 0500       MOV              R5, #0x00
+  852 00000D16 F7FF FFFE       BL               PRINT
+  853 00000D1A F04F 0500       MOV              R5, #0x00
+  854 00000D1E F7FF FFFE       BL               PRINT
+  855 00000D22 F04F 0500       MOV              R5, #0x00
+  856 00000D26 F7FF FFFE       BL               PRINT
+  857 00000D2A F04F 0500       MOV              R5, #0x00
+  858 00000D2E F7FF FFFE       BL               PRINT
+  859 00000D32 F04F 0500       MOV              R5, #0x00
+  860 00000D36 F7FF FFFE       BL               PRINT
+  861 00000D3A F04F 0500       MOV              R5, #0x00
+  862 00000D3E F7FF FFFE       BL               PRINT
+  863 00000D42 F04F 0500       MOV              R5, #0x00
+  864 00000D46 F7FF FFFE       BL               PRINT
+  865 00000D4A F04F 0500       MOV              R5, #0x00
+  866 00000D4E F7FF FFFE       BL               PRINT
+  867 00000D52 F04F 0500       MOV              R5, #0x00
+  868 00000D56 F7FF FFFE       BL               PRINT
+  869 00000D5A F04F 0500       MOV              R5, #0x00
+  870 00000D5E F7FF FFFE       BL               PRINT
+  871 00000D62 F04F 0500       MOV              R5, #0x00
+  872 00000D66 F7FF FFFE       BL               PRINT
+  873 00000D6A F04F 0500       MOV              R5, #0x00
+  874 00000D6E F7FF FFFE       BL               PRINT
+  875 00000D72 F04F 0500       MOV              R5, #0x00
+  876 00000D76 F7FF FFFE       BL               PRINT
+  877 00000D7A F04F 0500       MOV              R5, #0x00
+  878 00000D7E F7FF FFFE       BL               PRINT
+  879 00000D82 F04F 0504       MOV              R5, #0x04
+  880 00000D86 F7FF FFFE       BL               PRINT
+  881 00000D8A F04F 050D       MOV              R5, #0x0D
+  882 00000D8E F7FF FFFE       BL               PRINT
+  883 00000D92 F04F 050D       MOV              R5, #0x0D
+
+
+
+ARM Macro Assembler    Page 16 
+
+
+  884 00000D96 F7FF FFFE       BL               PRINT
+  885 00000D9A F04F 051B       MOV              R5, #0x1B
+  886 00000D9E F7FF FFFE       BL               PRINT
+  887 00000DA2 F04F 051B       MOV              R5, #0x1B
+  888 00000DA6 F7FF FFFE       BL               PRINT
+  889 00000DAA F04F 050D       MOV              R5, #0x0D
+  890 00000DAE F7FF FFFE       BL               PRINT
+  891 00000DB2 F04F 0504       MOV              R5, #0x04
+  892 00000DB6 F7FF FFFE       BL               PRINT
+  893 00000DBA F04F 0504       MOV              R5, #0x04
+  894 00000DBE F7FF FFFE       BL               PRINT
+  895 00000DC2 F04F 050D       MOV              R5, #0x0D
+  896 00000DC6 F7FF FFFE       BL               PRINT
+  897 00000DCA F04F 051B       MOV              R5, #0x1B
+  898 00000DCE F7FF FFFE       BL               PRINT
+  899 00000DD2 F04F 051B       MOV              R5, #0x1B
+  900 00000DD6 F7FF FFFE       BL               PRINT
+  901 00000DDA F04F 050D       MOV              R5, #0x0D
+  902 00000DDE F7FF FFFE       BL               PRINT
+  903 00000DE2 F04F 0504       MOV              R5, #0x04
+  904 00000DE6 F7FF FFFE       BL               PRINT
+  905 00000DEA F04F 0504       MOV              R5, #0x04
+  906 00000DEE F7FF FFFE       BL               PRINT
+  907 00000DF2 F04F 050D       MOV              R5, #0x0D
+  908 00000DF6 F7FF FFFE       BL               PRINT
+  909 00000DFA F04F 051B       MOV              R5, #0x1B
+  910 00000DFE F7FF FFFE       BL               PRINT
+  911 00000E02 F04F 051B       MOV              R5, #0x1B
+  912 00000E06 F7FF FFFE       BL               PRINT
+  913 00000E0A F04F 050D       MOV              R5, #0x0D
+  914 00000E0E F7FF FFFE       BL               PRINT
+  915 00000E12 F04F 0504       MOV              R5, #0x04
+  916 00000E16 F7FF FFFE       BL               PRINT
+  917 00000E1A F04F 0504       MOV              R5, #0x04
+  918 00000E1E F7FF FFFE       BL               PRINT
+  919 00000E22 F04F 050D       MOV              R5, #0x0D
+  920 00000E26 F7FF FFFE       BL               PRINT
+  921 00000E2A F04F 051B       MOV              R5, #0x1B
+  922 00000E2E F7FF FFFE       BL               PRINT
+  923 00000E32 F04F 051B       MOV              R5, #0x1B
+  924 00000E36 F7FF FFFE       BL               PRINT
+  925 00000E3A F04F 050D       MOV              R5, #0x0D
+  926 00000E3E F7FF FFFE       BL               PRINT
+  927 00000E42 F04F 0504       MOV              R5, #0x04
+  928 00000E46 F7FF FFFE       BL               PRINT
+  929 00000E4A F04F 0504       MOV              R5, #0x04
+  930 00000E4E F7FF FFFE       BL               PRINT
+  931 00000E52 F04F 050D       MOV              R5, #0x0D
+  932 00000E56 F7FF FFFE       BL               PRINT
+  933 00000E5A F04F 051B       MOV              R5, #0x1B
+  934 00000E5E F7FF FFFE       BL               PRINT
+  935 00000E62 F04F 051B       MOV              R5, #0x1B
+  936 00000E66 F7FF FFFE       BL               PRINT
+  937 00000E6A F04F 050D       MOV              R5, #0x0D
+  938 00000E6E F7FF FFFE       BL               PRINT
+  939 00000E72 F04F 0504       MOV              R5, #0x04
+  940 00000E76 F7FF FFFE       BL               PRINT
+  941 00000E7A F04F 0504       MOV              R5, #0x04
+  942 00000E7E F7FF FFFE       BL               PRINT
+
+
+
+ARM Macro Assembler    Page 17 
+
+
+  943 00000E82 F04F 050D       MOV              R5, #0x0D
+  944 00000E86 F7FF FFFE       BL               PRINT
+  945 00000E8A F04F 051B       MOV              R5, #0x1B
+  946 00000E8E F7FF FFFE       BL               PRINT
+  947 00000E92 F04F 051B       MOV              R5, #0x1B
+  948 00000E96 F7FF FFFE       BL               PRINT
+  949 00000E9A F04F 050D       MOV              R5, #0x0D
+  950 00000E9E F7FF FFFE       BL               PRINT
+  951 00000EA2 F04F 0504       MOV              R5, #0x04
+  952 00000EA6 F7FF FFFE       BL               PRINT
+  953 00000EAA F04F 0504       MOV              R5, #0x04
+  954 00000EAE F7FF FFFE       BL               PRINT
+  955 00000EB2 F04F 050D       MOV              R5, #0x0D
+  956 00000EB6 F7FF FFFE       BL               PRINT
+  957 00000EBA F04F 051B       MOV              R5, #0x1B
+  958 00000EBE F7FF FFFE       BL               PRINT
+  959 00000EC2 F04F 051B       MOV              R5, #0x1B
+  960 00000EC6 F7FF FFFE       BL               PRINT
+  961 00000ECA F04F 050D       MOV              R5, #0x0D
+  962 00000ECE F7FF FFFE       BL               PRINT
+  963 00000ED2 F04F 0504       MOV              R5, #0x04
+  964 00000ED6 F7FF FFFE       BL               PRINT
+  965 00000EDA F04F 0504       MOV              R5, #0x04
+  966 00000EDE F7FF FFFE       BL               PRINT
+  967 00000EE2 F04F 050D       MOV              R5, #0x0D
+  968 00000EE6 F7FF FFFE       BL               PRINT
+  969 00000EEA F04F 051B       MOV              R5, #0x1B
+  970 00000EEE F7FF FFFE       BL               PRINT
+  971 00000EF2 F04F 051B       MOV              R5, #0x1B
+  972 00000EF6 F7FF FFFE       BL               PRINT
+  973 00000EFA F04F 050D       MOV              R5, #0x0D
+  974 00000EFE F7FF FFFE       BL               PRINT
+  975 00000F02 F04F 0504       MOV              R5, #0x04
+  976 00000F06 F7FF FFFE       BL               PRINT
+  977 00000F0A F04F 0504       MOV              R5, #0x04
+  978 00000F0E F7FF FFFE       BL               PRINT
+  979 00000F12 F04F 050D       MOV              R5, #0x0D
+  980 00000F16 F7FF FFFE       BL               PRINT
+  981 00000F1A F04F 051B       MOV              R5, #0x1B
+  982 00000F1E F7FF FFFE       BL               PRINT
+  983 00000F22 F04F 051B       MOV              R5, #0x1B
+  984 00000F26 F7FF FFFE       BL               PRINT
+  985 00000F2A F04F 050D       MOV              R5, #0x0D
+  986 00000F2E F7FF FFFE       BL               PRINT
+  987 00000F32 F04F 0504       MOV              R5, #0x04
+  988 00000F36 F7FF FFFE       BL               PRINT
+  989 00000F3A F04F 0504       MOV              R5, #0x04
+  990 00000F3E F7FF FFFE       BL               PRINT
+  991 00000F42 F04F 050D       MOV              R5, #0x0D
+  992 00000F46 F7FF FFFE       BL               PRINT
+  993 00000F4A F04F 051B       MOV              R5, #0x1B
+  994 00000F4E F7FF FFFE       BL               PRINT
+  995 00000F52 F04F 051B       MOV              R5, #0x1B
+  996 00000F56 F7FF FFFE       BL               PRINT
+  997 00000F5A F04F 050D       MOV              R5, #0x0D
+  998 00000F5E F7FF FFFE       BL               PRINT
+  999 00000F62 F04F 0504       MOV              R5, #0x04
+ 1000 00000F66 F7FF FFFE       BL               PRINT
+ 1001 00000F6A F04F 0504       MOV              R5, #0x04
+
+
+
+ARM Macro Assembler    Page 18 
+
+
+ 1002 00000F6E F7FF FFFE       BL               PRINT
+ 1003 00000F72 F04F 050D       MOV              R5, #0x0D
+ 1004 00000F76 F7FF FFFE       BL               PRINT
+ 1005 00000F7A F04F 051B       MOV              R5, #0x1B
+ 1006 00000F7E F7FF FFFE       BL               PRINT
+ 1007 00000F82 F04F 051B       MOV              R5, #0x1B
+ 1008 00000F86 F7FF FFFE       BL               PRINT
+ 1009 00000F8A F04F 0500       MOV              R5, #0x00
+ 1010 00000F8E F7FF FFFE       BL               PRINT
+ 1011 00000F92 F04F 0500       MOV              R5, #0x00
+ 1012 00000F96 F7FF FFFE       BL               PRINT
+ 1013 00000F9A F04F 0500       MOV              R5, #0x00
+ 1014 00000F9E F7FF FFFE       BL               PRINT
+ 1015 00000FA2 F04F 0500       MOV              R5, #0x00
+ 1016 00000FA6 F7FF FFFE       BL               PRINT
+ 1017 00000FAA F04F 0500       MOV              R5, #0x00
+ 1018 00000FAE F7FF FFFE       BL               PRINT
+ 1019 00000FB2 F04F 0500       MOV              R5, #0x00
+ 1020 00000FB6 F7FF FFFE       BL               PRINT
+ 1021 00000FBA F04F 0500       MOV              R5, #0x00
+ 1022 00000FBE F7FF FFFE       BL               PRINT
+ 1023 00000FC2 F04F 0500       MOV              R5, #0x00
+ 1024 00000FC6 F7FF FFFE       BL               PRINT
+ 1025 00000FCA F04F 0500       MOV              R5, #0x00
+ 1026 00000FCE F7FF FFFE       BL               PRINT
+ 1027 00000FD2         
+ 1028 00000FD2 E8BD 1FFF       POP              {R0-R12}
+ 1029 00000FD6 F85D EB04       POP              {LR}
+ 1030 00000FDA                 ENDP
+ 1031 00000FDA 4770            BX               LR
+ 1032 00000FDC         
+ 1033 00000FDC                 ALIGN
+ 1034 00000FDC                 END
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
+erwork --depend=.\objects\draw_lose.d -o.\objects\draw_lose.o -I.\RTE\_Target_1
+ -IC:\Keil_v5\ARM\PACK\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123 -IC:\Keil_v5\
+ARM\CMSIS\Include --predefine="__EVAL SETA 1" --predefine="__UVISION_VERSION SE
+TA 526" --predefine="TM4C123GH6PM SETA 1" --list=.\listings\draw_lose.lst DRAW_
+LOSE.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+DRAW_LOSE 00000000
+
+Symbol: DRAW_LOSE
+   Definitions
+      At line 11 in file DRAW_LOSE.s
+   Uses
+      At line 5 in file DRAW_LOSE.s
+Comment: DRAW_LOSE used once
+main 00000000
+
+Symbol: main
+   Definitions
+      At line 2 in file DRAW_LOSE.s
+   Uses
+      None
+Comment: main unused
+2 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+PRINT 00000000
+
+Symbol: PRINT
+   Definitions
+      At line 7 in file DRAW_LOSE.s
+   Uses
+      At line 20 in file DRAW_LOSE.s
+      At line 22 in file DRAW_LOSE.s
+      At line 24 in file DRAW_LOSE.s
+      At line 26 in file DRAW_LOSE.s
+      At line 28 in file DRAW_LOSE.s
+      At line 30 in file DRAW_LOSE.s
+      At line 32 in file DRAW_LOSE.s
+      At line 34 in file DRAW_LOSE.s
+      At line 36 in file DRAW_LOSE.s
+      At line 38 in file DRAW_LOSE.s
+      At line 40 in file DRAW_LOSE.s
+      At line 42 in file DRAW_LOSE.s
+      At line 44 in file DRAW_LOSE.s
+      At line 46 in file DRAW_LOSE.s
+      At line 48 in file DRAW_LOSE.s
+      At line 50 in file DRAW_LOSE.s
+      At line 52 in file DRAW_LOSE.s
+      At line 54 in file DRAW_LOSE.s
+      At line 56 in file DRAW_LOSE.s
+      At line 58 in file DRAW_LOSE.s
+      At line 60 in file DRAW_LOSE.s
+      At line 62 in file DRAW_LOSE.s
+      At line 64 in file DRAW_LOSE.s
+      At line 66 in file DRAW_LOSE.s
+      At line 68 in file DRAW_LOSE.s
+      At line 70 in file DRAW_LOSE.s
+      At line 72 in file DRAW_LOSE.s
+      At line 74 in file DRAW_LOSE.s
+      At line 76 in file DRAW_LOSE.s
+      At line 78 in file DRAW_LOSE.s
+      At line 80 in file DRAW_LOSE.s
+      At line 82 in file DRAW_LOSE.s
+      At line 84 in file DRAW_LOSE.s
+      At line 86 in file DRAW_LOSE.s
+      At line 88 in file DRAW_LOSE.s
+      At line 90 in file DRAW_LOSE.s
+      At line 92 in file DRAW_LOSE.s
+      At line 94 in file DRAW_LOSE.s
+      At line 96 in file DRAW_LOSE.s
+      At line 98 in file DRAW_LOSE.s
+      At line 100 in file DRAW_LOSE.s
+      At line 102 in file DRAW_LOSE.s
+      At line 104 in file DRAW_LOSE.s
+      At line 106 in file DRAW_LOSE.s
+      At line 108 in file DRAW_LOSE.s
+      At line 110 in file DRAW_LOSE.s
+      At line 112 in file DRAW_LOSE.s
+      At line 114 in file DRAW_LOSE.s
+      At line 116 in file DRAW_LOSE.s
+      At line 118 in file DRAW_LOSE.s
+      At line 120 in file DRAW_LOSE.s
+      At line 122 in file DRAW_LOSE.s
+      At line 124 in file DRAW_LOSE.s
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+External symbols
+
+      At line 126 in file DRAW_LOSE.s
+      At line 128 in file DRAW_LOSE.s
+      At line 130 in file DRAW_LOSE.s
+      At line 132 in file DRAW_LOSE.s
+      At line 134 in file DRAW_LOSE.s
+      At line 136 in file DRAW_LOSE.s
+      At line 138 in file DRAW_LOSE.s
+      At line 140 in file DRAW_LOSE.s
+      At line 142 in file DRAW_LOSE.s
+      At line 144 in file DRAW_LOSE.s
+      At line 146 in file DRAW_LOSE.s
+      At line 148 in file DRAW_LOSE.s
+      At line 150 in file DRAW_LOSE.s
+      At line 152 in file DRAW_LOSE.s
+      At line 154 in file DRAW_LOSE.s
+      At line 156 in file DRAW_LOSE.s
+      At line 158 in file DRAW_LOSE.s
+      At line 160 in file DRAW_LOSE.s
+      At line 162 in file DRAW_LOSE.s
+      At line 164 in file DRAW_LOSE.s
+      At line 166 in file DRAW_LOSE.s
+      At line 168 in file DRAW_LOSE.s
+      At line 170 in file DRAW_LOSE.s
+      At line 172 in file DRAW_LOSE.s
+      At line 174 in file DRAW_LOSE.s
+      At line 176 in file DRAW_LOSE.s
+      At line 178 in file DRAW_LOSE.s
+      At line 180 in file DRAW_LOSE.s
+      At line 182 in file DRAW_LOSE.s
+      At line 184 in file DRAW_LOSE.s
+      At line 186 in file DRAW_LOSE.s
+      At line 188 in file DRAW_LOSE.s
+      At line 190 in file DRAW_LOSE.s
+      At line 192 in file DRAW_LOSE.s
+      At line 194 in file DRAW_LOSE.s
+      At line 196 in file DRAW_LOSE.s
+      At line 198 in file DRAW_LOSE.s
+      At line 200 in file DRAW_LOSE.s
+      At line 202 in file DRAW_LOSE.s
+      At line 204 in file DRAW_LOSE.s
+      At line 206 in file DRAW_LOSE.s
+      At line 208 in file DRAW_LOSE.s
+      At line 210 in file DRAW_LOSE.s
+      At line 212 in file DRAW_LOSE.s
+      At line 214 in file DRAW_LOSE.s
+      At line 216 in file DRAW_LOSE.s
+      At line 218 in file DRAW_LOSE.s
+      At line 220 in file DRAW_LOSE.s
+      At line 222 in file DRAW_LOSE.s
+      At line 224 in file DRAW_LOSE.s
+      At line 226 in file DRAW_LOSE.s
+      At line 228 in file DRAW_LOSE.s
+      At line 230 in file DRAW_LOSE.s
+      At line 232 in file DRAW_LOSE.s
+      At line 234 in file DRAW_LOSE.s
+      At line 236 in file DRAW_LOSE.s
+      At line 238 in file DRAW_LOSE.s
+      At line 240 in file DRAW_LOSE.s
+      At line 242 in file DRAW_LOSE.s
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+External symbols
+
+      At line 244 in file DRAW_LOSE.s
+      At line 246 in file DRAW_LOSE.s
+      At line 248 in file DRAW_LOSE.s
+      At line 250 in file DRAW_LOSE.s
+      At line 252 in file DRAW_LOSE.s
+      At line 254 in file DRAW_LOSE.s
+      At line 256 in file DRAW_LOSE.s
+      At line 258 in file DRAW_LOSE.s
+      At line 260 in file DRAW_LOSE.s
+      At line 262 in file DRAW_LOSE.s
+      At line 264 in file DRAW_LOSE.s
+      At line 266 in file DRAW_LOSE.s
+      At line 268 in file DRAW_LOSE.s
+      At line 270 in file DRAW_LOSE.s
+      At line 272 in file DRAW_LOSE.s
+      At line 274 in file DRAW_LOSE.s
+      At line 276 in file DRAW_LOSE.s
+      At line 278 in file DRAW_LOSE.s
+      At line 280 in file DRAW_LOSE.s
+      At line 282 in file DRAW_LOSE.s
+      At line 284 in file DRAW_LOSE.s
+      At line 286 in file DRAW_LOSE.s
+      At line 288 in file DRAW_LOSE.s
+      At line 290 in file DRAW_LOSE.s
+      At line 292 in file DRAW_LOSE.s
+      At line 294 in file DRAW_LOSE.s
+      At line 296 in file DRAW_LOSE.s
+      At line 298 in file DRAW_LOSE.s
+      At line 300 in file DRAW_LOSE.s
+      At line 302 in file DRAW_LOSE.s
+      At line 304 in file DRAW_LOSE.s
+      At line 306 in file DRAW_LOSE.s
+      At line 308 in file DRAW_LOSE.s
+      At line 310 in file DRAW_LOSE.s
+      At line 312 in file DRAW_LOSE.s
+      At line 314 in file DRAW_LOSE.s
+      At line 316 in file DRAW_LOSE.s
+      At line 318 in file DRAW_LOSE.s
+      At line 320 in file DRAW_LOSE.s
+      At line 322 in file DRAW_LOSE.s
+      At line 324 in file DRAW_LOSE.s
+      At line 326 in file DRAW_LOSE.s
+      At line 328 in file DRAW_LOSE.s
+      At line 330 in file DRAW_LOSE.s
+      At line 332 in file DRAW_LOSE.s
+      At line 334 in file DRAW_LOSE.s
+      At line 336 in file DRAW_LOSE.s
+      At line 338 in file DRAW_LOSE.s
+      At line 340 in file DRAW_LOSE.s
+      At line 342 in file DRAW_LOSE.s
+      At line 344 in file DRAW_LOSE.s
+      At line 346 in file DRAW_LOSE.s
+      At line 348 in file DRAW_LOSE.s
+      At line 350 in file DRAW_LOSE.s
+      At line 352 in file DRAW_LOSE.s
+      At line 354 in file DRAW_LOSE.s
+      At line 356 in file DRAW_LOSE.s
+      At line 358 in file DRAW_LOSE.s
+      At line 360 in file DRAW_LOSE.s
+
+
+
+ARM Macro Assembler    Page 4 Alphabetic symbol ordering
+External symbols
+
+      At line 362 in file DRAW_LOSE.s
+      At line 364 in file DRAW_LOSE.s
+      At line 366 in file DRAW_LOSE.s
+      At line 368 in file DRAW_LOSE.s
+      At line 370 in file DRAW_LOSE.s
+      At line 372 in file DRAW_LOSE.s
+      At line 374 in file DRAW_LOSE.s
+      At line 376 in file DRAW_LOSE.s
+      At line 378 in file DRAW_LOSE.s
+      At line 380 in file DRAW_LOSE.s
+      At line 382 in file DRAW_LOSE.s
+      At line 384 in file DRAW_LOSE.s
+      At line 386 in file DRAW_LOSE.s
+      At line 388 in file DRAW_LOSE.s
+      At line 390 in file DRAW_LOSE.s
+      At line 392 in file DRAW_LOSE.s
+      At line 394 in file DRAW_LOSE.s
+      At line 396 in file DRAW_LOSE.s
+      At line 398 in file DRAW_LOSE.s
+      At line 400 in file DRAW_LOSE.s
+      At line 402 in file DRAW_LOSE.s
+      At line 404 in file DRAW_LOSE.s
+      At line 406 in file DRAW_LOSE.s
+      At line 408 in file DRAW_LOSE.s
+      At line 410 in file DRAW_LOSE.s
+      At line 412 in file DRAW_LOSE.s
+      At line 414 in file DRAW_LOSE.s
+      At line 416 in file DRAW_LOSE.s
+      At line 418 in file DRAW_LOSE.s
+      At line 420 in file DRAW_LOSE.s
+      At line 422 in file DRAW_LOSE.s
+      At line 424 in file DRAW_LOSE.s
+      At line 426 in file DRAW_LOSE.s
+      At line 428 in file DRAW_LOSE.s
+      At line 430 in file DRAW_LOSE.s
+      At line 432 in file DRAW_LOSE.s
+      At line 434 in file DRAW_LOSE.s
+      At line 436 in file DRAW_LOSE.s
+      At line 438 in file DRAW_LOSE.s
+      At line 440 in file DRAW_LOSE.s
+      At line 442 in file DRAW_LOSE.s
+      At line 444 in file DRAW_LOSE.s
+      At line 446 in file DRAW_LOSE.s
+      At line 448 in file DRAW_LOSE.s
+      At line 450 in file DRAW_LOSE.s
+      At line 452 in file DRAW_LOSE.s
+      At line 454 in file DRAW_LOSE.s
+      At line 456 in file DRAW_LOSE.s
+      At line 458 in file DRAW_LOSE.s
+      At line 460 in file DRAW_LOSE.s
+      At line 462 in file DRAW_LOSE.s
+      At line 464 in file DRAW_LOSE.s
+      At line 466 in file DRAW_LOSE.s
+      At line 468 in file DRAW_LOSE.s
+      At line 470 in file DRAW_LOSE.s
+      At line 472 in file DRAW_LOSE.s
+      At line 474 in file DRAW_LOSE.s
+      At line 476 in file DRAW_LOSE.s
+      At line 478 in file DRAW_LOSE.s
+
+
+
+ARM Macro Assembler    Page 5 Alphabetic symbol ordering
+External symbols
+
+      At line 480 in file DRAW_LOSE.s
+      At line 482 in file DRAW_LOSE.s
+      At line 484 in file DRAW_LOSE.s
+      At line 486 in file DRAW_LOSE.s
+      At line 488 in file DRAW_LOSE.s
+      At line 490 in file DRAW_LOSE.s
+      At line 492 in file DRAW_LOSE.s
+      At line 494 in file DRAW_LOSE.s
+      At line 496 in file DRAW_LOSE.s
+      At line 498 in file DRAW_LOSE.s
+      At line 500 in file DRAW_LOSE.s
+      At line 502 in file DRAW_LOSE.s
+      At line 504 in file DRAW_LOSE.s
+      At line 506 in file DRAW_LOSE.s
+      At line 508 in file DRAW_LOSE.s
+      At line 510 in file DRAW_LOSE.s
+      At line 512 in file DRAW_LOSE.s
+      At line 516 in file DRAW_LOSE.s
+      At line 518 in file DRAW_LOSE.s
+      At line 520 in file DRAW_LOSE.s
+      At line 522 in file DRAW_LOSE.s
+      At line 524 in file DRAW_LOSE.s
+      At line 526 in file DRAW_LOSE.s
+      At line 528 in file DRAW_LOSE.s
+      At line 530 in file DRAW_LOSE.s
+      At line 532 in file DRAW_LOSE.s
+      At line 534 in file DRAW_LOSE.s
+      At line 536 in file DRAW_LOSE.s
+      At line 538 in file DRAW_LOSE.s
+      At line 540 in file DRAW_LOSE.s
+      At line 542 in file DRAW_LOSE.s
+      At line 544 in file DRAW_LOSE.s
+      At line 546 in file DRAW_LOSE.s
+      At line 548 in file DRAW_LOSE.s
+      At line 550 in file DRAW_LOSE.s
+      At line 552 in file DRAW_LOSE.s
+      At line 554 in file DRAW_LOSE.s
+      At line 556 in file DRAW_LOSE.s
+      At line 558 in file DRAW_LOSE.s
+      At line 560 in file DRAW_LOSE.s
+      At line 562 in file DRAW_LOSE.s
+      At line 564 in file DRAW_LOSE.s
+      At line 566 in file DRAW_LOSE.s
+      At line 568 in file DRAW_LOSE.s
+      At line 570 in file DRAW_LOSE.s
+      At line 572 in file DRAW_LOSE.s
+      At line 574 in file DRAW_LOSE.s
+      At line 576 in file DRAW_LOSE.s
+      At line 578 in file DRAW_LOSE.s
+      At line 580 in file DRAW_LOSE.s
+      At line 582 in file DRAW_LOSE.s
+      At line 584 in file DRAW_LOSE.s
+      At line 586 in file DRAW_LOSE.s
+      At line 588 in file DRAW_LOSE.s
+      At line 590 in file DRAW_LOSE.s
+      At line 592 in file DRAW_LOSE.s
+      At line 594 in file DRAW_LOSE.s
+      At line 596 in file DRAW_LOSE.s
+      At line 598 in file DRAW_LOSE.s
+
+
+
+ARM Macro Assembler    Page 6 Alphabetic symbol ordering
+External symbols
+
+      At line 600 in file DRAW_LOSE.s
+      At line 602 in file DRAW_LOSE.s
+      At line 604 in file DRAW_LOSE.s
+      At line 606 in file DRAW_LOSE.s
+      At line 608 in file DRAW_LOSE.s
+      At line 610 in file DRAW_LOSE.s
+      At line 612 in file DRAW_LOSE.s
+      At line 614 in file DRAW_LOSE.s
+      At line 616 in file DRAW_LOSE.s
+      At line 618 in file DRAW_LOSE.s
+      At line 620 in file DRAW_LOSE.s
+      At line 622 in file DRAW_LOSE.s
+      At line 624 in file DRAW_LOSE.s
+      At line 626 in file DRAW_LOSE.s
+      At line 628 in file DRAW_LOSE.s
+      At line 630 in file DRAW_LOSE.s
+      At line 632 in file DRAW_LOSE.s
+      At line 634 in file DRAW_LOSE.s
+      At line 636 in file DRAW_LOSE.s
+      At line 638 in file DRAW_LOSE.s
+      At line 640 in file DRAW_LOSE.s
+      At line 642 in file DRAW_LOSE.s
+      At line 644 in file DRAW_LOSE.s
+      At line 646 in file DRAW_LOSE.s
+      At line 648 in file DRAW_LOSE.s
+      At line 650 in file DRAW_LOSE.s
+      At line 652 in file DRAW_LOSE.s
+      At line 654 in file DRAW_LOSE.s
+      At line 656 in file DRAW_LOSE.s
+      At line 658 in file DRAW_LOSE.s
+      At line 660 in file DRAW_LOSE.s
+      At line 662 in file DRAW_LOSE.s
+      At line 664 in file DRAW_LOSE.s
+      At line 666 in file DRAW_LOSE.s
+      At line 668 in file DRAW_LOSE.s
+      At line 670 in file DRAW_LOSE.s
+      At line 672 in file DRAW_LOSE.s
+      At line 674 in file DRAW_LOSE.s
+      At line 676 in file DRAW_LOSE.s
+      At line 678 in file DRAW_LOSE.s
+      At line 680 in file DRAW_LOSE.s
+      At line 682 in file DRAW_LOSE.s
+      At line 684 in file DRAW_LOSE.s
+      At line 686 in file DRAW_LOSE.s
+      At line 688 in file DRAW_LOSE.s
+      At line 690 in file DRAW_LOSE.s
+      At line 692 in file DRAW_LOSE.s
+      At line 694 in file DRAW_LOSE.s
+      At line 696 in file DRAW_LOSE.s
+      At line 698 in file DRAW_LOSE.s
+      At line 700 in file DRAW_LOSE.s
+      At line 702 in file DRAW_LOSE.s
+      At line 704 in file DRAW_LOSE.s
+      At line 706 in file DRAW_LOSE.s
+      At line 708 in file DRAW_LOSE.s
+      At line 710 in file DRAW_LOSE.s
+      At line 712 in file DRAW_LOSE.s
+      At line 714 in file DRAW_LOSE.s
+      At line 716 in file DRAW_LOSE.s
+
+
+
+ARM Macro Assembler    Page 7 Alphabetic symbol ordering
+External symbols
+
+      At line 718 in file DRAW_LOSE.s
+      At line 720 in file DRAW_LOSE.s
+      At line 722 in file DRAW_LOSE.s
+      At line 724 in file DRAW_LOSE.s
+      At line 726 in file DRAW_LOSE.s
+      At line 728 in file DRAW_LOSE.s
+      At line 730 in file DRAW_LOSE.s
+      At line 732 in file DRAW_LOSE.s
+      At line 734 in file DRAW_LOSE.s
+      At line 736 in file DRAW_LOSE.s
+      At line 738 in file DRAW_LOSE.s
+      At line 740 in file DRAW_LOSE.s
+      At line 742 in file DRAW_LOSE.s
+      At line 744 in file DRAW_LOSE.s
+      At line 746 in file DRAW_LOSE.s
+      At line 748 in file DRAW_LOSE.s
+      At line 750 in file DRAW_LOSE.s
+      At line 752 in file DRAW_LOSE.s
+      At line 754 in file DRAW_LOSE.s
+      At line 756 in file DRAW_LOSE.s
+      At line 758 in file DRAW_LOSE.s
+      At line 760 in file DRAW_LOSE.s
+      At line 762 in file DRAW_LOSE.s
+      At line 764 in file DRAW_LOSE.s
+      At line 766 in file DRAW_LOSE.s
+      At line 768 in file DRAW_LOSE.s
+      At line 770 in file DRAW_LOSE.s
+      At line 772 in file DRAW_LOSE.s
+      At line 774 in file DRAW_LOSE.s
+      At line 776 in file DRAW_LOSE.s
+      At line 778 in file DRAW_LOSE.s
+      At line 780 in file DRAW_LOSE.s
+      At line 782 in file DRAW_LOSE.s
+      At line 784 in file DRAW_LOSE.s
+      At line 786 in file DRAW_LOSE.s
+      At line 788 in file DRAW_LOSE.s
+      At line 790 in file DRAW_LOSE.s
+      At line 792 in file DRAW_LOSE.s
+      At line 794 in file DRAW_LOSE.s
+      At line 796 in file DRAW_LOSE.s
+      At line 798 in file DRAW_LOSE.s
+      At line 800 in file DRAW_LOSE.s
+      At line 802 in file DRAW_LOSE.s
+      At line 804 in file DRAW_LOSE.s
+      At line 806 in file DRAW_LOSE.s
+      At line 808 in file DRAW_LOSE.s
+      At line 810 in file DRAW_LOSE.s
+      At line 812 in file DRAW_LOSE.s
+      At line 814 in file DRAW_LOSE.s
+      At line 816 in file DRAW_LOSE.s
+      At line 818 in file DRAW_LOSE.s
+      At line 820 in file DRAW_LOSE.s
+      At line 822 in file DRAW_LOSE.s
+      At line 824 in file DRAW_LOSE.s
+      At line 826 in file DRAW_LOSE.s
+      At line 828 in file DRAW_LOSE.s
+      At line 830 in file DRAW_LOSE.s
+      At line 832 in file DRAW_LOSE.s
+      At line 834 in file DRAW_LOSE.s
+
+
+
+ARM Macro Assembler    Page 8 Alphabetic symbol ordering
+External symbols
+
+      At line 836 in file DRAW_LOSE.s
+      At line 838 in file DRAW_LOSE.s
+      At line 840 in file DRAW_LOSE.s
+      At line 842 in file DRAW_LOSE.s
+      At line 844 in file DRAW_LOSE.s
+      At line 846 in file DRAW_LOSE.s
+      At line 848 in file DRAW_LOSE.s
+      At line 850 in file DRAW_LOSE.s
+      At line 852 in file DRAW_LOSE.s
+      At line 854 in file DRAW_LOSE.s
+      At line 856 in file DRAW_LOSE.s
+      At line 858 in file DRAW_LOSE.s
+      At line 860 in file DRAW_LOSE.s
+      At line 862 in file DRAW_LOSE.s
+      At line 864 in file DRAW_LOSE.s
+      At line 866 in file DRAW_LOSE.s
+      At line 868 in file DRAW_LOSE.s
+      At line 870 in file DRAW_LOSE.s
+      At line 872 in file DRAW_LOSE.s
+      At line 874 in file DRAW_LOSE.s
+      At line 876 in file DRAW_LOSE.s
+      At line 878 in file DRAW_LOSE.s
+      At line 880 in file DRAW_LOSE.s
+      At line 882 in file DRAW_LOSE.s
+      At line 884 in file DRAW_LOSE.s
+      At line 886 in file DRAW_LOSE.s
+      At line 888 in file DRAW_LOSE.s
+      At line 890 in file DRAW_LOSE.s
+      At line 892 in file DRAW_LOSE.s
+      At line 894 in file DRAW_LOSE.s
+      At line 896 in file DRAW_LOSE.s
+      At line 898 in file DRAW_LOSE.s
+      At line 900 in file DRAW_LOSE.s
+      At line 902 in file DRAW_LOSE.s
+      At line 904 in file DRAW_LOSE.s
+      At line 906 in file DRAW_LOSE.s
+      At line 908 in file DRAW_LOSE.s
+      At line 910 in file DRAW_LOSE.s
+      At line 912 in file DRAW_LOSE.s
+      At line 914 in file DRAW_LOSE.s
+      At line 916 in file DRAW_LOSE.s
+      At line 918 in file DRAW_LOSE.s
+      At line 920 in file DRAW_LOSE.s
+      At line 922 in file DRAW_LOSE.s
+      At line 924 in file DRAW_LOSE.s
+      At line 926 in file DRAW_LOSE.s
+      At line 928 in file DRAW_LOSE.s
+      At line 930 in file DRAW_LOSE.s
+      At line 932 in file DRAW_LOSE.s
+      At line 934 in file DRAW_LOSE.s
+      At line 936 in file DRAW_LOSE.s
+      At line 938 in file DRAW_LOSE.s
+      At line 940 in file DRAW_LOSE.s
+      At line 942 in file DRAW_LOSE.s
+      At line 944 in file DRAW_LOSE.s
+      At line 946 in file DRAW_LOSE.s
+      At line 948 in file DRAW_LOSE.s
+      At line 950 in file DRAW_LOSE.s
+      At line 952 in file DRAW_LOSE.s
+
+
+
+ARM Macro Assembler    Page 9 Alphabetic symbol ordering
+External symbols
+
+      At line 954 in file DRAW_LOSE.s
+      At line 956 in file DRAW_LOSE.s
+      At line 958 in file DRAW_LOSE.s
+      At line 960 in file DRAW_LOSE.s
+      At line 962 in file DRAW_LOSE.s
+      At line 964 in file DRAW_LOSE.s
+      At line 966 in file DRAW_LOSE.s
+      At line 968 in file DRAW_LOSE.s
+      At line 970 in file DRAW_LOSE.s
+      At line 972 in file DRAW_LOSE.s
+      At line 974 in file DRAW_LOSE.s
+      At line 976 in file DRAW_LOSE.s
+      At line 978 in file DRAW_LOSE.s
+      At line 980 in file DRAW_LOSE.s
+      At line 982 in file DRAW_LOSE.s
+      At line 984 in file DRAW_LOSE.s
+      At line 986 in file DRAW_LOSE.s
+      At line 988 in file DRAW_LOSE.s
+      At line 990 in file DRAW_LOSE.s
+      At line 992 in file DRAW_LOSE.s
+      At line 994 in file DRAW_LOSE.s
+      At line 996 in file DRAW_LOSE.s
+      At line 998 in file DRAW_LOSE.s
+      At line 1000 in file DRAW_LOSE.s
+      At line 1002 in file DRAW_LOSE.s
+      At line 1004 in file DRAW_LOSE.s
+      At line 1006 in file DRAW_LOSE.s
+      At line 1008 in file DRAW_LOSE.s
+      At line 1010 in file DRAW_LOSE.s
+      At line 1012 in file DRAW_LOSE.s
+      At line 1014 in file DRAW_LOSE.s
+      At line 1016 in file DRAW_LOSE.s
+      At line 1018 in file DRAW_LOSE.s
+      At line 1020 in file DRAW_LOSE.s
+      At line 1022 in file DRAW_LOSE.s
+      At line 1024 in file DRAW_LOSE.s
+      At line 1026 in file DRAW_LOSE.s
+
+SetCursor_X 00000000
+
+Symbol: SetCursor_X
+   Definitions
+      At line 8 in file DRAW_LOSE.s
+   Uses
+      At line 15 in file DRAW_LOSE.s
+Comment: SetCursor_X used once
+SetCursor_Y 00000000
+
+Symbol: SetCursor_Y
+   Definitions
+      At line 9 in file DRAW_LOSE.s
+   Uses
+      At line 17 in file DRAW_LOSE.s
+Comment: SetCursor_Y used once
+3 symbols
+339 symbols in table

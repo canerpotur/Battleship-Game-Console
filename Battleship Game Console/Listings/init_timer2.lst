@@ -1,0 +1,807 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ; Routine for creating a pulse train using interrupts
+    2 00000000         ; This uses Channel 0, and a 1MHz Timer Clock (_TAPR = 1
+                       5 )
+    3 00000000         ; Uses Timer0A to create pulse train on PF2
+    4 00000000         
+    5 00000000         ;Nested Vector Interrupt Controller registers
+    6 00000000 00080000 
+                       NVIC_EN0_INT19
+                               EQU              0x00080000  ; Interrupt 19 enab
+                                                            le
+    7 00000000 E000E100 
+                       NVIC_EN0
+                               EQU              0xE000E100  ; IRQ 0 to 31 Set E
+                                                            nable Register
+    8 00000000 E000E410 
+                       NVIC_PRI4
+                               EQU              0xE000E410  ; IRQ 16 to 19 Prio
+                                                            rity Register
+    9 00000000         
+   10 00000000         ; 16/32 Timer Registers
+   11 00000000 40030000 
+                       TIMER0_CFG
+                               EQU              0x40030000
+   12 00000000 40030004 
+                       TIMER0_TAMR
+                               EQU              0x40030004
+   13 00000000 4003000C 
+                       TIMER0_CTL
+                               EQU              0x4003000C
+   14 00000000 40030018 
+                       TIMER0_IMR
+                               EQU              0x40030018
+   15 00000000 4003001C 
+                       TIMER0_RIS
+                               EQU              0x4003001C  ; Timer Interrupt S
+                                                            tatus
+   16 00000000 40030024 
+                       TIMER0_ICR
+                               EQU              0x40030024  ; Timer Interrupt C
+                                                            lear
+   17 00000000 40030028 
+                       TIMER0_TAILR
+                               EQU              0x40030028  ; Timer interval
+   18 00000000 40030038 
+                       TIMER0_TAPR
+                               EQU              0x40030038
+   19 00000000 40030048 
+                       TIMER0_TAR
+                               EQU              0x40030048  ; Timer register
+   20 00000000         
+   21 00000000         ;GPIO Registers
+   22 00000000 40025010 
+                       GPIO_PORTF_DATA
+                               EQU              0x40025010  ; Access BIT2
+   23 00000000 40025400 
+                       GPIO_PORTF_DIR
+                               EQU              0x40025400  ; Port Direction
+   24 00000000 40025420 
+                       GPIO_PORTF_AFSEL
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+                               EQU              0x40025420  ; Alt Function enab
+                                                            le
+   25 00000000 4002551C 
+                       GPIO_PORTF_DEN
+                               EQU              0x4002551C  ; Digital Enable
+   26 00000000 40025528 
+                       GPIO_PORTF_AMSEL
+                               EQU              0x40025528  ; Analog enable
+   27 00000000 4002552C 
+                       GPIO_PORTF_PCTL
+                               EQU              0x4002552C  ; Alternate Functio
+                                                            ns
+   28 00000000         
+   29 00000000         
+   30 00000000         ;System Registers
+   31 00000000 400FE608 
+                       SYSCTL_RCGCGPIO
+                               EQU              0x400FE608  ; GPIO Gate Control
+                                                            
+   32 00000000 400FE604 
+                       SYSCTL_RCGCTIMER
+                               EQU              0x400FE604  ; GPTM Gate Control
+                                                            
+   33 00000000         
+   34 00000000         ;LABEL  DIRECTIVE VALUE  COMMENT
+   35 00000000                 AREA             main   , READONLY, CODE
+   36 00000000                 THUMB                        ; Subsequent instru
+                                                            ctions are Thumb
+   37 00000000                 EXPORT           INIT_TIMER2 ; Make available
+   38 00000000                 EXPORT           My_Timer0A_Handler
+   39 00000000                 IMPORT           NokiaClear
+   40 00000000                 IMPORT           ClearMap
+   41 00000000                 IMPORT           PrintCursor
+   42 00000000                 IMPORT           READ_POT1
+   43 00000000                 IMPORT           SetCursor_X
+   44 00000000                 IMPORT           SetCursor_Y
+   45 00000000                 IMPORT           PrintShip
+   46 00000000                 IMPORT           PRINT
+   47 00000000                 IMPORT           DELAY100
+   48 00000000         
+   49 00000000         
+   50 00000000 00F42400 
+                       CYCLE   EQU              16000000    ; Theoretically:0x0
+                                                            0000014
+   51 00000000         
+   52 00000000         
+   53 00000000         My_Timer0A_Handler
+                               PROC
+   54 00000000 B500            PUSH             {LR}
+   55 00000002         ;LDR  R0, =GPIO_PORTF_DATA ;Address of Port-F data value
+                               
+   56 00000002         ;LDR  R2,[R0]     ;Detect if the output is high or low
+   57 00000002 F10A 0A01       ADD              R10, #1
+   58 00000006 F1BA 0F01       CMP              R10, #1
+   59 0000000A D008            BEQ              Print1
+   60 0000000C F1BA 0F02       CMP              R10, #2
+   61 00000010 D02A            BEQ              Print2
+   62 00000012 F1BA 0F03       CMP              R10, #3
+   63 00000016 D04C            BEQ              Print3
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+   64 00000018 F1BA 0F04       CMP              R10, #4
+   65 0000001C D06E            BEQ              Print4
+   66 0000001E         
+   67 0000001E         
+   68 0000001E         
+   69 0000001E F04F 044C 
+                       Print1  MOV              R4, #76
+   70 00000022 F7FF FFFE       BL               SetCursor_X
+   71 00000026         
+   72 00000026 F04F 0400       MOV              R4, #0
+   73 0000002A F7FF FFFE       BL               SetCursor_Y
+   74 0000002E F04F 0500       MOV              R5, #0x00
+   75 00000032 F7FF FFFE       BL               PRINT
+   76 00000036         
+   77 00000036 F7FF FFFE       BL               DELAY100
+   78 0000003A F04F 0542       MOV              R5, #0x42
+   79 0000003E F7FF FFFE       BL               PRINT
+   80 00000042         
+   81 00000042 F7FF FFFE       BL               DELAY100
+   82 00000046 F04F 057F       MOV              R5, #0x7f
+   83 0000004A F7FF FFFE       BL               PRINT
+   84 0000004E         
+   85 0000004E F7FF FFFE       BL               DELAY100
+   86 00000052 F04F 0540       MOV              R5, #0x40
+   87 00000056 F7FF FFFE       BL               PRINT
+   88 0000005A         
+   89 0000005A F7FF FFFE       BL               DELAY100
+   90 0000005E F04F 0500       MOV              R5, #0x00
+   91 00000062 F7FF FFFE       BL               PRINT
+   92 00000066 E097            B                done
+   93 00000068         
+   94 00000068 F04F 044C 
+                       Print2  MOV              R4, #76
+   95 0000006C F7FF FFFE       BL               SetCursor_X
+   96 00000070         
+   97 00000070 F04F 0400       MOV              R4, #0
+   98 00000074 F7FF FFFE       BL               SetCursor_Y
+   99 00000078         
+  100 00000078 F04F 0542       MOV              R5, #0x42
+  101 0000007C F7FF FFFE       BL               PRINT
+  102 00000080         
+  103 00000080 F7FF FFFE       BL               DELAY100
+  104 00000084 F04F 0561       MOV              R5, #0x61
+  105 00000088 F7FF FFFE       BL               PRINT
+  106 0000008C         
+  107 0000008C F7FF FFFE       BL               DELAY100
+  108 00000090 F04F 0551       MOV              R5, #0x51
+  109 00000094 F7FF FFFE       BL               PRINT
+  110 00000098         
+  111 00000098 F7FF FFFE       BL               DELAY100
+  112 0000009C F04F 0549       MOV              R5, #0x49
+  113 000000A0 F7FF FFFE       BL               PRINT
+  114 000000A4         
+  115 000000A4 F7FF FFFE       BL               DELAY100
+  116 000000A8 F04F 0546       MOV              R5, #0x46
+  117 000000AC F7FF FFFE       BL               PRINT
+  118 000000B0 E072            B                done
+  119 000000B2         
+  120 000000B2 F04F 044C 
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+                       Print3  MOV              R4, #76
+  121 000000B6 F7FF FFFE       BL               SetCursor_X
+  122 000000BA         
+  123 000000BA F04F 0400       MOV              R4, #0
+  124 000000BE F7FF FFFE       BL               SetCursor_Y
+  125 000000C2         
+  126 000000C2 F04F 0521       MOV              R5, #0x21
+  127 000000C6 F7FF FFFE       BL               PRINT
+  128 000000CA         
+  129 000000CA F7FF FFFE       BL               DELAY100
+  130 000000CE F04F 0541       MOV              R5, #0x41
+  131 000000D2 F7FF FFFE       BL               PRINT
+  132 000000D6         
+  133 000000D6 F7FF FFFE       BL               DELAY100
+  134 000000DA F04F 0545       MOV              R5, #0x45
+  135 000000DE F7FF FFFE       BL               PRINT
+  136 000000E2         
+  137 000000E2 F7FF FFFE       BL               DELAY100
+  138 000000E6 F04F 054B       MOV              R5, #0x4b
+  139 000000EA F7FF FFFE       BL               PRINT
+  140 000000EE         
+  141 000000EE F7FF FFFE       BL               DELAY100
+  142 000000F2 F04F 0531       MOV              R5, #0x31
+  143 000000F6 F7FF FFFE       BL               PRINT
+  144 000000FA E04D            B                done
+  145 000000FC         
+  146 000000FC F04F 044C 
+                       Print4  MOV              R4, #76
+  147 00000100 F7FF FFFE       BL               SetCursor_X
+  148 00000104         
+  149 00000104 F04F 0400       MOV              R4, #0
+  150 00000108 F7FF FFFE       BL               SetCursor_Y
+  151 0000010C         
+  152 0000010C F04F 0518       MOV              R5, #0x18
+  153 00000110 F7FF FFFE       BL               PRINT
+  154 00000114         
+  155 00000114 F7FF FFFE       BL               DELAY100
+  156 00000118 F04F 0514       MOV              R5, #0x14
+  157 0000011C F7FF FFFE       BL               PRINT
+  158 00000120         
+  159 00000120 F7FF FFFE       BL               DELAY100
+  160 00000124 F04F 0512       MOV              R5, #0x12
+  161 00000128 F7FF FFFE       BL               PRINT
+  162 0000012C         
+  163 0000012C F7FF FFFE       BL               DELAY100
+  164 00000130 F04F 057F       MOV              R5, #0x7f
+  165 00000134 F7FF FFFE       BL               PRINT
+  166 00000138         
+  167 00000138 F7FF FFFE       BL               DELAY100
+  168 0000013C F04F 0510       MOV              R5, #0x10
+  169 00000140 F7FF FFFE       BL               PRINT
+  170 00000144 F04F 0A00       mov              r10, #0
+  171 00000148 E026            B                done
+  172 0000014A         
+  173 0000014A F04F 044C 
+                       Print5  MOV              R4, #76
+  174 0000014E F7FF FFFE       BL               SetCursor_X
+  175 00000152         
+  176 00000152 F04F 0400       MOV              R4, #0
+
+
+
+ARM Macro Assembler    Page 5 
+
+
+  177 00000156 F7FF FFFE       BL               SetCursor_Y
+  178 0000015A         
+  179 0000015A F04F 0527       MOV              R5, #0x27
+  180 0000015E F7FF FFFE       BL               PRINT
+  181 00000162         
+  182 00000162 F7FF FFFE       BL               DELAY100
+  183 00000166 F04F 0545       MOV              R5, #0x45
+  184 0000016A F7FF FFFE       BL               PRINT
+  185 0000016E         
+  186 0000016E F7FF FFFE       BL               DELAY100
+  187 00000172 F04F 0545       MOV              R5, #0x45
+  188 00000176 F7FF FFFE       BL               PRINT
+  189 0000017A         
+  190 0000017A F7FF FFFE       BL               DELAY100
+  191 0000017E F04F 0545       MOV              R5, #0x45
+  192 00000182 F7FF FFFE       BL               PRINT
+  193 00000186         
+  194 00000186 F7FF FFFE       BL               DELAY100
+  195 0000018A F04F 0539       MOV              R5, #0x39
+  196 0000018E F7FF FFFE       BL               PRINT
+  197 00000192 F04F 0A00       mov              r10, #0
+  198 00000196         
+  199 00000196 E7FF            B                done
+  200 00000198 4816    done    LDR              R0,=TIMER0_ICR ;Address of Time
+                                                            r Interrupt Clear
+  201 0000019A 6801            LDR              R1, [R0]    ;Value of Timer Int
+                                                            errupt Clear
+  202 0000019C F041 0101       ORR              R1,#0x01
+  203 000001A0 6001            STR              R1, [R0]    ;Clear the timer in
+                                                            terrupt
+  204 000001A2 F85D EB04       POP              {LR}
+  205 000001A6 4770            BX               LR
+  206 000001A8                 ENDP
+  207 000001A8         ;---------------------------------------------------
+  208 000001A8         
+  209 000001A8         INIT_TIMER2
+                               proc
+  210 000001A8 4913            LDR              R1, =SYSCTL_RCGCTIMER 
+                                                            ; Start Timer0
+  211 000001AA 680A            LDR              R2, [R1]
+  212 000001AC F042 0201       ORR              R2, R2, #0x01
+  213 000001B0 600A            STR              R2, [R1]
+  214 000001B2 BF00            NOP                          ; allow clock to se
+                                                            ttle
+  215 000001B4 BF00            NOP
+  216 000001B6 BF00            NOP
+  217 000001B8 4910            LDR              R1, =TIMER0_CTL ; disable timer
+                                                             during setup LDR R
+                                                            2, [R1]
+  218 000001BA F022 0201       BIC              R2, R2, #0x01
+  219 000001BE 600A            STR              R2, [R1]
+  220 000001C0 490F            LDR              R1, =TIMER0_CFG 
+                                                            ; set 16 bit mode
+  221 000001C2 F04F 0200       MOV              R2, #0x00
+  222 000001C6 600A            STR              R2, [R1]
+  223 000001C8 490E            LDR              R1, =TIMER0_TAMR
+  224 000001CA F04F 0202       MOV              R2, #0x002  ; set to periodic, 
+                                                            count down
+  225 000001CE 600A            STR              R2, [R1]
+
+
+
+ARM Macro Assembler    Page 6 
+
+
+  226 000001D0 490D            LDR              R1, =TIMER0_TAILR ; initialize 
+                                                            match clocks
+  227 000001D2 4A0E            ldr              R2, =CYCLE
+  228 000001D4 600A            STR              R2, [R1]
+  229 000001D6         ;LDR R1, =TIMER0_TAPR
+  230 000001D6         ;MOV R2, #100 ; divide clock by 16 to
+  231 000001D6         ; STR R2, [R1] ; get 1us clocks
+  232 000001D6 490E            LDR              R1, =TIMER0_IMR ; enable timeou
+                                                            t interrupt
+  233 000001D8 F04F 0201       MOV              R2, #0x01
+  234 000001DC 600A            STR              R2, [R1]
+  235 000001DE         ; Configure interrupt priorities
+  236 000001DE         ; Timer0A is interrupt #19.
+  237 000001DE         ; Interrupts 16-19 are handled by NVIC register PRI4.
+  238 000001DE         ; Interrupt 19 is controlled by bits 31:29 of PRI4.
+  239 000001DE         ; set NVIC interrupt 19 to priority 2
+  240 000001DE         ;  LDR R1, =NVIC_PRI4
+  241 000001DE         ;  LDR R2, [R1]
+  242 000001DE         ;  AND R2, R2, #0x00FFFFFF ; clear interrupt 19 priority
+                       
+  243 000001DE         ;  ORR R2, R2, #0x40000000 ; set interrupt 19 priority t
+                       o 2
+  244 000001DE         ;  STR R2, [R1]
+  245 000001DE         ; NVIC has to be enabled
+  246 000001DE         ; Interrupts 0-31 are handled by NVIC register EN0
+  247 000001DE         ; Interrupt 19 is controlled by bit 19
+  248 000001DE         ; enable interrupt 19 in NVIC
+  249 000001DE 490D            LDR              R1, =NVIC_EN0
+  250 000001E0 F2C0 0208       MOVT             R2, #0x08   ; set bit 19 to ena
+                                                            ble interrupt 19
+  251 000001E4 600A            STR              R2, [R1]
+  252 000001E6         ; Enable timer
+  253 000001E6 4905            LDR              R1, =TIMER0_CTL
+  254 000001E8 680A            LDR              R2, [R1]
+  255 000001EA F042 0201       ORR              R2, R2, #0x01 ; set bit0 to ena
+                                                            ble
+  256 000001EE 600A            STR              R2, [R1]    ; and bit 1 to stal
+                                                            l on debug
+  257 000001F0 4770            BX               LR          ; return
+  258 000001F2                 ENDP
+  259 000001F2                 END
+              00 00 40030024 
+              400FE604 
+              4003000C 
+              40030000 
+              40030004 
+              40030028 
+              00F42400 
+              40030018 
+              E000E100 
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
+erwork --depend=.\objects\init_timer2.d -o.\objects\init_timer2.o -I.\RTE\_Targ
+et_1 -IC:\Keil_v5\ARM\PACK\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123 -IC:\Keil
+_v5\ARM\CMSIS\Include --predefine="__EVAL SETA 1" --predefine="__UVISION_VERSIO
+N SETA 526" --predefine="TM4C123GH6PM SETA 1" --list=.\listings\init_timer2.lst
+ INIT_TIMER2.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+INIT_TIMER2 000001A8
+
+Symbol: INIT_TIMER2
+   Definitions
+      At line 209 in file INIT_TIMER2.s
+   Uses
+      At line 37 in file INIT_TIMER2.s
+Comment: INIT_TIMER2 used once
+My_Timer0A_Handler 00000000
+
+Symbol: My_Timer0A_Handler
+   Definitions
+      At line 53 in file INIT_TIMER2.s
+   Uses
+      At line 38 in file INIT_TIMER2.s
+Comment: My_Timer0A_Handler used once
+Print1 0000001E
+
+Symbol: Print1
+   Definitions
+      At line 69 in file INIT_TIMER2.s
+   Uses
+      At line 59 in file INIT_TIMER2.s
+Comment: Print1 used once
+Print2 00000068
+
+Symbol: Print2
+   Definitions
+      At line 94 in file INIT_TIMER2.s
+   Uses
+      At line 61 in file INIT_TIMER2.s
+Comment: Print2 used once
+Print3 000000B2
+
+Symbol: Print3
+   Definitions
+      At line 120 in file INIT_TIMER2.s
+   Uses
+      At line 63 in file INIT_TIMER2.s
+Comment: Print3 used once
+Print4 000000FC
+
+Symbol: Print4
+   Definitions
+      At line 146 in file INIT_TIMER2.s
+   Uses
+      At line 65 in file INIT_TIMER2.s
+Comment: Print4 used once
+Print5 0000014A
+
+Symbol: Print5
+   Definitions
+      At line 173 in file INIT_TIMER2.s
+   Uses
+      None
+Comment: Print5 unused
+done 00000198
+
+Symbol: done
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Relocatable symbols
+
+   Definitions
+      At line 200 in file INIT_TIMER2.s
+   Uses
+      At line 92 in file INIT_TIMER2.s
+      At line 118 in file INIT_TIMER2.s
+      At line 144 in file INIT_TIMER2.s
+      At line 171 in file INIT_TIMER2.s
+      At line 199 in file INIT_TIMER2.s
+
+main 00000000
+
+Symbol: main
+   Definitions
+      At line 35 in file INIT_TIMER2.s
+   Uses
+      None
+Comment: main unused
+9 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Absolute symbols
+
+CYCLE 00F42400
+
+Symbol: CYCLE
+   Definitions
+      At line 50 in file INIT_TIMER2.s
+   Uses
+      At line 227 in file INIT_TIMER2.s
+Comment: CYCLE used once
+GPIO_PORTF_AFSEL 40025420
+
+Symbol: GPIO_PORTF_AFSEL
+   Definitions
+      At line 24 in file INIT_TIMER2.s
+   Uses
+      None
+Comment: GPIO_PORTF_AFSEL unused
+GPIO_PORTF_AMSEL 40025528
+
+Symbol: GPIO_PORTF_AMSEL
+   Definitions
+      At line 26 in file INIT_TIMER2.s
+   Uses
+      None
+Comment: GPIO_PORTF_AMSEL unused
+GPIO_PORTF_DATA 40025010
+
+Symbol: GPIO_PORTF_DATA
+   Definitions
+      At line 22 in file INIT_TIMER2.s
+   Uses
+      None
+Comment: GPIO_PORTF_DATA unused
+GPIO_PORTF_DEN 4002551C
+
+Symbol: GPIO_PORTF_DEN
+   Definitions
+      At line 25 in file INIT_TIMER2.s
+   Uses
+      None
+Comment: GPIO_PORTF_DEN unused
+GPIO_PORTF_DIR 40025400
+
+Symbol: GPIO_PORTF_DIR
+   Definitions
+      At line 23 in file INIT_TIMER2.s
+   Uses
+      None
+Comment: GPIO_PORTF_DIR unused
+GPIO_PORTF_PCTL 4002552C
+
+Symbol: GPIO_PORTF_PCTL
+   Definitions
+      At line 27 in file INIT_TIMER2.s
+   Uses
+      None
+Comment: GPIO_PORTF_PCTL unused
+NVIC_EN0 E000E100
+
+Symbol: NVIC_EN0
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Absolute symbols
+
+   Definitions
+      At line 7 in file INIT_TIMER2.s
+   Uses
+      At line 249 in file INIT_TIMER2.s
+Comment: NVIC_EN0 used once
+NVIC_EN0_INT19 00080000
+
+Symbol: NVIC_EN0_INT19
+   Definitions
+      At line 6 in file INIT_TIMER2.s
+   Uses
+      None
+Comment: NVIC_EN0_INT19 unused
+NVIC_PRI4 E000E410
+
+Symbol: NVIC_PRI4
+   Definitions
+      At line 8 in file INIT_TIMER2.s
+   Uses
+      None
+Comment: NVIC_PRI4 unused
+SYSCTL_RCGCGPIO 400FE608
+
+Symbol: SYSCTL_RCGCGPIO
+   Definitions
+      At line 31 in file INIT_TIMER2.s
+   Uses
+      None
+Comment: SYSCTL_RCGCGPIO unused
+SYSCTL_RCGCTIMER 400FE604
+
+Symbol: SYSCTL_RCGCTIMER
+   Definitions
+      At line 32 in file INIT_TIMER2.s
+   Uses
+      At line 210 in file INIT_TIMER2.s
+Comment: SYSCTL_RCGCTIMER used once
+TIMER0_CFG 40030000
+
+Symbol: TIMER0_CFG
+   Definitions
+      At line 11 in file INIT_TIMER2.s
+   Uses
+      At line 220 in file INIT_TIMER2.s
+Comment: TIMER0_CFG used once
+TIMER0_CTL 4003000C
+
+Symbol: TIMER0_CTL
+   Definitions
+      At line 13 in file INIT_TIMER2.s
+   Uses
+      At line 217 in file INIT_TIMER2.s
+      At line 253 in file INIT_TIMER2.s
+
+TIMER0_ICR 40030024
+
+Symbol: TIMER0_ICR
+   Definitions
+      At line 16 in file INIT_TIMER2.s
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Absolute symbols
+
+   Uses
+      At line 200 in file INIT_TIMER2.s
+Comment: TIMER0_ICR used once
+TIMER0_IMR 40030018
+
+Symbol: TIMER0_IMR
+   Definitions
+      At line 14 in file INIT_TIMER2.s
+   Uses
+      At line 232 in file INIT_TIMER2.s
+Comment: TIMER0_IMR used once
+TIMER0_RIS 4003001C
+
+Symbol: TIMER0_RIS
+   Definitions
+      At line 15 in file INIT_TIMER2.s
+   Uses
+      None
+Comment: TIMER0_RIS unused
+TIMER0_TAILR 40030028
+
+Symbol: TIMER0_TAILR
+   Definitions
+      At line 17 in file INIT_TIMER2.s
+   Uses
+      At line 226 in file INIT_TIMER2.s
+Comment: TIMER0_TAILR used once
+TIMER0_TAMR 40030004
+
+Symbol: TIMER0_TAMR
+   Definitions
+      At line 12 in file INIT_TIMER2.s
+   Uses
+      At line 223 in file INIT_TIMER2.s
+Comment: TIMER0_TAMR used once
+TIMER0_TAPR 40030038
+
+Symbol: TIMER0_TAPR
+   Definitions
+      At line 18 in file INIT_TIMER2.s
+   Uses
+      None
+Comment: TIMER0_TAPR unused
+TIMER0_TAR 40030048
+
+Symbol: TIMER0_TAR
+   Definitions
+      At line 19 in file INIT_TIMER2.s
+   Uses
+      None
+Comment: TIMER0_TAR unused
+21 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+ClearMap 00000000
+
+Symbol: ClearMap
+   Definitions
+      At line 40 in file INIT_TIMER2.s
+   Uses
+      None
+Comment: ClearMap unused
+DELAY100 00000000
+
+Symbol: DELAY100
+   Definitions
+      At line 47 in file INIT_TIMER2.s
+   Uses
+      At line 77 in file INIT_TIMER2.s
+      At line 81 in file INIT_TIMER2.s
+      At line 85 in file INIT_TIMER2.s
+      At line 89 in file INIT_TIMER2.s
+      At line 103 in file INIT_TIMER2.s
+      At line 107 in file INIT_TIMER2.s
+      At line 111 in file INIT_TIMER2.s
+      At line 115 in file INIT_TIMER2.s
+      At line 129 in file INIT_TIMER2.s
+      At line 133 in file INIT_TIMER2.s
+      At line 137 in file INIT_TIMER2.s
+      At line 141 in file INIT_TIMER2.s
+      At line 155 in file INIT_TIMER2.s
+      At line 159 in file INIT_TIMER2.s
+      At line 163 in file INIT_TIMER2.s
+      At line 167 in file INIT_TIMER2.s
+      At line 182 in file INIT_TIMER2.s
+      At line 186 in file INIT_TIMER2.s
+      At line 190 in file INIT_TIMER2.s
+      At line 194 in file INIT_TIMER2.s
+
+NokiaClear 00000000
+
+Symbol: NokiaClear
+   Definitions
+      At line 39 in file INIT_TIMER2.s
+   Uses
+      None
+Comment: NokiaClear unused
+PRINT 00000000
+
+Symbol: PRINT
+   Definitions
+      At line 46 in file INIT_TIMER2.s
+   Uses
+      At line 75 in file INIT_TIMER2.s
+      At line 79 in file INIT_TIMER2.s
+      At line 83 in file INIT_TIMER2.s
+      At line 87 in file INIT_TIMER2.s
+      At line 91 in file INIT_TIMER2.s
+      At line 101 in file INIT_TIMER2.s
+      At line 105 in file INIT_TIMER2.s
+      At line 109 in file INIT_TIMER2.s
+      At line 113 in file INIT_TIMER2.s
+      At line 117 in file INIT_TIMER2.s
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+External symbols
+
+      At line 127 in file INIT_TIMER2.s
+      At line 131 in file INIT_TIMER2.s
+      At line 135 in file INIT_TIMER2.s
+      At line 139 in file INIT_TIMER2.s
+      At line 143 in file INIT_TIMER2.s
+      At line 153 in file INIT_TIMER2.s
+      At line 157 in file INIT_TIMER2.s
+      At line 161 in file INIT_TIMER2.s
+      At line 165 in file INIT_TIMER2.s
+      At line 169 in file INIT_TIMER2.s
+      At line 180 in file INIT_TIMER2.s
+      At line 184 in file INIT_TIMER2.s
+      At line 188 in file INIT_TIMER2.s
+      At line 192 in file INIT_TIMER2.s
+      At line 196 in file INIT_TIMER2.s
+
+PrintCursor 00000000
+
+Symbol: PrintCursor
+   Definitions
+      At line 41 in file INIT_TIMER2.s
+   Uses
+      None
+Comment: PrintCursor unused
+PrintShip 00000000
+
+Symbol: PrintShip
+   Definitions
+      At line 45 in file INIT_TIMER2.s
+   Uses
+      None
+Comment: PrintShip unused
+READ_POT1 00000000
+
+Symbol: READ_POT1
+   Definitions
+      At line 42 in file INIT_TIMER2.s
+   Uses
+      None
+Comment: READ_POT1 unused
+SetCursor_X 00000000
+
+Symbol: SetCursor_X
+   Definitions
+      At line 43 in file INIT_TIMER2.s
+   Uses
+      At line 70 in file INIT_TIMER2.s
+      At line 95 in file INIT_TIMER2.s
+      At line 121 in file INIT_TIMER2.s
+      At line 147 in file INIT_TIMER2.s
+      At line 174 in file INIT_TIMER2.s
+
+SetCursor_Y 00000000
+
+Symbol: SetCursor_Y
+   Definitions
+      At line 44 in file INIT_TIMER2.s
+   Uses
+      At line 73 in file INIT_TIMER2.s
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+External symbols
+
+      At line 98 in file INIT_TIMER2.s
+      At line 124 in file INIT_TIMER2.s
+      At line 150 in file INIT_TIMER2.s
+      At line 177 in file INIT_TIMER2.s
+
+9 symbols
+375 symbols in table

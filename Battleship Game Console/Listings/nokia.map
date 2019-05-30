@@ -1,0 +1,407 @@
+Component: ARM Compiler 5.06 update 6 (build 750) Tool: armlink [4d35ed]
+
+==============================================================================
+
+Section Cross References
+
+    nokia.o(main) refers to init_nokia.o(main) for INIT_NOKIA
+    nokia.o(main) refers to config_nokia.o(main) for CONFIG_NOKIA
+    nokia.o(main) refers to nokiacommands.o(main) for NokiaClear
+    nokia.o(main) refers to init_systick_timer.o(main) for INIT_SYSTICK_TIMER
+    nokia.o(main) refers to init_switches.o(routines) for INIT_SWITCHES
+    nokia.o(main) refers to delay100m.o(main) for DELAY100m
+    nokia.o(main) refers to read_pot2.o(main) for READ_POT2
+    nokia.o(main) refers to read_pot1.o(main) for READ_POT1
+    nokia.o(main) refers to init_counter.o(main) for INIT_COUNTER
+    startup.o(STACK) refers (Special) to delay100.o(main) for DELAY100
+    startup.o(STACK) refers (Special) to init_counter.o(main) for INIT_COUNTER
+    startup.o(STACK) refers (Special) to nokiacommands.o(main) for PrintCursor
+    startup.o(STACK) refers (Special) to read_pot1.o(main) for READ_POT1
+    startup.o(STACK) refers (Special) to read_pot2.o(main) for READ_POT2
+    startup.o(STACK) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
+    startup.o(HEAP) refers (Special) to delay100.o(main) for DELAY100
+    startup.o(HEAP) refers (Special) to init_counter.o(main) for INIT_COUNTER
+    startup.o(HEAP) refers (Special) to nokiacommands.o(main) for PrintCursor
+    startup.o(HEAP) refers (Special) to read_pot1.o(main) for READ_POT1
+    startup.o(HEAP) refers (Special) to read_pot2.o(main) for READ_POT2
+    startup.o(HEAP) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
+    startup.o(RESET) refers (Special) to delay100.o(main) for DELAY100
+    startup.o(RESET) refers (Special) to init_counter.o(main) for INIT_COUNTER
+    startup.o(RESET) refers (Special) to nokiacommands.o(main) for PrintCursor
+    startup.o(RESET) refers (Special) to read_pot1.o(main) for READ_POT1
+    startup.o(RESET) refers (Special) to read_pot2.o(main) for READ_POT2
+    startup.o(RESET) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
+    startup.o(RESET) refers to startup.o(STACK) for StackMem
+    startup.o(RESET) refers to nokia.o(main) for __main
+    startup.o(RESET) refers to mine_check.o(main) for MINE_CHECK
+    startup.o(RESET) refers to draw_win.o(main) for DRAW_WIN
+    startup.o(RESET) refers to draw_lose.o(main) for DRAW_LOSE
+    startup.o(.text) refers (Special) to delay100.o(main) for DELAY100
+    startup.o(.text) refers (Special) to init_counter.o(main) for INIT_COUNTER
+    startup.o(.text) refers (Special) to nokiacommands.o(main) for PrintCursor
+    startup.o(.text) refers (Special) to read_pot1.o(main) for READ_POT1
+    startup.o(.text) refers (Special) to read_pot2.o(main) for READ_POT2
+    startup.o(.text) refers (Special) to heapauxi.o(.text) for __use_two_region_memory
+    startup.o(.text) refers to startup.o(HEAP) for HeapMem
+    startup.o(.text) refers to startup.o(STACK) for StackMem
+    config_nokia.o(main) refers to delay100.o(main) for DELAY100
+    nokiacommands.o(main) refers to delay100.o(main) for DELAY100
+    nokiacommands.o(main) refers to read_pot2.o(main) for READ_POT2
+    nokiacommands.o(main) refers to read_pot1.o(main) for READ_POT1
+    init_counter.o(main) refers to nokiacommands.o(main) for SetCursor_X
+    init_counter.o(main) refers to delay100.o(main) for DELAY100
+    draw_lose.o(main) refers to nokiacommands.o(main) for SetCursor_X
+    draw_win.o(main) refers to nokiacommands.o(main) for SetCursor_X
+
+
+==============================================================================
+
+Removing Unused input sections from the image.
+
+    Removing startup.o(HEAP), (0 bytes).
+    Removing startup.o(.text), (48 bytes).
+
+2 unused section(s) (total 48 bytes) removed from the image.
+
+==============================================================================
+
+Image Symbol Table
+
+    Local Symbols
+
+    Symbol Name                              Value     Ov Type        Size  Object(Section)
+
+    RESET                                    0x00000000   Section     1248  startup.o(RESET)
+    ../clib/heapaux.c                        0x00000000   Number         0  heapauxi.o ABSOLUTE
+    CONFIG_NOKIA.s                           0x00000000   Number         0  config_nokia.o ABSOLUTE
+    DELAY100.s                               0x00000000   Number         0  delay100.o ABSOLUTE
+    DELAY100m.s                              0x00000000   Number         0  delay100m.o ABSOLUTE
+    DRAW_LOSE.s                              0x00000000   Number         0  draw_lose.o ABSOLUTE
+    DRAW_WIN.s                               0x00000000   Number         0  draw_win.o ABSOLUTE
+    INIT_COUNTER.s                           0x00000000   Number         0  init_counter.o ABSOLUTE
+    INIT_NOKIA.s                             0x00000000   Number         0  init_nokia.o ABSOLUTE
+    INIT_SWITCHES.s                          0x00000000   Number         0  init_switches.o ABSOLUTE
+    INIT_SYSTICK_TIMER.s                     0x00000000   Number         0  init_systick_timer.o ABSOLUTE
+    MINE_CHECK.s                             0x00000000   Number         0  mine_check.o ABSOLUTE
+    NokiaCommands.s                          0x00000000   Number         0  nokiacommands.o ABSOLUTE
+    READ_POT1.s                              0x00000000   Number         0  read_pot1.o ABSOLUTE
+    READ_POT2.s                              0x00000000   Number         0  read_pot2.o ABSOLUTE
+    Startup.s                                0x00000000   Number         0  startup.o ABSOLUTE
+    dc.s                                     0x00000000   Number         0  dc.o ABSOLUTE
+    nokia.s                                  0x00000000   Number         0  nokia.o ABSOLUTE
+    $v0                                      0x0000026c   Number         0  startup.o(RESET)
+    .text                                    0x000004e0   Section        0  heapauxi.o(.text)
+    main                                     0x000004e8   Section      888  nokia.o(main)
+    $v0                                      0x000004e8   Number         0  nokia.o(main)
+    main                                     0x00000860   Section       20  delay100.o(main)
+    $v0                                      0x00000860   Number         0  delay100.o(main)
+    main                                     0x00000874   Section      192  config_nokia.o(main)
+    $v0                                      0x00000874   Number         0  config_nokia.o(main)
+    main                                     0x00000934   Section     6392  nokiacommands.o(main)
+    $v0                                      0x00000934   Number         0  nokiacommands.o(main)
+    main                                     0x0000222c   Section      248  read_pot1.o(main)
+    $v0                                      0x0000222c   Number         0  read_pot1.o(main)
+    main                                     0x00002324   Section      256  init_nokia.o(main)
+    $v0                                      0x00002324   Number         0  init_nokia.o(main)
+    main                                     0x00002424   Section      248  read_pot2.o(main)
+    $v0                                      0x00002424   Number         0  read_pot2.o(main)
+    main                                     0x0000251c   Section       36  init_systick_timer.o(main)
+    $v0                                      0x0000251c   Number         0  init_systick_timer.o(main)
+    main                                     0x00002540   Section     2784  init_counter.o(main)
+    $v0                                      0x00002540   Number         0  init_counter.o(main)
+    main                                     0x00003020   Section       16  delay100m.o(main)
+    $v0                                      0x00003020   Number         0  delay100m.o(main)
+    main                                     0x00003030   Section     4060  draw_lose.o(main)
+    $v0                                      0x00003030   Number         0  draw_lose.o(main)
+    main                                     0x0000400c   Section     4016  draw_win.o(main)
+    $v0                                      0x0000400c   Number         0  draw_win.o(main)
+    main                                     0x00004fbc   Section     3084  mine_check.o(main)
+    $v0                                      0x00004fbc   Number         0  mine_check.o(main)
+    routines                                 0x00005bc8   Section      108  init_switches.o(routines)
+    $v0                                      0x00005bc8   Number         0  init_switches.o(routines)
+    STACK                                    0x20000000   Section     1024  startup.o(STACK)
+    StackMem                                 0x20000000   Data           0  startup.o(STACK)
+
+    Global Symbols
+
+    Symbol Name                              Value     Ov Type        Size  Object(Section)
+
+    BuildAttributes$$THM_ISAv4$E$P$D$K$B$S$7EM$VFPi3$EXTD16$VFPS$VFMA$PE$A:L22UL41UL21$X:L11$S22US41US21$IEEE1$IW$USESV6$~STKCKD$USESV7$~SHL$OSPACE$ROPI$EBA8$STANDARDLIB$REQ8$EABIv2 0x00000000   Number         0  anon$$obj.o ABSOLUTE
+    __Vectors                                0x00000000   Data           0  startup.o(RESET)
+    Reset_Handler                            0x0000026d   Thumb Code     0  startup.o(RESET)
+    NMI_Handler                              0x00000271   Thumb Code     2  startup.o(RESET)
+    HardFault_Handler                        0x00000273   Thumb Code     2  startup.o(RESET)
+    MemManage_Handler                        0x00000275   Thumb Code     2  startup.o(RESET)
+    BusFault_Handler                         0x00000277   Thumb Code     2  startup.o(RESET)
+    UsageFault_Handler                       0x00000279   Thumb Code     2  startup.o(RESET)
+    SVC_Handler                              0x0000027b   Thumb Code     2  startup.o(RESET)
+    DebugMon_Handler                         0x0000027d   Thumb Code     2  startup.o(RESET)
+    PendSV_Handler                           0x0000027f   Thumb Code     2  startup.o(RESET)
+    SysTick_Handler                          0x00000281   Thumb Code   592  startup.o(RESET)
+    ADC0Seq0_Handler                         0x000004d1   Thumb Code     0  startup.o(RESET)
+    ADC0Seq1_Handler                         0x000004d1   Thumb Code     0  startup.o(RESET)
+    ADC0Seq2_Handler                         0x000004d1   Thumb Code     0  startup.o(RESET)
+    ADC0Seq3_Handler                         0x000004d1   Thumb Code     0  startup.o(RESET)
+    ADC1Seq0_Handler                         0x000004d1   Thumb Code     0  startup.o(RESET)
+    ADC1Seq1_Handler                         0x000004d1   Thumb Code     0  startup.o(RESET)
+    ADC1Seq2_Handler                         0x000004d1   Thumb Code     0  startup.o(RESET)
+    ADC1Seq3_Handler                         0x000004d1   Thumb Code     0  startup.o(RESET)
+    CAN0_Handler                             0x000004d1   Thumb Code     0  startup.o(RESET)
+    CAN1_Handler                             0x000004d1   Thumb Code     0  startup.o(RESET)
+    CAN2_Handler                             0x000004d1   Thumb Code     0  startup.o(RESET)
+    Comp0_Handler                            0x000004d1   Thumb Code     0  startup.o(RESET)
+    Comp1_Handler                            0x000004d1   Thumb Code     0  startup.o(RESET)
+    Comp2_Handler                            0x000004d1   Thumb Code     0  startup.o(RESET)
+    Ethernet_Handler                         0x000004d1   Thumb Code     0  startup.o(RESET)
+    ExtBus_Handler                           0x000004d1   Thumb Code     0  startup.o(RESET)
+    FPU_Handler                              0x000004d1   Thumb Code     0  startup.o(RESET)
+    Fan0_Handler                             0x000004d1   Thumb Code     0  startup.o(RESET)
+    FlashCtl_Handler                         0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortA_Handler                        0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortB_Handler                        0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortC_Handler                        0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortD_Handler                        0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortE_Handler                        0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortF_Handler                        0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortG_Handler                        0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortH_Handler                        0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortJ_Handler                        0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortK_Handler                        0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortL_Handler                        0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortM_Handler                        0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortN_Handler                        0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortP1_Handler                       0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortP2_Handler                       0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortP3_Handler                       0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortP4_Handler                       0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortP5_Handler                       0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortP6_Handler                       0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortP7_Handler                       0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortP_Handler                        0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortQ1_Handler                       0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortQ2_Handler                       0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortQ3_Handler                       0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortQ4_Handler                       0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortQ5_Handler                       0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortQ6_Handler                       0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortQ7_Handler                       0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortQ_Handler                        0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortR_Handler                        0x000004d1   Thumb Code     0  startup.o(RESET)
+    GPIOPortS_Handler                        0x000004d1   Thumb Code     0  startup.o(RESET)
+    Hibernate_Handler                        0x000004d1   Thumb Code     0  startup.o(RESET)
+    I2C0_Handler                             0x000004d1   Thumb Code     0  startup.o(RESET)
+    I2C1_Handler                             0x000004d1   Thumb Code     0  startup.o(RESET)
+    I2C2_Handler                             0x000004d1   Thumb Code     0  startup.o(RESET)
+    I2C3_Handler                             0x000004d1   Thumb Code     0  startup.o(RESET)
+    I2C4_Handler                             0x000004d1   Thumb Code     0  startup.o(RESET)
+    I2C5_Handler                             0x000004d1   Thumb Code     0  startup.o(RESET)
+    I2S0_Handler                             0x000004d1   Thumb Code     0  startup.o(RESET)
+    LPC0_Handler                             0x000004d1   Thumb Code     0  startup.o(RESET)
+    PECI0_Handler                            0x000004d1   Thumb Code     0  startup.o(RESET)
+    PWM0Fault_Handler                        0x000004d1   Thumb Code     0  startup.o(RESET)
+    PWM0Generator0_Handler                   0x000004d1   Thumb Code     0  startup.o(RESET)
+    PWM0Generator1_Handler                   0x000004d1   Thumb Code     0  startup.o(RESET)
+    PWM0Generator2_Handler                   0x000004d1   Thumb Code     0  startup.o(RESET)
+    PWM0Generator3_Handler                   0x000004d1   Thumb Code     0  startup.o(RESET)
+    PWM1Fault_Handler                        0x000004d1   Thumb Code     0  startup.o(RESET)
+    PWM1Generator0_Handler                   0x000004d1   Thumb Code     0  startup.o(RESET)
+    PWM1Generator1_Handler                   0x000004d1   Thumb Code     0  startup.o(RESET)
+    PWM1Generator2_Handler                   0x000004d1   Thumb Code     0  startup.o(RESET)
+    PWM1Generator3_Handler                   0x000004d1   Thumb Code     0  startup.o(RESET)
+    Quadrature0_Handler                      0x000004d1   Thumb Code     0  startup.o(RESET)
+    Quadrature1_Handler                      0x000004d1   Thumb Code     0  startup.o(RESET)
+    Quadrature2_Handler                      0x000004d1   Thumb Code     0  startup.o(RESET)
+    SSI0_Handler                             0x000004d1   Thumb Code     0  startup.o(RESET)
+    SSI1_Handler                             0x000004d1   Thumb Code     0  startup.o(RESET)
+    SSI2_Handler                             0x000004d1   Thumb Code     0  startup.o(RESET)
+    SSI3_Handler                             0x000004d1   Thumb Code     0  startup.o(RESET)
+    SysCtl_Handler                           0x000004d1   Thumb Code     0  startup.o(RESET)
+    Timer0A_Handler                          0x000004d1   Thumb Code     0  startup.o(RESET)
+    Timer0B_Handler                          0x000004d1   Thumb Code     0  startup.o(RESET)
+    Timer1A_Handler                          0x000004d1   Thumb Code     0  startup.o(RESET)
+    Timer1B_Handler                          0x000004d1   Thumb Code     0  startup.o(RESET)
+    Timer2A_Handler                          0x000004d1   Thumb Code     0  startup.o(RESET)
+    Timer2B_Handler                          0x000004d1   Thumb Code     0  startup.o(RESET)
+    Timer3A_Handler                          0x000004d1   Thumb Code     0  startup.o(RESET)
+    Timer3B_Handler                          0x000004d1   Thumb Code     0  startup.o(RESET)
+    Timer4A_Handler                          0x000004d1   Thumb Code     0  startup.o(RESET)
+    Timer4B_Handler                          0x000004d1   Thumb Code     0  startup.o(RESET)
+    Timer5A_Handler                          0x000004d1   Thumb Code     0  startup.o(RESET)
+    Timer5B_Handler                          0x000004d1   Thumb Code     0  startup.o(RESET)
+    UART0_Handler                            0x000004d1   Thumb Code     0  startup.o(RESET)
+    UART1_Handler                            0x000004d1   Thumb Code     0  startup.o(RESET)
+    UART2_Handler                            0x000004d1   Thumb Code     0  startup.o(RESET)
+    UART3_Handler                            0x000004d1   Thumb Code     0  startup.o(RESET)
+    UART4_Handler                            0x000004d1   Thumb Code     0  startup.o(RESET)
+    UART5_Handler                            0x000004d1   Thumb Code     0  startup.o(RESET)
+    UART6_Handler                            0x000004d1   Thumb Code     0  startup.o(RESET)
+    UART7_Handler                            0x000004d1   Thumb Code     0  startup.o(RESET)
+    USB0_Handler                             0x000004d1   Thumb Code     0  startup.o(RESET)
+    WDT_Handler                              0x000004d1   Thumb Code     0  startup.o(RESET)
+    WideTimer0A_Handler                      0x000004d1   Thumb Code     0  startup.o(RESET)
+    WideTimer0B_Handler                      0x000004d1   Thumb Code     0  startup.o(RESET)
+    WideTimer1A_Handler                      0x000004d1   Thumb Code     0  startup.o(RESET)
+    WideTimer1B_Handler                      0x000004d1   Thumb Code     0  startup.o(RESET)
+    WideTimer2A_Handler                      0x000004d1   Thumb Code     0  startup.o(RESET)
+    WideTimer2B_Handler                      0x000004d1   Thumb Code     0  startup.o(RESET)
+    WideTimer3A_Handler                      0x000004d1   Thumb Code     0  startup.o(RESET)
+    WideTimer3B_Handler                      0x000004d1   Thumb Code     0  startup.o(RESET)
+    WideTimer4A_Handler                      0x000004d1   Thumb Code     0  startup.o(RESET)
+    WideTimer4B_Handler                      0x000004d1   Thumb Code     0  startup.o(RESET)
+    WideTimer5A_Handler                      0x000004d1   Thumb Code     0  startup.o(RESET)
+    WideTimer5B_Handler                      0x000004d1   Thumb Code     0  startup.o(RESET)
+    uDMA_Error                               0x000004d1   Thumb Code     0  startup.o(RESET)
+    uDMA_Handler                             0x000004d1   Thumb Code     0  startup.o(RESET)
+    __use_two_region_memory                  0x000004e1   Thumb Code     2  heapauxi.o(.text)
+    __rt_heap_escrow$2region                 0x000004e3   Thumb Code     2  heapauxi.o(.text)
+    __rt_heap_expand$2region                 0x000004e5   Thumb Code     2  heapauxi.o(.text)
+    __main                                   0x000004e9   Thumb Code   776  nokia.o(main)
+    DELAY100                                 0x00000861   Thumb Code    20  delay100.o(main)
+    CONFIG_NOKIA                             0x00000875   Thumb Code   174  config_nokia.o(main)
+    NokiaClear                               0x00000935   Thumb Code    40  nokiacommands.o(main)
+    NokiaCommands                            0x00000935   Thumb Code     0  nokiacommands.o(main)
+    ClearMap                                 0x00000965   Thumb Code   596  nokiacommands.o(main)
+    WAITCOMMAND                              0x00000bc1   Thumb Code    20  nokiacommands.o(main)
+    WAITDATA                                 0x00000bd7   Thumb Code    20  nokiacommands.o(main)
+    SetCursor_X                              0x00000bf1   Thumb Code    50  nokiacommands.o(main)
+    SetCursor_Y                              0x00000c2d   Thumb Code    50  nokiacommands.o(main)
+    PrintCursor                              0x00000c69   Thumb Code    68  nokiacommands.o(main)
+    PRINT                                    0x00000cad   Thumb Code    44  nokiacommands.o(main)
+    PrintMap                                 0x00000cd9   Thumb Code   330  nokiacommands.o(main)
+    PrintShip                                0x00000e25   Thumb Code   364  nokiacommands.o(main)
+    PrintShip2                               0x00000f9d   Thumb Code   364  nokiacommands.o(main)
+    PrintShip3                               0x0000110b   Thumb Code   364  nokiacommands.o(main)
+    PrintShip4                               0x00001289   Thumb Code   364  nokiacommands.o(main)
+    PrintWarShip                             0x00001401   Thumb Code   364  nokiacommands.o(main)
+    PrintWarShip2                            0x0000156f   Thumb Code   364  nokiacommands.o(main)
+    PrintWarShip3                            0x000016dd   Thumb Code   364  nokiacommands.o(main)
+    PrintWarShip4                            0x0000184b   Thumb Code   364  nokiacommands.o(main)
+    PrintMine1                               0x000019b9   Thumb Code   322  nokiacommands.o(main)
+    PrintMine2                               0x00001afd   Thumb Code   322  nokiacommands.o(main)
+    PrintMine3                               0x00001c41   Thumb Code   322  nokiacommands.o(main)
+    PrintMine4                               0x00001d85   Thumb Code   324  nokiacommands.o(main)
+    PrintCursorShip                          0x00001ecb   Thumb Code   416  nokiacommands.o(main)
+    PrintCursor2                             0x0000206d   Thumb Code   380  nokiacommands.o(main)
+    READ_POT1                                0x0000222d   Thumb Code   186  read_pot1.o(main)
+    INIT_NOKIA                               0x00002325   Thumb Code   208  init_nokia.o(main)
+    READ_POT2                                0x00002425   Thumb Code   186  read_pot2.o(main)
+    INIT_SYSTICK_TIMER                       0x0000251d   Thumb Code    28  init_systick_timer.o(main)
+    My_Timer0A_Handler                       0x00002541   Thumb Code  2664  init_counter.o(main)
+    INIT_COUNTER                             0x00002fa9   Thumb Code    78  init_counter.o(main)
+    DELAY100m                                0x00003021   Thumb Code    12  delay100m.o(main)
+    DRAW_LOSE                                0x00003031   Thumb Code  4058  draw_lose.o(main)
+    DRAW_WIN                                 0x0000400d   Thumb Code  4014  draw_win.o(main)
+    MINE_CHECK                               0x00004fbd   Thumb Code  3054  mine_check.o(main)
+    INIT_SWITCHES                            0x00005bc9   Thumb Code    74  init_switches.o(routines)
+
+
+
+==============================================================================
+
+Memory Map of the image
+
+  Image Entry point : 0x0000026d
+
+  Load Region LR_1 (Base: 0x00000000, Size: 0x00006034, Max: 0xffffffff, ABSOLUTE)
+
+    Execution Region ER_RO (Exec base: 0x00000000, Load base: 0x00000000, Size: 0x00005c34, Max: 0xffffffff, ABSOLUTE)
+
+    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
+
+    0x00000000   0x00000000   0x000004e0   Code   RO            9  * RESET               startup.o
+    0x000004e0   0x000004e0   0x00000006   Code   RO           70    .text               c_w.l(heapauxi.o)
+    0x000004e6   0x000004e6   0x00000002   PAD
+    0x000004e8   0x000004e8   0x00000378   Code   RO            1    main                nokia.o
+    0x00000860   0x00000860   0x00000014   Code   RO           16    main                delay100.o
+    0x00000874   0x00000874   0x000000c0   Code   RO           20    main                config_nokia.o
+    0x00000934   0x00000934   0x000018f8   Code   RO           24    main                nokiacommands.o
+    0x0000222c   0x0000222c   0x000000f8   Code   RO           28    main                read_pot1.o
+    0x00002324   0x00002324   0x00000100   Code   RO           32    main                init_nokia.o
+    0x00002424   0x00002424   0x000000f8   Code   RO           36    main                read_pot2.o
+    0x0000251c   0x0000251c   0x00000024   Code   RO           44    main                init_systick_timer.o
+    0x00002540   0x00002540   0x00000ae0   Code   RO           48    main                init_counter.o
+    0x00003020   0x00003020   0x00000010   Code   RO           52    main                delay100m.o
+    0x00003030   0x00003030   0x00000fdc   Code   RO           56    main                draw_lose.o
+    0x0000400c   0x0000400c   0x00000fb0   Code   RO           60    main                draw_win.o
+    0x00004fbc   0x00004fbc   0x00000c0c   Code   RO           64    main                mine_check.o
+    0x00005bc8   0x00005bc8   0x0000006c   Code   RO           40    routines            init_switches.o
+
+
+    Execution Region ER_RW (Exec base: 0x20000000, Load base: 0x00005c34, Size: 0x00000400, Max: 0xffffffff, ABSOLUTE)
+
+    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
+
+    0x20000000   0x00005c34   0x00000400   Data   RW            7    STACK               startup.o
+
+
+    Execution Region ER_ZI (Exec base: 0x20000400, Load base: 0x00006034, Size: 0x00000000, Max: 0xffffffff, ABSOLUTE)
+
+    **** No section assigned to this execution region ****
+
+
+==============================================================================
+
+Image component sizes
+
+
+      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
+
+       192         16          0          0          0        452   config_nokia.o
+        20          0          0          0          0        380   delay100.o
+        16          4          0          0          0        376   delay100m.o
+      4060          0          0          0          0       1388   draw_lose.o
+      4016          0          0          0          0       1376   draw_win.o
+      2784         42          0          0          0       1164   init_counter.o
+       256         46          0          0          0        460   init_nokia.o
+       108         34          0          0          0        416   init_switches.o
+        36          8          0          0          0        412   init_systick_timer.o
+      3084        244          0          0          0       1464   mine_check.o
+       888        112          0          0          0        676   nokia.o
+      6392        144          0          0          0       2984   nokiacommands.o
+       248         62          0          0          0        448   read_pot1.o
+       248         62          0          0          0        448   read_pot2.o
+      1248        630          0       1024          0        932   startup.o
+
+    ----------------------------------------------------------------------
+     23596       1404          0       1024          0      13376   Object Totals
+         0          0          0          0          0          0   (incl. Generated)
+         0          0          0          0          0          0   (incl. Padding)
+
+    ----------------------------------------------------------------------
+
+      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Library Member Name
+
+         6          0          0          0          0        152   heapauxi.o
+
+    ----------------------------------------------------------------------
+         8          0          0          0          0        152   Library Totals
+         2          0          0          0          0          0   (incl. Padding)
+
+    ----------------------------------------------------------------------
+
+      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Library Name
+
+         6          0          0          0          0        152   c_w.l
+
+    ----------------------------------------------------------------------
+         8          0          0          0          0        152   Library Totals
+
+    ----------------------------------------------------------------------
+
+==============================================================================
+
+
+      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
+
+     23604       1404          0       1024          0      12128   Grand Totals
+     23604       1404          0       1024          0      12128   ELF Image Totals
+     23604       1404          0       1024          0          0   ROM Totals
+
+==============================================================================
+
+    Total RO  Size (Code + RO Data)                23604 (  23.05kB)
+    Total RW  Size (RW Data + ZI Data)              1024 (   1.00kB)
+    Total ROM Size (Code + RO Data + RW Data)      24628 (  24.05kB)
+
+==============================================================================
+

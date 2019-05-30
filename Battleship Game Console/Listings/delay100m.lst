@@ -1,0 +1,66 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ;LABEL  DIRECTIVE VALUE  COMMENT
+    2 00000000                 AREA             main   , READONLY, CODE
+    3 00000000                 THUMB                        ; Subsequent instru
+                                                            ctions are Thumb
+    4 00000000                 EXPORT           DELAY100m   ; Make available
+    5 00000000         
+    6 00000000         DELAY100m
+                               PROC
+    7 00000000 B401            PUSH             {R0}        ; Store the registe
+                                                            r in Stack
+    8 00000002         
+    9 00000002 4802            LDR              R0, =250000 ; Counter value
+   10 00000004 3801    loop    SUBS             R0,#1
+   11 00000006 D1FD            BNE              loop
+   12 00000008         
+   13 00000008 BC01            POP              {R0}
+   14 0000000A 4770            BX               LR
+   15 0000000C         
+   16 0000000C                 ENDP
+   17 0000000C                 ALIGN
+   18 0000000C                 END
+              0003D090 
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
+erwork --depend=.\objects\delay100m.d -o.\objects\delay100m.o -I.\RTE\_Target_1
+ -IC:\Keil_v5\ARM\PACK\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123 -IC:\Keil_v5\
+ARM\CMSIS\Include --predefine="__EVAL SETA 1" --predefine="__UVISION_VERSION SE
+TA 526" --predefine="TM4C123GH6PM SETA 1" --list=.\listings\delay100m.lst DELAY
+100m.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+DELAY100m 00000000
+
+Symbol: DELAY100m
+   Definitions
+      At line 6 in file DELAY100m.s
+   Uses
+      At line 4 in file DELAY100m.s
+Comment: DELAY100m used once
+loop 00000004
+
+Symbol: loop
+   Definitions
+      At line 10 in file DELAY100m.s
+   Uses
+      At line 11 in file DELAY100m.s
+Comment: loop used once
+main 00000000
+
+Symbol: main
+   Definitions
+      At line 2 in file DELAY100m.s
+   Uses
+      None
+Comment: main unused
+3 symbols
+339 symbols in table

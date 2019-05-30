@@ -1,0 +1,2091 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ; Routine for creating a pulse train using interrupts
+    2 00000000         ; This uses Channel 0, and a 1MHz Timer Clock (_TAPR = 1
+                       5 )
+    3 00000000         ; Uses Timer0A to create pulse train on PF2
+    4 00000000         
+    5 00000000         ;Nested Vector Interrupt Controller registers
+    6 00000000 00080000 
+                       NVIC_EN0_INT19
+                               EQU              0x00080000  ; Interrupt 19 enab
+                                                            le
+    7 00000000 E000E100 
+                       NVIC_EN0
+                               EQU              0xE000E100  ; IRQ 0 to 31 Set E
+                                                            nable Register
+    8 00000000 E000E410 
+                       NVIC_PRI4
+                               EQU              0xE000E410  ; IRQ 16 to 19 Prio
+                                                            rity Register
+    9 00000000         
+   10 00000000         ; 16/32 Timer Registers
+   11 00000000 40030000 
+                       TIMER0_CFG
+                               EQU              0x40030000
+   12 00000000 40030004 
+                       TIMER0_TAMR
+                               EQU              0x40030004
+   13 00000000 4003000C 
+                       TIMER0_CTL
+                               EQU              0x4003000C
+   14 00000000 40030018 
+                       TIMER0_IMR
+                               EQU              0x40030018
+   15 00000000 4003001C 
+                       TIMER0_RIS
+                               EQU              0x4003001C  ; Timer Interrupt S
+                                                            tatus
+   16 00000000 40030024 
+                       TIMER0_ICR
+                               EQU              0x40030024  ; Timer Interrupt C
+                                                            lear
+   17 00000000 40030028 
+                       TIMER0_TAILR
+                               EQU              0x40030028  ; Timer interval
+   18 00000000 40030038 
+                       TIMER0_TAPR
+                               EQU              0x40030038
+   19 00000000 40030048 
+                       TIMER0_TAR
+                               EQU              0x40030048  ; Timer register
+   20 00000000         
+   21 00000000         ;GPIO Registers
+   22 00000000 40025010 
+                       GPIO_PORTF_DATA
+                               EQU              0x40025010  ; Access BIT2
+   23 00000000 40025400 
+                       GPIO_PORTF_DIR
+                               EQU              0x40025400  ; Port Direction
+   24 00000000 40025420 
+                       GPIO_PORTF_AFSEL
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+                               EQU              0x40025420  ; Alt Function enab
+                                                            le
+   25 00000000 4002551C 
+                       GPIO_PORTF_DEN
+                               EQU              0x4002551C  ; Digital Enable
+   26 00000000 40025528 
+                       GPIO_PORTF_AMSEL
+                               EQU              0x40025528  ; Analog enable
+   27 00000000 4002552C 
+                       GPIO_PORTF_PCTL
+                               EQU              0x4002552C  ; Alternate Functio
+                                                            ns
+   28 00000000         
+   29 00000000         
+   30 00000000         ;System Registers
+   31 00000000 400FE608 
+                       SYSCTL_RCGCGPIO
+                               EQU              0x400FE608  ; GPIO Gate Control
+                                                            
+   32 00000000 400FE604 
+                       SYSCTL_RCGCTIMER
+                               EQU              0x400FE604  ; GPTM Gate Control
+                                                            
+   33 00000000         
+   34 00000000         ;LABEL  DIRECTIVE VALUE  COMMENT
+   35 00000000                 AREA             main   , READONLY, CODE
+   36 00000000                 THUMB                        ; Subsequent instru
+                                                            ctions are Thumb
+   37 00000000                 EXPORT           INIT_COUNTER ; Make available
+   38 00000000                 EXPORT           My_Timer0A_Handler
+   39 00000000                 IMPORT           NokiaClear
+   40 00000000                 IMPORT           ClearMap
+   41 00000000                 IMPORT           PrintCursor
+   42 00000000                 IMPORT           READ_POT1
+   43 00000000                 IMPORT           SetCursor_X
+   44 00000000                 IMPORT           SetCursor_Y
+   45 00000000                 IMPORT           PrintShip
+   46 00000000                 IMPORT           PRINT
+   47 00000000                 IMPORT           DELAY100
+   48 00000000         
+   49 00000000         
+   50 00000000 00F42400 
+                       CYCLE   EQU              16000000    ; Theoretically:0x0
+                                                            0000014
+   51 00000000 007A1200 
+                       HALFCYCLE
+                               EQU              8000000     ; Theoretically:0x0
+                                                            0000014
+   52 00000000         
+   53 00000000         My_Timer0A_Handler
+                               PROC
+   54 00000000 B500            PUSH             {LR}
+   55 00000002         ;LDR  R0, =GPIO_PORTF_DATA ;Address of Port-F data value
+                               
+   56 00000002         ;LDR  R2,[R0]     ;Detect if the output is high or low
+   57 00000002 F1A6 0601       SUB              R6, #1
+   58 00000006         ;  CMP  R6, #20     
+   59 00000006         ;  BEQ  Print20
+   60 00000006         ;  CMP  R6, #19     
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+   61 00000006         ;  BEQ  Print19
+   62 00000006         ;  CMP  R6, #18     
+   63 00000006         ;  BEQ  Print18
+   64 00000006         ;  CMP  R6, #17     
+   65 00000006         ;  BEQ  Print17   
+   66 00000006         
+   67 00000006         
+   68 00000006         Print20
+   69 00000006 2E14            CMP              R6, #20
+   70 00000008 D14C            BNE              Print19
+   71 0000000A         
+   72 0000000A F107 0701       ADD              R7, #1
+   73 0000000E         
+   74 0000000E F04F 0449       MOV              R4, #73
+   75 00000012 F7FF FFFE       BL               SetCursor_X
+   76 00000016 F04F 0400       MOV              R4, #0
+   77 0000001A F7FF FFFE       BL               SetCursor_Y
+   78 0000001E         
+   79 0000001E F04F 0542       MOV              R5, #0x42
+   80 00000022 F7FF FFFE       BL               PRINT
+   81 00000026 F7FF FFFE       BL               DELAY100
+   82 0000002A F04F 0561       MOV              R5, #0x61
+   83 0000002E F7FF FFFE       BL               PRINT
+   84 00000032 F7FF FFFE       BL               DELAY100
+   85 00000036 F04F 0551       MOV              R5, #0x51
+   86 0000003A F7FF FFFE       BL               PRINT
+   87 0000003E F7FF FFFE       BL               DELAY100
+   88 00000042 F04F 0549       MOV              R5, #0x49
+   89 00000046 F7FF FFFE       BL               PRINT
+   90 0000004A F7FF FFFE       BL               DELAY100
+   91 0000004E F04F 0546       MOV              R5, #0x46
+   92 00000052 F7FF FFFE       BL               PRINT
+   93 00000056 F7FF FFFE       BL               DELAY100
+   94 0000005A         
+   95 0000005A F04F 044F       MOV              R4, #79
+   96 0000005E F7FF FFFE       BL               SetCursor_X
+   97 00000062 F04F 0400       MOV              R4, #0
+   98 00000066 F7FF FFFE       BL               SetCursor_Y
+   99 0000006A         
+  100 0000006A F04F 053E       MOV              R5, #0x3E
+  101 0000006E F7FF FFFE       BL               PRINT
+  102 00000072 F7FF FFFE       BL               DELAY100
+  103 00000076 F04F 0551       MOV              R5, #0x51
+  104 0000007A F7FF FFFE       BL               PRINT
+  105 0000007E F7FF FFFE       BL               DELAY100
+  106 00000082 F04F 0549       MOV              R5, #0x49
+  107 00000086 F7FF FFFE       BL               PRINT
+  108 0000008A F7FF FFFE       BL               DELAY100
+  109 0000008E F04F 0545       MOV              R5, #0x45
+  110 00000092 F7FF FFFE       BL               PRINT
+  111 00000096 F7FF FFFE       BL               DELAY100
+  112 0000009A F04F 053E       MOV              R5, #0x3E
+  113 0000009E F7FF FFFE       BL               PRINT
+  114 000000A2 E2C6            B                done1
+  115 000000A4         
+  116 000000A4 2E13    Print19 CMP              R6, #19
+  117 000000A6 D14C            BNE              Print18
+  118 000000A8 F04F 0449       MOV              R4, #73
+  119 000000AC F7FF FFFE       BL               SetCursor_X
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+  120 000000B0 F04F 0400       MOV              R4, #0
+  121 000000B4 F7FF FFFE       BL               SetCursor_Y
+  122 000000B8         
+  123 000000B8 F04F 0500       MOV              R5, #0x00
+  124 000000BC F7FF FFFE       BL               PRINT
+  125 000000C0 F7FF FFFE       BL               DELAY100
+  126 000000C4 F04F 0542       MOV              R5, #0x42
+  127 000000C8 F7FF FFFE       BL               PRINT
+  128 000000CC F7FF FFFE       BL               DELAY100
+  129 000000D0 F04F 057F       MOV              R5, #0x7f
+  130 000000D4 F7FF FFFE       BL               PRINT
+  131 000000D8 F7FF FFFE       BL               DELAY100
+  132 000000DC F04F 0540       MOV              R5, #0x40
+  133 000000E0 F7FF FFFE       BL               PRINT
+  134 000000E4 F7FF FFFE       BL               DELAY100
+  135 000000E8 F04F 0500       MOV              R5, #0x00
+  136 000000EC F7FF FFFE       BL               PRINT
+  137 000000F0 F7FF FFFE       BL               DELAY100
+  138 000000F4         
+  139 000000F4 F04F 044F       MOV              R4, #79
+  140 000000F8 F7FF FFFE       BL               SetCursor_X
+  141 000000FC F04F 0400       MOV              R4, #0
+  142 00000100 F7FF FFFE       BL               SetCursor_Y
+  143 00000104         
+  144 00000104 F04F 0506       MOV              R5, #0x06
+  145 00000108 F7FF FFFE       BL               PRINT
+  146 0000010C F7FF FFFE       BL               DELAY100
+  147 00000110 F04F 0549       MOV              R5, #0x49
+  148 00000114 F7FF FFFE       BL               PRINT
+  149 00000118 F7FF FFFE       BL               DELAY100
+  150 0000011C F04F 0549       MOV              R5, #0x49
+  151 00000120 F7FF FFFE       BL               PRINT
+  152 00000124 F7FF FFFE       BL               DELAY100
+  153 00000128 F04F 0529       MOV              R5, #0x29
+  154 0000012C F7FF FFFE       BL               PRINT
+  155 00000130 F7FF FFFE       BL               DELAY100
+  156 00000134 F04F 051E       MOV              R5, #0x1E
+  157 00000138 F7FF FFFE       BL               PRINT
+  158 0000013C F7FF FFFE       BL               DELAY100
+  159 00000140         
+  160 00000140 E277            B                done1
+  161 00000142         
+  162 00000142         
+  163 00000142 2E12    Print18 CMP              R6, #18
+  164 00000144 D14C            BNE              Print17
+  165 00000146 F04F 0449       MOV              R4, #73
+  166 0000014A F7FF FFFE       BL               SetCursor_X
+  167 0000014E F04F 0400       MOV              R4, #0
+  168 00000152 F7FF FFFE       BL               SetCursor_Y
+  169 00000156         
+  170 00000156 F04F 0500       MOV              R5, #0x00
+  171 0000015A F7FF FFFE       BL               PRINT
+  172 0000015E F7FF FFFE       BL               DELAY100
+  173 00000162 F04F 0542       MOV              R5, #0x42
+  174 00000166 F7FF FFFE       BL               PRINT
+  175 0000016A F7FF FFFE       BL               DELAY100
+  176 0000016E F04F 057F       MOV              R5, #0x7f
+  177 00000172 F7FF FFFE       BL               PRINT
+  178 00000176 F7FF FFFE       BL               DELAY100
+
+
+
+ARM Macro Assembler    Page 5 
+
+
+  179 0000017A F04F 0540       MOV              R5, #0x40
+  180 0000017E F7FF FFFE       BL               PRINT
+  181 00000182 F7FF FFFE       BL               DELAY100
+  182 00000186 F04F 0500       MOV              R5, #0x00
+  183 0000018A F7FF FFFE       BL               PRINT
+  184 0000018E F7FF FFFE       BL               DELAY100
+  185 00000192         
+  186 00000192 F04F 044F       MOV              R4, #79
+  187 00000196 F7FF FFFE       BL               SetCursor_X
+  188 0000019A F04F 0400       MOV              R4, #0
+  189 0000019E F7FF FFFE       BL               SetCursor_Y
+  190 000001A2         
+  191 000001A2 F04F 0536       MOV              R5, #0x36
+  192 000001A6 F7FF FFFE       BL               PRINT
+  193 000001AA F7FF FFFE       BL               DELAY100
+  194 000001AE F04F 0549       MOV              R5, #0x49
+  195 000001B2 F7FF FFFE       BL               PRINT
+  196 000001B6 F7FF FFFE       BL               DELAY100
+  197 000001BA F04F 0549       MOV              R5, #0x49
+  198 000001BE F7FF FFFE       BL               PRINT
+  199 000001C2 F7FF FFFE       BL               DELAY100
+  200 000001C6 F04F 0549       MOV              R5, #0x49
+  201 000001CA F7FF FFFE       BL               PRINT
+  202 000001CE F7FF FFFE       BL               DELAY100
+  203 000001D2 F04F 0536       MOV              R5, #0x36
+  204 000001D6 F7FF FFFE       BL               PRINT
+  205 000001DA F7FF FFFE       BL               DELAY100
+  206 000001DE         
+  207 000001DE E228            B                done1
+  208 000001E0         
+  209 000001E0         
+  210 000001E0         
+  211 000001E0 2E11    Print17 CMP              R6, #17
+  212 000001E2 D14C            BNE              Print16
+  213 000001E4 F04F 0449       MOV              R4, #73
+  214 000001E8 F7FF FFFE       BL               SetCursor_X
+  215 000001EC F04F 0400       MOV              R4, #0
+  216 000001F0 F7FF FFFE       BL               SetCursor_Y
+  217 000001F4         
+  218 000001F4 F04F 0500       MOV              R5, #0x00
+  219 000001F8 F7FF FFFE       BL               PRINT
+  220 000001FC F7FF FFFE       BL               DELAY100
+  221 00000200 F04F 0542       MOV              R5, #0x42
+  222 00000204 F7FF FFFE       BL               PRINT
+  223 00000208 F7FF FFFE       BL               DELAY100
+  224 0000020C F04F 057F       MOV              R5, #0x7f
+  225 00000210 F7FF FFFE       BL               PRINT
+  226 00000214 F7FF FFFE       BL               DELAY100
+  227 00000218 F04F 0540       MOV              R5, #0x40
+  228 0000021C F7FF FFFE       BL               PRINT
+  229 00000220 F7FF FFFE       BL               DELAY100
+  230 00000224 F04F 0500       MOV              R5, #0x00
+  231 00000228 F7FF FFFE       BL               PRINT
+  232 0000022C F7FF FFFE       BL               DELAY100
+  233 00000230         
+  234 00000230 F04F 044F       MOV              R4, #79
+  235 00000234 F7FF FFFE       BL               SetCursor_X
+  236 00000238 F04F 0400       MOV              R4, #0
+  237 0000023C F7FF FFFE       BL               SetCursor_Y
+
+
+
+ARM Macro Assembler    Page 6 
+
+
+  238 00000240         
+  239 00000240 F04F 0501       MOV              R5, #0x01
+  240 00000244 F7FF FFFE       BL               PRINT
+  241 00000248 F7FF FFFE       BL               DELAY100
+  242 0000024C F04F 0571       MOV              R5, #0x71
+  243 00000250 F7FF FFFE       BL               PRINT
+  244 00000254 F7FF FFFE       BL               DELAY100
+  245 00000258 F04F 0509       MOV              R5, #0x09
+  246 0000025C F7FF FFFE       BL               PRINT
+  247 00000260 F7FF FFFE       BL               DELAY100
+  248 00000264 F04F 0505       MOV              R5, #0x05
+  249 00000268 F7FF FFFE       BL               PRINT
+  250 0000026C F7FF FFFE       BL               DELAY100
+  251 00000270 F04F 0503       MOV              R5, #0x03
+  252 00000274 F7FF FFFE       BL               PRINT
+  253 00000278 F7FF FFFE       BL               DELAY100
+  254 0000027C         
+  255 0000027C E3E9            B                done
+  256 0000027E         
+  257 0000027E 2E10    Print16 CMP              R6, #16
+  258 00000280 D14C            BNE              Print15
+  259 00000282 F04F 0449       MOV              R4, #73
+  260 00000286 F7FF FFFE       BL               SetCursor_X
+  261 0000028A F04F 0400       MOV              R4, #0
+  262 0000028E F7FF FFFE       BL               SetCursor_Y
+  263 00000292         
+  264 00000292 F04F 0500       MOV              R5, #0x00
+  265 00000296 F7FF FFFE       BL               PRINT
+  266 0000029A F7FF FFFE       BL               DELAY100
+  267 0000029E F04F 0542       MOV              R5, #0x42
+  268 000002A2 F7FF FFFE       BL               PRINT
+  269 000002A6 F7FF FFFE       BL               DELAY100
+  270 000002AA F04F 057F       MOV              R5, #0x7f
+  271 000002AE F7FF FFFE       BL               PRINT
+  272 000002B2 F7FF FFFE       BL               DELAY100
+  273 000002B6 F04F 0540       MOV              R5, #0x40
+  274 000002BA F7FF FFFE       BL               PRINT
+  275 000002BE F7FF FFFE       BL               DELAY100
+  276 000002C2 F04F 0500       MOV              R5, #0x00
+  277 000002C6 F7FF FFFE       BL               PRINT
+  278 000002CA F7FF FFFE       BL               DELAY100
+  279 000002CE         
+  280 000002CE F04F 044F       MOV              R4, #79
+  281 000002D2 F7FF FFFE       BL               SetCursor_X
+  282 000002D6 F04F 0400       MOV              R4, #0
+  283 000002DA F7FF FFFE       BL               SetCursor_Y
+  284 000002DE         
+  285 000002DE F04F 053C       MOV              R5, #0x3C
+  286 000002E2 F7FF FFFE       BL               PRINT
+  287 000002E6 F7FF FFFE       BL               DELAY100
+  288 000002EA F04F 054A       MOV              R5, #0x4A
+  289 000002EE F7FF FFFE       BL               PRINT
+  290 000002F2 F7FF FFFE       BL               DELAY100
+  291 000002F6 F04F 0549       MOV              R5, #0x49
+  292 000002FA F7FF FFFE       BL               PRINT
+  293 000002FE F7FF FFFE       BL               DELAY100
+  294 00000302 F04F 0549       MOV              R5, #0x49
+  295 00000306 F7FF FFFE       BL               PRINT
+  296 0000030A F7FF FFFE       BL               DELAY100
+
+
+
+ARM Macro Assembler    Page 7 
+
+
+  297 0000030E F04F 0530       MOV              R5, #0x30
+  298 00000312 F7FF FFFE       BL               PRINT
+  299 00000316 F7FF FFFE       BL               DELAY100
+  300 0000031A         
+  301 0000031A E39A            B                done
+  302 0000031C         
+  303 0000031C 2E0F    Print15 CMP              R6, #15
+  304 0000031E D14C            BNE              Print14
+  305 00000320 F04F 0449       MOV              R4, #73
+  306 00000324 F7FF FFFE       BL               SetCursor_X
+  307 00000328 F04F 0400       MOV              R4, #0
+  308 0000032C F7FF FFFE       BL               SetCursor_Y
+  309 00000330         
+  310 00000330 F04F 0500       MOV              R5, #0x00
+  311 00000334 F7FF FFFE       BL               PRINT
+  312 00000338 F7FF FFFE       BL               DELAY100
+  313 0000033C F04F 0542       MOV              R5, #0x42
+  314 00000340 F7FF FFFE       BL               PRINT
+  315 00000344 F7FF FFFE       BL               DELAY100
+  316 00000348 F04F 057F       MOV              R5, #0x7f
+  317 0000034C F7FF FFFE       BL               PRINT
+  318 00000350 F7FF FFFE       BL               DELAY100
+  319 00000354 F04F 0540       MOV              R5, #0x40
+  320 00000358 F7FF FFFE       BL               PRINT
+  321 0000035C F7FF FFFE       BL               DELAY100
+  322 00000360 F04F 0500       MOV              R5, #0x00
+  323 00000364 F7FF FFFE       BL               PRINT
+  324 00000368 F7FF FFFE       BL               DELAY100
+  325 0000036C         
+  326 0000036C F04F 044F       MOV              R4, #79
+  327 00000370 F7FF FFFE       BL               SetCursor_X
+  328 00000374 F04F 0400       MOV              R4, #0
+  329 00000378 F7FF FFFE       BL               SetCursor_Y
+  330 0000037C         
+  331 0000037C F04F 0527       MOV              R5, #0x27
+  332 00000380 F7FF FFFE       BL               PRINT
+  333 00000384 F7FF FFFE       BL               DELAY100
+  334 00000388 F04F 0545       MOV              R5, #0x45
+  335 0000038C F7FF FFFE       BL               PRINT
+  336 00000390 F7FF FFFE       BL               DELAY100
+  337 00000394 F04F 0545       MOV              R5, #0x45
+  338 00000398 F7FF FFFE       BL               PRINT
+  339 0000039C F7FF FFFE       BL               DELAY100
+  340 000003A0 F04F 0545       MOV              R5, #0x45
+  341 000003A4 F7FF FFFE       BL               PRINT
+  342 000003A8 F7FF FFFE       BL               DELAY100
+  343 000003AC F04F 0539       MOV              R5, #0x39
+  344 000003B0 F7FF FFFE       BL               PRINT
+  345 000003B4 F7FF FFFE       BL               DELAY100
+  346 000003B8         
+  347 000003B8 E34B            B                done
+  348 000003BA         
+  349 000003BA         
+  350 000003BA 2E0E    Print14 CMP              R6, #14
+  351 000003BC D14C            BNE              Print13
+  352 000003BE F04F 0449       MOV              R4, #73
+  353 000003C2 F7FF FFFE       BL               SetCursor_X
+  354 000003C6 F04F 0400       MOV              R4, #0
+  355 000003CA F7FF FFFE       BL               SetCursor_Y
+
+
+
+ARM Macro Assembler    Page 8 
+
+
+  356 000003CE         
+  357 000003CE F04F 0500       MOV              R5, #0x00
+  358 000003D2 F7FF FFFE       BL               PRINT
+  359 000003D6 F7FF FFFE       BL               DELAY100
+  360 000003DA F04F 0542       MOV              R5, #0x42
+  361 000003DE F7FF FFFE       BL               PRINT
+  362 000003E2 F7FF FFFE       BL               DELAY100
+  363 000003E6 F04F 057F       MOV              R5, #0x7f
+  364 000003EA F7FF FFFE       BL               PRINT
+  365 000003EE F7FF FFFE       BL               DELAY100
+  366 000003F2 F04F 0540       MOV              R5, #0x40
+  367 000003F6 F7FF FFFE       BL               PRINT
+  368 000003FA F7FF FFFE       BL               DELAY100
+  369 000003FE F04F 0500       MOV              R5, #0x00
+  370 00000402 F7FF FFFE       BL               PRINT
+  371 00000406 F7FF FFFE       BL               DELAY100
+  372 0000040A         
+  373 0000040A F04F 044F       MOV              R4, #79
+  374 0000040E F7FF FFFE       BL               SetCursor_X
+  375 00000412 F04F 0400       MOV              R4, #0
+  376 00000416 F7FF FFFE       BL               SetCursor_Y
+  377 0000041A         
+  378 0000041A F04F 0518       MOV              R5, #0x18
+  379 0000041E F7FF FFFE       BL               PRINT
+  380 00000422 F7FF FFFE       BL               DELAY100
+  381 00000426 F04F 0514       MOV              R5, #0x14
+  382 0000042A F7FF FFFE       BL               PRINT
+  383 0000042E F7FF FFFE       BL               DELAY100
+  384 00000432 F04F 0512       MOV              R5, #0x12
+  385 00000436 F7FF FFFE       BL               PRINT
+  386 0000043A F7FF FFFE       BL               DELAY100
+  387 0000043E F04F 057F       MOV              R5, #0x7f
+  388 00000442 F7FF FFFE       BL               PRINT
+  389 00000446 F7FF FFFE       BL               DELAY100
+  390 0000044A F04F 0510       MOV              R5, #0x10
+  391 0000044E F7FF FFFE       BL               PRINT
+  392 00000452 F7FF FFFE       BL               DELAY100
+  393 00000456         
+  394 00000456 E2FC            B                done
+  395 00000458         
+  396 00000458 2E0D    Print13 CMP              R6, #13
+  397 0000045A D14C            BNE              Print12
+  398 0000045C F04F 0449       MOV              R4, #73
+  399 00000460 F7FF FFFE       BL               SetCursor_X
+  400 00000464 F04F 0400       MOV              R4, #0
+  401 00000468 F7FF FFFE       BL               SetCursor_Y
+  402 0000046C         
+  403 0000046C F04F 0500       MOV              R5, #0x00
+  404 00000470 F7FF FFFE       BL               PRINT
+  405 00000474 F7FF FFFE       BL               DELAY100
+  406 00000478 F04F 0542       MOV              R5, #0x42
+  407 0000047C F7FF FFFE       BL               PRINT
+  408 00000480 F7FF FFFE       BL               DELAY100
+  409 00000484 F04F 057F       MOV              R5, #0x7f
+  410 00000488 F7FF FFFE       BL               PRINT
+  411 0000048C F7FF FFFE       BL               DELAY100
+  412 00000490 F04F 0540       MOV              R5, #0x40
+  413 00000494 F7FF FFFE       BL               PRINT
+  414 00000498 F7FF FFFE       BL               DELAY100
+
+
+
+ARM Macro Assembler    Page 9 
+
+
+  415 0000049C F04F 0500       MOV              R5, #0x00
+  416 000004A0 F7FF FFFE       BL               PRINT
+  417 000004A4 F7FF FFFE       BL               DELAY100
+  418 000004A8         
+  419 000004A8 F04F 044F       MOV              R4, #79
+  420 000004AC F7FF FFFE       BL               SetCursor_X
+  421 000004B0 F04F 0400       MOV              R4, #0
+  422 000004B4 F7FF FFFE       BL               SetCursor_Y
+  423 000004B8         
+  424 000004B8 F04F 0521       MOV              R5, #0x21
+  425 000004BC F7FF FFFE       BL               PRINT
+  426 000004C0 F7FF FFFE       BL               DELAY100
+  427 000004C4 F04F 0541       MOV              R5, #0x41
+  428 000004C8 F7FF FFFE       BL               PRINT
+  429 000004CC F7FF FFFE       BL               DELAY100
+  430 000004D0 F04F 0545       MOV              R5, #0x45
+  431 000004D4 F7FF FFFE       BL               PRINT
+  432 000004D8 F7FF FFFE       BL               DELAY100
+  433 000004DC F04F 054B       MOV              R5, #0x4B
+  434 000004E0 F7FF FFFE       BL               PRINT
+  435 000004E4 F7FF FFFE       BL               DELAY100
+  436 000004E8 F04F 0531       MOV              R5, #0x31
+  437 000004EC F7FF FFFE       BL               PRINT
+  438 000004F0 F7FF FFFE       BL               DELAY100
+  439 000004F4 E2AD            B                done
+  440 000004F6         
+  441 000004F6 2E0C    Print12 CMP              R6, #12
+  442 000004F8 D14C            BNE              Print11
+  443 000004FA F04F 0449       MOV              R4, #73
+  444 000004FE F7FF FFFE       BL               SetCursor_X
+  445 00000502 F04F 0400       MOV              R4, #0
+  446 00000506 F7FF FFFE       BL               SetCursor_Y
+  447 0000050A         
+  448 0000050A F04F 0500       MOV              R5, #0x00
+  449 0000050E F7FF FFFE       BL               PRINT
+  450 00000512 F7FF FFFE       BL               DELAY100
+  451 00000516 F04F 0542       MOV              R5, #0x42
+  452 0000051A F7FF FFFE       BL               PRINT
+  453 0000051E F7FF FFFE       BL               DELAY100
+  454 00000522 F04F 057F       MOV              R5, #0x7f
+  455 00000526 F7FF FFFE       BL               PRINT
+  456 0000052A F7FF FFFE       BL               DELAY100
+  457 0000052E F04F 0540       MOV              R5, #0x40
+  458 00000532 F7FF FFFE       BL               PRINT
+  459 00000536 F7FF FFFE       BL               DELAY100
+  460 0000053A F04F 0500       MOV              R5, #0x00
+  461 0000053E F7FF FFFE       BL               PRINT
+  462 00000542 F7FF FFFE       BL               DELAY100
+  463 00000546         
+  464 00000546 F04F 044F       MOV              R4, #79
+  465 0000054A F7FF FFFE       BL               SetCursor_X
+  466 0000054E F04F 0400       MOV              R4, #0
+  467 00000552 F7FF FFFE       BL               SetCursor_Y
+  468 00000556         
+  469 00000556 F04F 0542       MOV              R5, #0x42
+  470 0000055A F7FF FFFE       BL               PRINT
+  471 0000055E F7FF FFFE       BL               DELAY100
+  472 00000562 F04F 0561       MOV              R5, #0x61
+  473 00000566 F7FF FFFE       BL               PRINT
+
+
+
+ARM Macro Assembler    Page 10 
+
+
+  474 0000056A F7FF FFFE       BL               DELAY100
+  475 0000056E F04F 0551       MOV              R5, #0x51
+  476 00000572 F7FF FFFE       BL               PRINT
+  477 00000576 F7FF FFFE       BL               DELAY100
+  478 0000057A F04F 0549       MOV              R5, #0x49
+  479 0000057E F7FF FFFE       BL               PRINT
+  480 00000582 F7FF FFFE       BL               DELAY100
+  481 00000586 F04F 0546       MOV              R5, #0x46
+  482 0000058A F7FF FFFE       BL               PRINT
+  483 0000058E F7FF FFFE       BL               DELAY100
+  484 00000592         
+  485 00000592 E25E            B                done
+  486 00000594         
+  487 00000594 2E0B    Print11 CMP              R6, #11
+  488 00000596 D14D            BNE              Print10
+  489 00000598 F04F 0449       MOV              R4, #73
+  490 0000059C F7FF FFFE       BL               SetCursor_X
+  491 000005A0 F04F 0400       MOV              R4, #0
+  492 000005A4 F7FF FFFE       BL               SetCursor_Y
+  493 000005A8         
+  494 000005A8 F04F 0500       MOV              R5, #0x00
+  495 000005AC F7FF FFFE       BL               PRINT
+  496 000005B0 F7FF FFFE       BL               DELAY100
+  497 000005B4 F04F 0542       MOV              R5, #0x42
+  498 000005B8 F7FF FFFE       BL               PRINT
+  499 000005BC F7FF FFFE       BL               DELAY100
+  500 000005C0 F04F 057F       MOV              R5, #0x7f
+  501 000005C4 F7FF FFFE       BL               PRINT
+  502 000005C8 F7FF FFFE       BL               DELAY100
+  503 000005CC F04F 0540       MOV              R5, #0x40
+  504 000005D0 F7FF FFFE       BL               PRINT
+  505 000005D4 F7FF FFFE       BL               DELAY100
+  506 000005D8 F04F 0500       MOV              R5, #0x00
+  507 000005DC F7FF FFFE       BL               PRINT
+  508 000005E0 F7FF FFFE       BL               DELAY100
+  509 000005E4         
+  510 000005E4 F04F 044F       MOV              R4, #79
+  511 000005E8 F7FF FFFE       BL               SetCursor_X
+  512 000005EC F04F 0400       MOV              R4, #0
+  513 000005F0 F7FF FFFE       BL               SetCursor_Y
+  514 000005F4         
+  515 000005F4 F04F 0500       MOV              R5, #0x00
+  516 000005F8 F7FF FFFE       BL               PRINT
+  517 000005FC F7FF FFFE       BL               DELAY100
+  518 00000600 F04F 0542       MOV              R5, #0x42
+  519 00000604 F7FF FFFE       BL               PRINT
+  520 00000608 F7FF FFFE       BL               DELAY100
+  521 0000060C F04F 057F       MOV              R5, #0x7f
+  522 00000610 F7FF FFFE       BL               PRINT
+  523 00000614 F7FF FFFE       BL               DELAY100
+  524 00000618 F04F 0540       MOV              R5, #0x40
+  525 0000061C F7FF FFFE       BL               PRINT
+  526 00000620 F7FF FFFE       BL               DELAY100
+  527 00000624 F04F 0500       MOV              R5, #0x00
+  528 00000628 F7FF FFFE       BL               PRINT
+  529 0000062C F7FF FFFE       BL               DELAY100
+  530 00000630 E20F            B                done
+  531 00000632         
+  532 00000632 E20E    done1   B                done
+
+
+
+ARM Macro Assembler    Page 11 
+
+
+  533 00000634         
+  534 00000634 2E0A    Print10 CMP              R6, #10
+  535 00000636 D14C            BNE              Print9
+  536 00000638 F04F 0449       MOV              R4, #73
+  537 0000063C F7FF FFFE       BL               SetCursor_X
+  538 00000640 F04F 0400       MOV              R4, #0
+  539 00000644 F7FF FFFE       BL               SetCursor_Y
+  540 00000648         
+  541 00000648 F04F 0500       MOV              R5, #0x00
+  542 0000064C F7FF FFFE       BL               PRINT
+  543 00000650 F7FF FFFE       BL               DELAY100
+  544 00000654 F04F 0542       MOV              R5, #0x42
+  545 00000658 F7FF FFFE       BL               PRINT
+  546 0000065C F7FF FFFE       BL               DELAY100
+  547 00000660 F04F 057F       MOV              R5, #0x7f
+  548 00000664 F7FF FFFE       BL               PRINT
+  549 00000668 F7FF FFFE       BL               DELAY100
+  550 0000066C F04F 0540       MOV              R5, #0x40
+  551 00000670 F7FF FFFE       BL               PRINT
+  552 00000674 F7FF FFFE       BL               DELAY100
+  553 00000678 F04F 0500       MOV              R5, #0x00
+  554 0000067C F7FF FFFE       BL               PRINT
+  555 00000680 F7FF FFFE       BL               DELAY100
+  556 00000684         
+  557 00000684 F04F 044F       MOV              R4, #79
+  558 00000688 F7FF FFFE       BL               SetCursor_X
+  559 0000068C F04F 0400       MOV              R4, #0
+  560 00000690 F7FF FFFE       BL               SetCursor_Y
+  561 00000694         
+  562 00000694 F04F 053E       MOV              R5, #0x3E
+  563 00000698 F7FF FFFE       BL               PRINT
+  564 0000069C F7FF FFFE       BL               DELAY100
+  565 000006A0 F04F 0551       MOV              R5, #0x51
+  566 000006A4 F7FF FFFE       BL               PRINT
+  567 000006A8 F7FF FFFE       BL               DELAY100
+  568 000006AC F04F 0549       MOV              R5, #0x49
+  569 000006B0 F7FF FFFE       BL               PRINT
+  570 000006B4 F7FF FFFE       BL               DELAY100
+  571 000006B8 F04F 0545       MOV              R5, #0x45
+  572 000006BC F7FF FFFE       BL               PRINT
+  573 000006C0 F7FF FFFE       BL               DELAY100
+  574 000006C4 F04F 053E       MOV              R5, #0x3E
+  575 000006C8 F7FF FFFE       BL               PRINT
+  576 000006CC F7FF FFFE       BL               DELAY100
+  577 000006D0 E1BF            B                done
+  578 000006D2         
+  579 000006D2         
+  580 000006D2 2E09    Print9  CMP              R6, #9
+  581 000006D4 D14C            BNE              Print8
+  582 000006D6 F04F 0449       MOV              R4, #73
+  583 000006DA F7FF FFFE       BL               SetCursor_X
+  584 000006DE F04F 0400       MOV              R4, #0
+  585 000006E2 F7FF FFFE       BL               SetCursor_Y
+  586 000006E6         
+  587 000006E6 F04F 0500       MOV              R5, #0x00
+  588 000006EA F7FF FFFE       BL               PRINT
+  589 000006EE F7FF FFFE       BL               DELAY100
+  590 000006F2 F04F 0500       MOV              R5, #0x00
+  591 000006F6 F7FF FFFE       BL               PRINT
+
+
+
+ARM Macro Assembler    Page 12 
+
+
+  592 000006FA F7FF FFFE       BL               DELAY100
+  593 000006FE F04F 0500       MOV              R5, #0x00
+  594 00000702 F7FF FFFE       BL               PRINT
+  595 00000706 F7FF FFFE       BL               DELAY100
+  596 0000070A F04F 0500       MOV              R5, #0x00
+  597 0000070E F7FF FFFE       BL               PRINT
+  598 00000712 F7FF FFFE       BL               DELAY100
+  599 00000716 F04F 0500       MOV              R5, #0x00
+  600 0000071A F7FF FFFE       BL               PRINT
+  601 0000071E F7FF FFFE       BL               DELAY100
+  602 00000722         
+  603 00000722 F04F 044F       MOV              R4, #79
+  604 00000726 F7FF FFFE       BL               SetCursor_X
+  605 0000072A F04F 0400       MOV              R4, #0
+  606 0000072E F7FF FFFE       BL               SetCursor_Y
+  607 00000732         
+  608 00000732 F04F 0506       MOV              R5, #0x06
+  609 00000736 F7FF FFFE       BL               PRINT
+  610 0000073A F7FF FFFE       BL               DELAY100
+  611 0000073E F04F 0549       MOV              R5, #0x49
+  612 00000742 F7FF FFFE       BL               PRINT
+  613 00000746 F7FF FFFE       BL               DELAY100
+  614 0000074A F04F 0549       MOV              R5, #0x49
+  615 0000074E F7FF FFFE       BL               PRINT
+  616 00000752 F7FF FFFE       BL               DELAY100
+  617 00000756 F04F 0529       MOV              R5, #0x29
+  618 0000075A F7FF FFFE       BL               PRINT
+  619 0000075E F7FF FFFE       BL               DELAY100
+  620 00000762 F04F 051E       MOV              R5, #0x1E
+  621 00000766 F7FF FFFE       BL               PRINT
+  622 0000076A F7FF FFFE       BL               DELAY100
+  623 0000076E         
+  624 0000076E E170            B                done
+  625 00000770         
+  626 00000770         
+  627 00000770 2E08    Print8  CMP              R6, #8
+  628 00000772 D126            BNE              Print7
+  629 00000774         
+  630 00000774 F04F 044F       MOV              R4, #79
+  631 00000778 F7FF FFFE       BL               SetCursor_X
+  632 0000077C F04F 0400       MOV              R4, #0
+  633 00000780 F7FF FFFE       BL               SetCursor_Y
+  634 00000784         
+  635 00000784 F04F 0536       MOV              R5, #0x36
+  636 00000788 F7FF FFFE       BL               PRINT
+  637 0000078C F7FF FFFE       BL               DELAY100
+  638 00000790 F04F 0549       MOV              R5, #0x49
+  639 00000794 F7FF FFFE       BL               PRINT
+  640 00000798 F7FF FFFE       BL               DELAY100
+  641 0000079C F04F 0549       MOV              R5, #0x49
+  642 000007A0 F7FF FFFE       BL               PRINT
+  643 000007A4 F7FF FFFE       BL               DELAY100
+  644 000007A8 F04F 0549       MOV              R5, #0x49
+  645 000007AC F7FF FFFE       BL               PRINT
+  646 000007B0 F7FF FFFE       BL               DELAY100
+  647 000007B4 F04F 0536       MOV              R5, #0x36
+  648 000007B8 F7FF FFFE       BL               PRINT
+  649 000007BC F7FF FFFE       BL               DELAY100
+  650 000007C0         
+
+
+
+ARM Macro Assembler    Page 13 
+
+
+  651 000007C0 E147            B                done
+  652 000007C2         
+  653 000007C2 2E07    Print7  CMP              R6, #7
+  654 000007C4 D126            BNE              Print6
+  655 000007C6         
+  656 000007C6 F04F 044F       MOV              R4, #79
+  657 000007CA F7FF FFFE       BL               SetCursor_X
+  658 000007CE F04F 0400       MOV              R4, #0
+  659 000007D2 F7FF FFFE       BL               SetCursor_Y
+  660 000007D6         
+  661 000007D6 F04F 0501       MOV              R5, #0x01
+  662 000007DA F7FF FFFE       BL               PRINT
+  663 000007DE F7FF FFFE       BL               DELAY100
+  664 000007E2 F04F 0571       MOV              R5, #0x71
+  665 000007E6 F7FF FFFE       BL               PRINT
+  666 000007EA F7FF FFFE       BL               DELAY100
+  667 000007EE F04F 0509       MOV              R5, #0x09
+  668 000007F2 F7FF FFFE       BL               PRINT
+  669 000007F6 F7FF FFFE       BL               DELAY100
+  670 000007FA F04F 0505       MOV              R5, #0x05
+  671 000007FE F7FF FFFE       BL               PRINT
+  672 00000802 F7FF FFFE       BL               DELAY100
+  673 00000806 F04F 0503       MOV              R5, #0x03
+  674 0000080A F7FF FFFE       BL               PRINT
+  675 0000080E F7FF FFFE       BL               DELAY100
+  676 00000812         
+  677 00000812 E11E            B                done
+  678 00000814         
+  679 00000814 2E06    Print6  CMP              R6, #6
+  680 00000816 D126            BNE              Print5
+  681 00000818         
+  682 00000818 F04F 044F       MOV              R4, #79
+  683 0000081C F7FF FFFE       BL               SetCursor_X
+  684 00000820 F04F 0400       MOV              R4, #0
+  685 00000824 F7FF FFFE       BL               SetCursor_Y
+  686 00000828         
+  687 00000828 F04F 053C       MOV              R5, #0x3C
+  688 0000082C F7FF FFFE       BL               PRINT
+  689 00000830 F7FF FFFE       BL               DELAY100
+  690 00000834 F04F 054A       MOV              R5, #0x4A
+  691 00000838 F7FF FFFE       BL               PRINT
+  692 0000083C F7FF FFFE       BL               DELAY100
+  693 00000840 F04F 0549       MOV              R5, #0x49
+  694 00000844 F7FF FFFE       BL               PRINT
+  695 00000848 F7FF FFFE       BL               DELAY100
+  696 0000084C F04F 0549       MOV              R5, #0x49
+  697 00000850 F7FF FFFE       BL               PRINT
+  698 00000854 F7FF FFFE       BL               DELAY100
+  699 00000858 F04F 0530       MOV              R5, #0x30
+  700 0000085C F7FF FFFE       BL               PRINT
+  701 00000860 F7FF FFFE       BL               DELAY100
+  702 00000864         
+  703 00000864 E0F5            B                done
+  704 00000866         
+  705 00000866 2E05    Print5  CMP              R6, #5
+  706 00000868 D126            BNE              Print4
+  707 0000086A         
+  708 0000086A F04F 044F       MOV              R4, #79
+  709 0000086E F7FF FFFE       BL               SetCursor_X
+
+
+
+ARM Macro Assembler    Page 14 
+
+
+  710 00000872 F04F 0400       MOV              R4, #0
+  711 00000876 F7FF FFFE       BL               SetCursor_Y
+  712 0000087A         
+  713 0000087A F04F 0527       MOV              R5, #0x27
+  714 0000087E F7FF FFFE       BL               PRINT
+  715 00000882 F7FF FFFE       BL               DELAY100
+  716 00000886 F04F 0545       MOV              R5, #0x45
+  717 0000088A F7FF FFFE       BL               PRINT
+  718 0000088E F7FF FFFE       BL               DELAY100
+  719 00000892 F04F 0545       MOV              R5, #0x45
+  720 00000896 F7FF FFFE       BL               PRINT
+  721 0000089A F7FF FFFE       BL               DELAY100
+  722 0000089E F04F 0545       MOV              R5, #0x45
+  723 000008A2 F7FF FFFE       BL               PRINT
+  724 000008A6 F7FF FFFE       BL               DELAY100
+  725 000008AA F04F 0539       MOV              R5, #0x39
+  726 000008AE F7FF FFFE       BL               PRINT
+  727 000008B2 F7FF FFFE       BL               DELAY100
+  728 000008B6         
+  729 000008B6 E0CC            B                done
+  730 000008B8         
+  731 000008B8         
+  732 000008B8 2E04    Print4  CMP              R6, #4
+  733 000008BA D126            BNE              Print3
+  734 000008BC         
+  735 000008BC F04F 044F       MOV              R4, #79
+  736 000008C0 F7FF FFFE       BL               SetCursor_X
+  737 000008C4 F04F 0400       MOV              R4, #0
+  738 000008C8 F7FF FFFE       BL               SetCursor_Y
+  739 000008CC         
+  740 000008CC F04F 0518       MOV              R5, #0x18
+  741 000008D0 F7FF FFFE       BL               PRINT
+  742 000008D4 F7FF FFFE       BL               DELAY100
+  743 000008D8 F04F 0514       MOV              R5, #0x14
+  744 000008DC F7FF FFFE       BL               PRINT
+  745 000008E0 F7FF FFFE       BL               DELAY100
+  746 000008E4 F04F 0512       MOV              R5, #0x12
+  747 000008E8 F7FF FFFE       BL               PRINT
+  748 000008EC F7FF FFFE       BL               DELAY100
+  749 000008F0 F04F 057F       MOV              R5, #0x7f
+  750 000008F4 F7FF FFFE       BL               PRINT
+  751 000008F8 F7FF FFFE       BL               DELAY100
+  752 000008FC F04F 0510       MOV              R5, #0x10
+  753 00000900 F7FF FFFE       BL               PRINT
+  754 00000904 F7FF FFFE       BL               DELAY100
+  755 00000908 E0A3            B                done
+  756 0000090A         
+  757 0000090A 2E03    Print3  CMP              R6, #3
+  758 0000090C D126            BNE              Print2
+  759 0000090E         
+  760 0000090E F04F 044F       MOV              R4, #79
+  761 00000912 F7FF FFFE       BL               SetCursor_X
+  762 00000916 F04F 0400       MOV              R4, #0
+  763 0000091A F7FF FFFE       BL               SetCursor_Y
+  764 0000091E         
+  765 0000091E F04F 0521       MOV              R5, #0x21
+  766 00000922 F7FF FFFE       BL               PRINT
+  767 00000926 F7FF FFFE       BL               DELAY100
+  768 0000092A F04F 0541       MOV              R5, #0x41
+
+
+
+ARM Macro Assembler    Page 15 
+
+
+  769 0000092E F7FF FFFE       BL               PRINT
+  770 00000932 F7FF FFFE       BL               DELAY100
+  771 00000936 F04F 0545       MOV              R5, #0x45
+  772 0000093A F7FF FFFE       BL               PRINT
+  773 0000093E F7FF FFFE       BL               DELAY100
+  774 00000942 F04F 054B       MOV              R5, #0x4B
+  775 00000946 F7FF FFFE       BL               PRINT
+  776 0000094A F7FF FFFE       BL               DELAY100
+  777 0000094E F04F 0531       MOV              R5, #0x31
+  778 00000952 F7FF FFFE       BL               PRINT
+  779 00000956 F7FF FFFE       BL               DELAY100
+  780 0000095A E07A            B                done
+  781 0000095C         
+  782 0000095C 2E02    Print2  CMP              R6, #2
+  783 0000095E D126            BNE              Print1
+  784 00000960         
+  785 00000960 F04F 044F       MOV              R4, #79
+  786 00000964 F7FF FFFE       BL               SetCursor_X
+  787 00000968 F04F 0400       MOV              R4, #0
+  788 0000096C F7FF FFFE       BL               SetCursor_Y
+  789 00000970         
+  790 00000970 F04F 0542       MOV              R5, #0x42
+  791 00000974 F7FF FFFE       BL               PRINT
+  792 00000978 F7FF FFFE       BL               DELAY100
+  793 0000097C F04F 0561       MOV              R5, #0x61
+  794 00000980 F7FF FFFE       BL               PRINT
+  795 00000984 F7FF FFFE       BL               DELAY100
+  796 00000988 F04F 0551       MOV              R5, #0x51
+  797 0000098C F7FF FFFE       BL               PRINT
+  798 00000990 F7FF FFFE       BL               DELAY100
+  799 00000994 F04F 0549       MOV              R5, #0x49
+  800 00000998 F7FF FFFE       BL               PRINT
+  801 0000099C F7FF FFFE       BL               DELAY100
+  802 000009A0 F04F 0546       MOV              R5, #0x46
+  803 000009A4 F7FF FFFE       BL               PRINT
+  804 000009A8 F7FF FFFE       BL               DELAY100
+  805 000009AC         
+  806 000009AC E051            B                done
+  807 000009AE         
+  808 000009AE 2E01    Print1  CMP              R6, #1
+  809 000009B0 D126            BNE              Print0
+  810 000009B2 F04F 044F       MOV              R4, #79
+  811 000009B6 F7FF FFFE       BL               SetCursor_X
+  812 000009BA F04F 0400       MOV              R4, #0
+  813 000009BE F7FF FFFE       BL               SetCursor_Y
+  814 000009C2         
+  815 000009C2 F04F 0500       MOV              R5, #0x00
+  816 000009C6 F7FF FFFE       BL               PRINT
+  817 000009CA F7FF FFFE       BL               DELAY100
+  818 000009CE F04F 0542       MOV              R5, #0x42
+  819 000009D2 F7FF FFFE       BL               PRINT
+  820 000009D6 F7FF FFFE       BL               DELAY100
+  821 000009DA F04F 057F       MOV              R5, #0x7f
+  822 000009DE F7FF FFFE       BL               PRINT
+  823 000009E2 F7FF FFFE       BL               DELAY100
+  824 000009E6 F04F 0540       MOV              R5, #0x40
+  825 000009EA F7FF FFFE       BL               PRINT
+  826 000009EE F7FF FFFE       BL               DELAY100
+  827 000009F2 F04F 0500       MOV              R5, #0x00
+
+
+
+ARM Macro Assembler    Page 16 
+
+
+  828 000009F6 F7FF FFFE       BL               PRINT
+  829 000009FA F7FF FFFE       BL               DELAY100
+  830 000009FE         
+  831 000009FE E028            B                done
+  832 00000A00         
+  833 00000A00 F04F 07FF 
+                       Print0  MOV              R7, 0xFF
+  834 00000A04 F04F 044F       MOV              R4, #79
+  835 00000A08 F7FF FFFE       BL               SetCursor_X
+  836 00000A0C F04F 0400       MOV              R4, #0
+  837 00000A10 F7FF FFFE       BL               SetCursor_Y
+  838 00000A14         
+  839 00000A14 F04F 053E       MOV              R5, #0x3E
+  840 00000A18 F7FF FFFE       BL               PRINT
+  841 00000A1C F7FF FFFE       BL               DELAY100
+  842 00000A20 F04F 0551       MOV              R5, #0x51
+  843 00000A24 F7FF FFFE       BL               PRINT
+  844 00000A28 F7FF FFFE       BL               DELAY100
+  845 00000A2C F04F 0549       MOV              R5, #0x49
+  846 00000A30 F7FF FFFE       BL               PRINT
+  847 00000A34 F7FF FFFE       BL               DELAY100
+  848 00000A38 F04F 0545       MOV              R5, #0x45
+  849 00000A3C F7FF FFFE       BL               PRINT
+  850 00000A40 F7FF FFFE       BL               DELAY100
+  851 00000A44 F04F 053E       MOV              R5, #0x3E
+  852 00000A48 F7FF FFFE       BL               PRINT
+  853 00000A4C F7FF FFFE       BL               DELAY100
+  854 00000A50 E7FF            B                done
+  855 00000A52         
+  856 00000A52 4919    done    LDR              R1, =TIMER0_TAILR
+  857 00000A54 4A19            ldr              R2, =CYCLE  ; 16MHZ*16.000.000 
+                                                            CYCLE=1 SECOND(THEO
+                                                            RETICALLY)
+  858 00000A56 600A            STR              R2, [R1]
+  859 00000A58         
+  860 00000A58 4819            LDR              R0,=TIMER0_ICR ;Address of Time
+                                                            r Interrupt Clear
+  861 00000A5A 6801            LDR              R1, [R0]    ;Value of Timer Int
+                                                            errupt Clear
+  862 00000A5C F041 0101       ORR              R1,#0x01
+  863 00000A60 6001            STR              R1, [R0]    ;Clear the timer in
+                                                            terrupt
+  864 00000A62 F85D EB04       POP              {LR}
+  865 00000A66 4770            BX               LR
+  866 00000A68                 ENDP
+  867 00000A68         ;---------------------------------------------------
+  868 00000A68         
+  869 00000A68         INIT_COUNTER
+                               proc
+  870 00000A68 4916            LDR              R1, =SYSCTL_RCGCTIMER 
+                                                            ; Start Timer0
+  871 00000A6A 680A            LDR              R2, [R1]
+  872 00000A6C F042 0201       ORR              R2, R2, #0x01
+  873 00000A70 600A            STR              R2, [R1]
+  874 00000A72 BF00            NOP                          ; allow clock to se
+                                                            ttle
+  875 00000A74 BF00            NOP
+  876 00000A76 BF00            NOP
+  877 00000A78 4913            LDR              R1, =TIMER0_CTL ; disable timer
+
+
+
+ARM Macro Assembler    Page 17 
+
+
+                                                             during setup LDR R
+                                                            2, [R1]
+  878 00000A7A F022 0201       BIC              R2, R2, #0x01
+  879 00000A7E 600A            STR              R2, [R1]
+  880 00000A80 4912            LDR              R1, =TIMER0_CFG 
+                                                            ; set 16 bit mode
+  881 00000A82 F04F 0200       MOV              R2, #0x00
+  882 00000A86 600A            STR              R2, [R1]
+  883 00000A88 4911            LDR              R1, =TIMER0_TAMR
+  884 00000A8A F04F 0202       MOV              R2, #0x002  ; set to periodic, 
+                                                            count down
+  885 00000A8E 600A            STR              R2, [R1]
+  886 00000A90 4909            LDR              R1, =TIMER0_TAILR ; initialize 
+                                                            match clocks
+  887 00000A92 4A10            LDR              R2, =HALFCYCLE
+  888 00000A94 600A            STR              R2, [R1]
+  889 00000A96         ;LDR R1, =TIMER0_TAPR
+  890 00000A96         ;MOV R2, #100 ; divide clock by 16 to
+  891 00000A96         ; STR R2, [R1] ; get 1us clocks
+  892 00000A96 4910            LDR              R1, =TIMER0_IMR ; enable timeou
+                                                            t interrupt
+  893 00000A98 F04F 0201       MOV              R2, #0x01
+  894 00000A9C 600A            STR              R2, [R1]
+  895 00000A9E         ; Configure interrupt priorities
+  896 00000A9E         ; Timer0A is interrupt #19.
+  897 00000A9E         ; Interrupts 16-19 are handled by NVIC register PRI4.
+  898 00000A9E         ; Interrupt 19 is controlled by bits 31:29 of PRI4.
+  899 00000A9E         ; set NVIC interrupt 19 to priority 2
+  900 00000A9E         ;  LDR R1, =NVIC_PRI4
+  901 00000A9E         ;  LDR R2, [R1]
+  902 00000A9E         ;  AND R2, R2, #0x00FFFFFF ; clear interrupt 19 priority
+                       
+  903 00000A9E         ;  ORR R2, R2, #0x40000000 ; set interrupt 19 priority t
+                       o 2
+  904 00000A9E         ;  STR R2, [R1]
+  905 00000A9E         ; NVIC has to be enabled
+  906 00000A9E         ; Interrupts 0-31 are handled by NVIC register EN0
+  907 00000A9E         ; Interrupt 19 is controlled by bit 19
+  908 00000A9E         ; enable interrupt 19 in NVIC
+  909 00000A9E 490F            LDR              R1, =NVIC_EN0
+  910 00000AA0 F2C0 0208       MOVT             R2, #0x08   ; set bit 19 to ena
+                                                            ble interrupt 19
+  911 00000AA4 600A            STR              R2, [R1]
+  912 00000AA6         ; Enable timer
+  913 00000AA6 4908            LDR              R1, =TIMER0_CTL
+  914 00000AA8 680A            LDR              R2, [R1]
+  915 00000AAA F042 0201       ORR              R2, R2, #0x01 ; set bit0 to ena
+                                                            ble
+  916 00000AAE 600A            STR              R2, [R1]    ; and bit 1 to stal
+                                                            l on debug
+  917 00000AB0 F04F 0615       MOV              R6, #21
+  918 00000AB4 4770            BX               LR          ; return
+  919 00000AB6                 ENDP
+  920 00000AB6                 END
+              00 00 40030028 
+              00F42400 
+              40030024 
+              400FE604 
+              4003000C 
+
+
+
+ARM Macro Assembler    Page 18 
+
+
+              40030000 
+              40030004 
+              007A1200 
+              40030018 
+              E000E100 
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
+erwork --depend=.\objects\init_counter.d -o.\objects\init_counter.o -I.\RTE\_Ta
+rget_1 -IC:\Keil_v5\ARM\PACK\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123 -IC:\Ke
+il_v5\ARM\CMSIS\Include --predefine="__EVAL SETA 1" --predefine="__UVISION_VERS
+ION SETA 526" --predefine="TM4C123GH6PM SETA 1" --list=.\listings\init_counter.
+lst INIT_COUNTER.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+INIT_COUNTER 00000A68
+
+Symbol: INIT_COUNTER
+   Definitions
+      At line 869 in file INIT_COUNTER.s
+   Uses
+      At line 37 in file INIT_COUNTER.s
+Comment: INIT_COUNTER used once
+My_Timer0A_Handler 00000000
+
+Symbol: My_Timer0A_Handler
+   Definitions
+      At line 53 in file INIT_COUNTER.s
+   Uses
+      At line 38 in file INIT_COUNTER.s
+Comment: My_Timer0A_Handler used once
+Print0 00000A00
+
+Symbol: Print0
+   Definitions
+      At line 833 in file INIT_COUNTER.s
+   Uses
+      At line 809 in file INIT_COUNTER.s
+Comment: Print0 used once
+Print1 000009AE
+
+Symbol: Print1
+   Definitions
+      At line 808 in file INIT_COUNTER.s
+   Uses
+      At line 783 in file INIT_COUNTER.s
+Comment: Print1 used once
+Print10 00000634
+
+Symbol: Print10
+   Definitions
+      At line 534 in file INIT_COUNTER.s
+   Uses
+      At line 488 in file INIT_COUNTER.s
+Comment: Print10 used once
+Print11 00000594
+
+Symbol: Print11
+   Definitions
+      At line 487 in file INIT_COUNTER.s
+   Uses
+      At line 442 in file INIT_COUNTER.s
+Comment: Print11 used once
+Print12 000004F6
+
+Symbol: Print12
+   Definitions
+      At line 441 in file INIT_COUNTER.s
+   Uses
+      At line 397 in file INIT_COUNTER.s
+Comment: Print12 used once
+Print13 00000458
+
+Symbol: Print13
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Relocatable symbols
+
+   Definitions
+      At line 396 in file INIT_COUNTER.s
+   Uses
+      At line 351 in file INIT_COUNTER.s
+Comment: Print13 used once
+Print14 000003BA
+
+Symbol: Print14
+   Definitions
+      At line 350 in file INIT_COUNTER.s
+   Uses
+      At line 304 in file INIT_COUNTER.s
+Comment: Print14 used once
+Print15 0000031C
+
+Symbol: Print15
+   Definitions
+      At line 303 in file INIT_COUNTER.s
+   Uses
+      At line 258 in file INIT_COUNTER.s
+Comment: Print15 used once
+Print16 0000027E
+
+Symbol: Print16
+   Definitions
+      At line 257 in file INIT_COUNTER.s
+   Uses
+      At line 212 in file INIT_COUNTER.s
+Comment: Print16 used once
+Print17 000001E0
+
+Symbol: Print17
+   Definitions
+      At line 211 in file INIT_COUNTER.s
+   Uses
+      At line 164 in file INIT_COUNTER.s
+Comment: Print17 used once
+Print18 00000142
+
+Symbol: Print18
+   Definitions
+      At line 163 in file INIT_COUNTER.s
+   Uses
+      At line 117 in file INIT_COUNTER.s
+Comment: Print18 used once
+Print19 000000A4
+
+Symbol: Print19
+   Definitions
+      At line 116 in file INIT_COUNTER.s
+   Uses
+      At line 70 in file INIT_COUNTER.s
+Comment: Print19 used once
+Print2 0000095C
+
+Symbol: Print2
+   Definitions
+      At line 782 in file INIT_COUNTER.s
+   Uses
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Relocatable symbols
+
+      At line 758 in file INIT_COUNTER.s
+Comment: Print2 used once
+Print20 00000006
+
+Symbol: Print20
+   Definitions
+      At line 68 in file INIT_COUNTER.s
+   Uses
+      None
+Comment: Print20 unused
+Print3 0000090A
+
+Symbol: Print3
+   Definitions
+      At line 757 in file INIT_COUNTER.s
+   Uses
+      At line 733 in file INIT_COUNTER.s
+Comment: Print3 used once
+Print4 000008B8
+
+Symbol: Print4
+   Definitions
+      At line 732 in file INIT_COUNTER.s
+   Uses
+      At line 706 in file INIT_COUNTER.s
+Comment: Print4 used once
+Print5 00000866
+
+Symbol: Print5
+   Definitions
+      At line 705 in file INIT_COUNTER.s
+   Uses
+      At line 680 in file INIT_COUNTER.s
+Comment: Print5 used once
+Print6 00000814
+
+Symbol: Print6
+   Definitions
+      At line 679 in file INIT_COUNTER.s
+   Uses
+      At line 654 in file INIT_COUNTER.s
+Comment: Print6 used once
+Print7 000007C2
+
+Symbol: Print7
+   Definitions
+      At line 653 in file INIT_COUNTER.s
+   Uses
+      At line 628 in file INIT_COUNTER.s
+Comment: Print7 used once
+Print8 00000770
+
+Symbol: Print8
+   Definitions
+      At line 627 in file INIT_COUNTER.s
+   Uses
+      At line 581 in file INIT_COUNTER.s
+Comment: Print8 used once
+Print9 000006D2
+
+
+
+ARM Macro Assembler    Page 4 Alphabetic symbol ordering
+Relocatable symbols
+
+
+Symbol: Print9
+   Definitions
+      At line 580 in file INIT_COUNTER.s
+   Uses
+      At line 535 in file INIT_COUNTER.s
+Comment: Print9 used once
+done 00000A52
+
+Symbol: done
+   Definitions
+      At line 856 in file INIT_COUNTER.s
+   Uses
+      At line 255 in file INIT_COUNTER.s
+      At line 301 in file INIT_COUNTER.s
+      At line 347 in file INIT_COUNTER.s
+      At line 394 in file INIT_COUNTER.s
+      At line 439 in file INIT_COUNTER.s
+      At line 485 in file INIT_COUNTER.s
+      At line 530 in file INIT_COUNTER.s
+      At line 532 in file INIT_COUNTER.s
+      At line 577 in file INIT_COUNTER.s
+      At line 624 in file INIT_COUNTER.s
+      At line 651 in file INIT_COUNTER.s
+      At line 677 in file INIT_COUNTER.s
+      At line 703 in file INIT_COUNTER.s
+      At line 729 in file INIT_COUNTER.s
+      At line 755 in file INIT_COUNTER.s
+      At line 780 in file INIT_COUNTER.s
+      At line 806 in file INIT_COUNTER.s
+      At line 831 in file INIT_COUNTER.s
+      At line 854 in file INIT_COUNTER.s
+
+done1 00000632
+
+Symbol: done1
+   Definitions
+      At line 532 in file INIT_COUNTER.s
+   Uses
+      At line 114 in file INIT_COUNTER.s
+      At line 160 in file INIT_COUNTER.s
+      At line 207 in file INIT_COUNTER.s
+
+main 00000000
+
+Symbol: main
+   Definitions
+      At line 35 in file INIT_COUNTER.s
+   Uses
+      None
+Comment: main unused
+26 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Absolute symbols
+
+CYCLE 00F42400
+
+Symbol: CYCLE
+   Definitions
+      At line 50 in file INIT_COUNTER.s
+   Uses
+      At line 857 in file INIT_COUNTER.s
+Comment: CYCLE used once
+GPIO_PORTF_AFSEL 40025420
+
+Symbol: GPIO_PORTF_AFSEL
+   Definitions
+      At line 24 in file INIT_COUNTER.s
+   Uses
+      None
+Comment: GPIO_PORTF_AFSEL unused
+GPIO_PORTF_AMSEL 40025528
+
+Symbol: GPIO_PORTF_AMSEL
+   Definitions
+      At line 26 in file INIT_COUNTER.s
+   Uses
+      None
+Comment: GPIO_PORTF_AMSEL unused
+GPIO_PORTF_DATA 40025010
+
+Symbol: GPIO_PORTF_DATA
+   Definitions
+      At line 22 in file INIT_COUNTER.s
+   Uses
+      None
+Comment: GPIO_PORTF_DATA unused
+GPIO_PORTF_DEN 4002551C
+
+Symbol: GPIO_PORTF_DEN
+   Definitions
+      At line 25 in file INIT_COUNTER.s
+   Uses
+      None
+Comment: GPIO_PORTF_DEN unused
+GPIO_PORTF_DIR 40025400
+
+Symbol: GPIO_PORTF_DIR
+   Definitions
+      At line 23 in file INIT_COUNTER.s
+   Uses
+      None
+Comment: GPIO_PORTF_DIR unused
+GPIO_PORTF_PCTL 4002552C
+
+Symbol: GPIO_PORTF_PCTL
+   Definitions
+      At line 27 in file INIT_COUNTER.s
+   Uses
+      None
+Comment: GPIO_PORTF_PCTL unused
+HALFCYCLE 007A1200
+
+Symbol: HALFCYCLE
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Absolute symbols
+
+   Definitions
+      At line 51 in file INIT_COUNTER.s
+   Uses
+      At line 887 in file INIT_COUNTER.s
+Comment: HALFCYCLE used once
+NVIC_EN0 E000E100
+
+Symbol: NVIC_EN0
+   Definitions
+      At line 7 in file INIT_COUNTER.s
+   Uses
+      At line 909 in file INIT_COUNTER.s
+Comment: NVIC_EN0 used once
+NVIC_EN0_INT19 00080000
+
+Symbol: NVIC_EN0_INT19
+   Definitions
+      At line 6 in file INIT_COUNTER.s
+   Uses
+      None
+Comment: NVIC_EN0_INT19 unused
+NVIC_PRI4 E000E410
+
+Symbol: NVIC_PRI4
+   Definitions
+      At line 8 in file INIT_COUNTER.s
+   Uses
+      None
+Comment: NVIC_PRI4 unused
+SYSCTL_RCGCGPIO 400FE608
+
+Symbol: SYSCTL_RCGCGPIO
+   Definitions
+      At line 31 in file INIT_COUNTER.s
+   Uses
+      None
+Comment: SYSCTL_RCGCGPIO unused
+SYSCTL_RCGCTIMER 400FE604
+
+Symbol: SYSCTL_RCGCTIMER
+   Definitions
+      At line 32 in file INIT_COUNTER.s
+   Uses
+      At line 870 in file INIT_COUNTER.s
+Comment: SYSCTL_RCGCTIMER used once
+TIMER0_CFG 40030000
+
+Symbol: TIMER0_CFG
+   Definitions
+      At line 11 in file INIT_COUNTER.s
+   Uses
+      At line 880 in file INIT_COUNTER.s
+Comment: TIMER0_CFG used once
+TIMER0_CTL 4003000C
+
+Symbol: TIMER0_CTL
+   Definitions
+      At line 13 in file INIT_COUNTER.s
+   Uses
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Absolute symbols
+
+      At line 877 in file INIT_COUNTER.s
+      At line 913 in file INIT_COUNTER.s
+
+TIMER0_ICR 40030024
+
+Symbol: TIMER0_ICR
+   Definitions
+      At line 16 in file INIT_COUNTER.s
+   Uses
+      At line 860 in file INIT_COUNTER.s
+Comment: TIMER0_ICR used once
+TIMER0_IMR 40030018
+
+Symbol: TIMER0_IMR
+   Definitions
+      At line 14 in file INIT_COUNTER.s
+   Uses
+      At line 892 in file INIT_COUNTER.s
+Comment: TIMER0_IMR used once
+TIMER0_RIS 4003001C
+
+Symbol: TIMER0_RIS
+   Definitions
+      At line 15 in file INIT_COUNTER.s
+   Uses
+      None
+Comment: TIMER0_RIS unused
+TIMER0_TAILR 40030028
+
+Symbol: TIMER0_TAILR
+   Definitions
+      At line 17 in file INIT_COUNTER.s
+   Uses
+      At line 856 in file INIT_COUNTER.s
+      At line 886 in file INIT_COUNTER.s
+
+TIMER0_TAMR 40030004
+
+Symbol: TIMER0_TAMR
+   Definitions
+      At line 12 in file INIT_COUNTER.s
+   Uses
+      At line 883 in file INIT_COUNTER.s
+Comment: TIMER0_TAMR used once
+TIMER0_TAPR 40030038
+
+Symbol: TIMER0_TAPR
+   Definitions
+      At line 18 in file INIT_COUNTER.s
+   Uses
+      None
+Comment: TIMER0_TAPR unused
+TIMER0_TAR 40030048
+
+Symbol: TIMER0_TAR
+   Definitions
+      At line 19 in file INIT_COUNTER.s
+   Uses
+      None
+
+
+
+ARM Macro Assembler    Page 4 Alphabetic symbol ordering
+Absolute symbols
+
+Comment: TIMER0_TAR unused
+22 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+ClearMap 00000000
+
+Symbol: ClearMap
+   Definitions
+      At line 40 in file INIT_COUNTER.s
+   Uses
+      None
+Comment: ClearMap unused
+DELAY100 00000000
+
+Symbol: DELAY100
+   Definitions
+      At line 47 in file INIT_COUNTER.s
+   Uses
+      At line 81 in file INIT_COUNTER.s
+      At line 84 in file INIT_COUNTER.s
+      At line 87 in file INIT_COUNTER.s
+      At line 90 in file INIT_COUNTER.s
+      At line 93 in file INIT_COUNTER.s
+      At line 102 in file INIT_COUNTER.s
+      At line 105 in file INIT_COUNTER.s
+      At line 108 in file INIT_COUNTER.s
+      At line 111 in file INIT_COUNTER.s
+      At line 125 in file INIT_COUNTER.s
+      At line 128 in file INIT_COUNTER.s
+      At line 131 in file INIT_COUNTER.s
+      At line 134 in file INIT_COUNTER.s
+      At line 137 in file INIT_COUNTER.s
+      At line 146 in file INIT_COUNTER.s
+      At line 149 in file INIT_COUNTER.s
+      At line 152 in file INIT_COUNTER.s
+      At line 155 in file INIT_COUNTER.s
+      At line 158 in file INIT_COUNTER.s
+      At line 172 in file INIT_COUNTER.s
+      At line 175 in file INIT_COUNTER.s
+      At line 178 in file INIT_COUNTER.s
+      At line 181 in file INIT_COUNTER.s
+      At line 184 in file INIT_COUNTER.s
+      At line 193 in file INIT_COUNTER.s
+      At line 196 in file INIT_COUNTER.s
+      At line 199 in file INIT_COUNTER.s
+      At line 202 in file INIT_COUNTER.s
+      At line 205 in file INIT_COUNTER.s
+      At line 220 in file INIT_COUNTER.s
+      At line 223 in file INIT_COUNTER.s
+      At line 226 in file INIT_COUNTER.s
+      At line 229 in file INIT_COUNTER.s
+      At line 232 in file INIT_COUNTER.s
+      At line 241 in file INIT_COUNTER.s
+      At line 244 in file INIT_COUNTER.s
+      At line 247 in file INIT_COUNTER.s
+      At line 250 in file INIT_COUNTER.s
+      At line 253 in file INIT_COUNTER.s
+      At line 266 in file INIT_COUNTER.s
+      At line 269 in file INIT_COUNTER.s
+      At line 272 in file INIT_COUNTER.s
+      At line 275 in file INIT_COUNTER.s
+      At line 278 in file INIT_COUNTER.s
+      At line 287 in file INIT_COUNTER.s
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+External symbols
+
+      At line 290 in file INIT_COUNTER.s
+      At line 293 in file INIT_COUNTER.s
+      At line 296 in file INIT_COUNTER.s
+      At line 299 in file INIT_COUNTER.s
+      At line 312 in file INIT_COUNTER.s
+      At line 315 in file INIT_COUNTER.s
+      At line 318 in file INIT_COUNTER.s
+      At line 321 in file INIT_COUNTER.s
+      At line 324 in file INIT_COUNTER.s
+      At line 333 in file INIT_COUNTER.s
+      At line 336 in file INIT_COUNTER.s
+      At line 339 in file INIT_COUNTER.s
+      At line 342 in file INIT_COUNTER.s
+      At line 345 in file INIT_COUNTER.s
+      At line 359 in file INIT_COUNTER.s
+      At line 362 in file INIT_COUNTER.s
+      At line 365 in file INIT_COUNTER.s
+      At line 368 in file INIT_COUNTER.s
+      At line 371 in file INIT_COUNTER.s
+      At line 380 in file INIT_COUNTER.s
+      At line 383 in file INIT_COUNTER.s
+      At line 386 in file INIT_COUNTER.s
+      At line 389 in file INIT_COUNTER.s
+      At line 392 in file INIT_COUNTER.s
+      At line 405 in file INIT_COUNTER.s
+      At line 408 in file INIT_COUNTER.s
+      At line 411 in file INIT_COUNTER.s
+      At line 414 in file INIT_COUNTER.s
+      At line 417 in file INIT_COUNTER.s
+      At line 426 in file INIT_COUNTER.s
+      At line 429 in file INIT_COUNTER.s
+      At line 432 in file INIT_COUNTER.s
+      At line 435 in file INIT_COUNTER.s
+      At line 438 in file INIT_COUNTER.s
+      At line 450 in file INIT_COUNTER.s
+      At line 453 in file INIT_COUNTER.s
+      At line 456 in file INIT_COUNTER.s
+      At line 459 in file INIT_COUNTER.s
+      At line 462 in file INIT_COUNTER.s
+      At line 471 in file INIT_COUNTER.s
+      At line 474 in file INIT_COUNTER.s
+      At line 477 in file INIT_COUNTER.s
+      At line 480 in file INIT_COUNTER.s
+      At line 483 in file INIT_COUNTER.s
+      At line 496 in file INIT_COUNTER.s
+      At line 499 in file INIT_COUNTER.s
+      At line 502 in file INIT_COUNTER.s
+      At line 505 in file INIT_COUNTER.s
+      At line 508 in file INIT_COUNTER.s
+      At line 517 in file INIT_COUNTER.s
+      At line 520 in file INIT_COUNTER.s
+      At line 523 in file INIT_COUNTER.s
+      At line 526 in file INIT_COUNTER.s
+      At line 529 in file INIT_COUNTER.s
+      At line 543 in file INIT_COUNTER.s
+      At line 546 in file INIT_COUNTER.s
+      At line 549 in file INIT_COUNTER.s
+      At line 552 in file INIT_COUNTER.s
+      At line 555 in file INIT_COUNTER.s
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+External symbols
+
+      At line 564 in file INIT_COUNTER.s
+      At line 567 in file INIT_COUNTER.s
+      At line 570 in file INIT_COUNTER.s
+      At line 573 in file INIT_COUNTER.s
+      At line 576 in file INIT_COUNTER.s
+      At line 589 in file INIT_COUNTER.s
+      At line 592 in file INIT_COUNTER.s
+      At line 595 in file INIT_COUNTER.s
+      At line 598 in file INIT_COUNTER.s
+      At line 601 in file INIT_COUNTER.s
+      At line 610 in file INIT_COUNTER.s
+      At line 613 in file INIT_COUNTER.s
+      At line 616 in file INIT_COUNTER.s
+      At line 619 in file INIT_COUNTER.s
+      At line 622 in file INIT_COUNTER.s
+      At line 637 in file INIT_COUNTER.s
+      At line 640 in file INIT_COUNTER.s
+      At line 643 in file INIT_COUNTER.s
+      At line 646 in file INIT_COUNTER.s
+      At line 649 in file INIT_COUNTER.s
+      At line 663 in file INIT_COUNTER.s
+      At line 666 in file INIT_COUNTER.s
+      At line 669 in file INIT_COUNTER.s
+      At line 672 in file INIT_COUNTER.s
+      At line 675 in file INIT_COUNTER.s
+      At line 689 in file INIT_COUNTER.s
+      At line 692 in file INIT_COUNTER.s
+      At line 695 in file INIT_COUNTER.s
+      At line 698 in file INIT_COUNTER.s
+      At line 701 in file INIT_COUNTER.s
+      At line 715 in file INIT_COUNTER.s
+      At line 718 in file INIT_COUNTER.s
+      At line 721 in file INIT_COUNTER.s
+      At line 724 in file INIT_COUNTER.s
+      At line 727 in file INIT_COUNTER.s
+      At line 742 in file INIT_COUNTER.s
+      At line 745 in file INIT_COUNTER.s
+      At line 748 in file INIT_COUNTER.s
+      At line 751 in file INIT_COUNTER.s
+      At line 754 in file INIT_COUNTER.s
+      At line 767 in file INIT_COUNTER.s
+      At line 770 in file INIT_COUNTER.s
+      At line 773 in file INIT_COUNTER.s
+      At line 776 in file INIT_COUNTER.s
+      At line 779 in file INIT_COUNTER.s
+      At line 792 in file INIT_COUNTER.s
+      At line 795 in file INIT_COUNTER.s
+      At line 798 in file INIT_COUNTER.s
+      At line 801 in file INIT_COUNTER.s
+      At line 804 in file INIT_COUNTER.s
+      At line 817 in file INIT_COUNTER.s
+      At line 820 in file INIT_COUNTER.s
+      At line 823 in file INIT_COUNTER.s
+      At line 826 in file INIT_COUNTER.s
+      At line 829 in file INIT_COUNTER.s
+      At line 841 in file INIT_COUNTER.s
+      At line 844 in file INIT_COUNTER.s
+      At line 847 in file INIT_COUNTER.s
+      At line 850 in file INIT_COUNTER.s
+
+
+
+ARM Macro Assembler    Page 4 Alphabetic symbol ordering
+External symbols
+
+      At line 853 in file INIT_COUNTER.s
+
+NokiaClear 00000000
+
+Symbol: NokiaClear
+   Definitions
+      At line 39 in file INIT_COUNTER.s
+   Uses
+      None
+Comment: NokiaClear unused
+PRINT 00000000
+
+Symbol: PRINT
+   Definitions
+      At line 46 in file INIT_COUNTER.s
+   Uses
+      At line 80 in file INIT_COUNTER.s
+      At line 83 in file INIT_COUNTER.s
+      At line 86 in file INIT_COUNTER.s
+      At line 89 in file INIT_COUNTER.s
+      At line 92 in file INIT_COUNTER.s
+      At line 101 in file INIT_COUNTER.s
+      At line 104 in file INIT_COUNTER.s
+      At line 107 in file INIT_COUNTER.s
+      At line 110 in file INIT_COUNTER.s
+      At line 113 in file INIT_COUNTER.s
+      At line 124 in file INIT_COUNTER.s
+      At line 127 in file INIT_COUNTER.s
+      At line 130 in file INIT_COUNTER.s
+      At line 133 in file INIT_COUNTER.s
+      At line 136 in file INIT_COUNTER.s
+      At line 145 in file INIT_COUNTER.s
+      At line 148 in file INIT_COUNTER.s
+      At line 151 in file INIT_COUNTER.s
+      At line 154 in file INIT_COUNTER.s
+      At line 157 in file INIT_COUNTER.s
+      At line 171 in file INIT_COUNTER.s
+      At line 174 in file INIT_COUNTER.s
+      At line 177 in file INIT_COUNTER.s
+      At line 180 in file INIT_COUNTER.s
+      At line 183 in file INIT_COUNTER.s
+      At line 192 in file INIT_COUNTER.s
+      At line 195 in file INIT_COUNTER.s
+      At line 198 in file INIT_COUNTER.s
+      At line 201 in file INIT_COUNTER.s
+      At line 204 in file INIT_COUNTER.s
+      At line 219 in file INIT_COUNTER.s
+      At line 222 in file INIT_COUNTER.s
+      At line 225 in file INIT_COUNTER.s
+      At line 228 in file INIT_COUNTER.s
+      At line 231 in file INIT_COUNTER.s
+      At line 240 in file INIT_COUNTER.s
+      At line 243 in file INIT_COUNTER.s
+      At line 246 in file INIT_COUNTER.s
+      At line 249 in file INIT_COUNTER.s
+      At line 252 in file INIT_COUNTER.s
+      At line 265 in file INIT_COUNTER.s
+      At line 268 in file INIT_COUNTER.s
+      At line 271 in file INIT_COUNTER.s
+
+
+
+ARM Macro Assembler    Page 5 Alphabetic symbol ordering
+External symbols
+
+      At line 274 in file INIT_COUNTER.s
+      At line 277 in file INIT_COUNTER.s
+      At line 286 in file INIT_COUNTER.s
+      At line 289 in file INIT_COUNTER.s
+      At line 292 in file INIT_COUNTER.s
+      At line 295 in file INIT_COUNTER.s
+      At line 298 in file INIT_COUNTER.s
+      At line 311 in file INIT_COUNTER.s
+      At line 314 in file INIT_COUNTER.s
+      At line 317 in file INIT_COUNTER.s
+      At line 320 in file INIT_COUNTER.s
+      At line 323 in file INIT_COUNTER.s
+      At line 332 in file INIT_COUNTER.s
+      At line 335 in file INIT_COUNTER.s
+      At line 338 in file INIT_COUNTER.s
+      At line 341 in file INIT_COUNTER.s
+      At line 344 in file INIT_COUNTER.s
+      At line 358 in file INIT_COUNTER.s
+      At line 361 in file INIT_COUNTER.s
+      At line 364 in file INIT_COUNTER.s
+      At line 367 in file INIT_COUNTER.s
+      At line 370 in file INIT_COUNTER.s
+      At line 379 in file INIT_COUNTER.s
+      At line 382 in file INIT_COUNTER.s
+      At line 385 in file INIT_COUNTER.s
+      At line 388 in file INIT_COUNTER.s
+      At line 391 in file INIT_COUNTER.s
+      At line 404 in file INIT_COUNTER.s
+      At line 407 in file INIT_COUNTER.s
+      At line 410 in file INIT_COUNTER.s
+      At line 413 in file INIT_COUNTER.s
+      At line 416 in file INIT_COUNTER.s
+      At line 425 in file INIT_COUNTER.s
+      At line 428 in file INIT_COUNTER.s
+      At line 431 in file INIT_COUNTER.s
+      At line 434 in file INIT_COUNTER.s
+      At line 437 in file INIT_COUNTER.s
+      At line 449 in file INIT_COUNTER.s
+      At line 452 in file INIT_COUNTER.s
+      At line 455 in file INIT_COUNTER.s
+      At line 458 in file INIT_COUNTER.s
+      At line 461 in file INIT_COUNTER.s
+      At line 470 in file INIT_COUNTER.s
+      At line 473 in file INIT_COUNTER.s
+      At line 476 in file INIT_COUNTER.s
+      At line 479 in file INIT_COUNTER.s
+      At line 482 in file INIT_COUNTER.s
+      At line 495 in file INIT_COUNTER.s
+      At line 498 in file INIT_COUNTER.s
+      At line 501 in file INIT_COUNTER.s
+      At line 504 in file INIT_COUNTER.s
+      At line 507 in file INIT_COUNTER.s
+      At line 516 in file INIT_COUNTER.s
+      At line 519 in file INIT_COUNTER.s
+      At line 522 in file INIT_COUNTER.s
+      At line 525 in file INIT_COUNTER.s
+      At line 528 in file INIT_COUNTER.s
+      At line 542 in file INIT_COUNTER.s
+      At line 545 in file INIT_COUNTER.s
+
+
+
+ARM Macro Assembler    Page 6 Alphabetic symbol ordering
+External symbols
+
+      At line 548 in file INIT_COUNTER.s
+      At line 551 in file INIT_COUNTER.s
+      At line 554 in file INIT_COUNTER.s
+      At line 563 in file INIT_COUNTER.s
+      At line 566 in file INIT_COUNTER.s
+      At line 569 in file INIT_COUNTER.s
+      At line 572 in file INIT_COUNTER.s
+      At line 575 in file INIT_COUNTER.s
+      At line 588 in file INIT_COUNTER.s
+      At line 591 in file INIT_COUNTER.s
+      At line 594 in file INIT_COUNTER.s
+      At line 597 in file INIT_COUNTER.s
+      At line 600 in file INIT_COUNTER.s
+      At line 609 in file INIT_COUNTER.s
+      At line 612 in file INIT_COUNTER.s
+      At line 615 in file INIT_COUNTER.s
+      At line 618 in file INIT_COUNTER.s
+      At line 621 in file INIT_COUNTER.s
+      At line 636 in file INIT_COUNTER.s
+      At line 639 in file INIT_COUNTER.s
+      At line 642 in file INIT_COUNTER.s
+      At line 645 in file INIT_COUNTER.s
+      At line 648 in file INIT_COUNTER.s
+      At line 662 in file INIT_COUNTER.s
+      At line 665 in file INIT_COUNTER.s
+      At line 668 in file INIT_COUNTER.s
+      At line 671 in file INIT_COUNTER.s
+      At line 674 in file INIT_COUNTER.s
+      At line 688 in file INIT_COUNTER.s
+      At line 691 in file INIT_COUNTER.s
+      At line 694 in file INIT_COUNTER.s
+      At line 697 in file INIT_COUNTER.s
+      At line 700 in file INIT_COUNTER.s
+      At line 714 in file INIT_COUNTER.s
+      At line 717 in file INIT_COUNTER.s
+      At line 720 in file INIT_COUNTER.s
+      At line 723 in file INIT_COUNTER.s
+      At line 726 in file INIT_COUNTER.s
+      At line 741 in file INIT_COUNTER.s
+      At line 744 in file INIT_COUNTER.s
+      At line 747 in file INIT_COUNTER.s
+      At line 750 in file INIT_COUNTER.s
+      At line 753 in file INIT_COUNTER.s
+      At line 766 in file INIT_COUNTER.s
+      At line 769 in file INIT_COUNTER.s
+      At line 772 in file INIT_COUNTER.s
+      At line 775 in file INIT_COUNTER.s
+      At line 778 in file INIT_COUNTER.s
+      At line 791 in file INIT_COUNTER.s
+      At line 794 in file INIT_COUNTER.s
+      At line 797 in file INIT_COUNTER.s
+      At line 800 in file INIT_COUNTER.s
+      At line 803 in file INIT_COUNTER.s
+      At line 816 in file INIT_COUNTER.s
+      At line 819 in file INIT_COUNTER.s
+      At line 822 in file INIT_COUNTER.s
+      At line 825 in file INIT_COUNTER.s
+      At line 828 in file INIT_COUNTER.s
+      At line 840 in file INIT_COUNTER.s
+
+
+
+ARM Macro Assembler    Page 7 Alphabetic symbol ordering
+External symbols
+
+      At line 843 in file INIT_COUNTER.s
+      At line 846 in file INIT_COUNTER.s
+      At line 849 in file INIT_COUNTER.s
+      At line 852 in file INIT_COUNTER.s
+
+PrintCursor 00000000
+
+Symbol: PrintCursor
+   Definitions
+      At line 41 in file INIT_COUNTER.s
+   Uses
+      None
+Comment: PrintCursor unused
+PrintShip 00000000
+
+Symbol: PrintShip
+   Definitions
+      At line 45 in file INIT_COUNTER.s
+   Uses
+      None
+Comment: PrintShip unused
+READ_POT1 00000000
+
+Symbol: READ_POT1
+   Definitions
+      At line 42 in file INIT_COUNTER.s
+   Uses
+      None
+Comment: READ_POT1 unused
+SetCursor_X 00000000
+
+Symbol: SetCursor_X
+   Definitions
+      At line 43 in file INIT_COUNTER.s
+   Uses
+      At line 75 in file INIT_COUNTER.s
+      At line 96 in file INIT_COUNTER.s
+      At line 119 in file INIT_COUNTER.s
+      At line 140 in file INIT_COUNTER.s
+      At line 166 in file INIT_COUNTER.s
+      At line 187 in file INIT_COUNTER.s
+      At line 214 in file INIT_COUNTER.s
+      At line 235 in file INIT_COUNTER.s
+      At line 260 in file INIT_COUNTER.s
+      At line 281 in file INIT_COUNTER.s
+      At line 306 in file INIT_COUNTER.s
+      At line 327 in file INIT_COUNTER.s
+      At line 353 in file INIT_COUNTER.s
+      At line 374 in file INIT_COUNTER.s
+      At line 399 in file INIT_COUNTER.s
+      At line 420 in file INIT_COUNTER.s
+      At line 444 in file INIT_COUNTER.s
+      At line 465 in file INIT_COUNTER.s
+      At line 490 in file INIT_COUNTER.s
+      At line 511 in file INIT_COUNTER.s
+      At line 537 in file INIT_COUNTER.s
+      At line 558 in file INIT_COUNTER.s
+      At line 583 in file INIT_COUNTER.s
+      At line 604 in file INIT_COUNTER.s
+
+
+
+ARM Macro Assembler    Page 8 Alphabetic symbol ordering
+External symbols
+
+      At line 631 in file INIT_COUNTER.s
+      At line 657 in file INIT_COUNTER.s
+      At line 683 in file INIT_COUNTER.s
+      At line 709 in file INIT_COUNTER.s
+      At line 736 in file INIT_COUNTER.s
+      At line 761 in file INIT_COUNTER.s
+      At line 786 in file INIT_COUNTER.s
+      At line 811 in file INIT_COUNTER.s
+      At line 835 in file INIT_COUNTER.s
+
+SetCursor_Y 00000000
+
+Symbol: SetCursor_Y
+   Definitions
+      At line 44 in file INIT_COUNTER.s
+   Uses
+      At line 77 in file INIT_COUNTER.s
+      At line 98 in file INIT_COUNTER.s
+      At line 121 in file INIT_COUNTER.s
+      At line 142 in file INIT_COUNTER.s
+      At line 168 in file INIT_COUNTER.s
+      At line 189 in file INIT_COUNTER.s
+      At line 216 in file INIT_COUNTER.s
+      At line 237 in file INIT_COUNTER.s
+      At line 262 in file INIT_COUNTER.s
+      At line 283 in file INIT_COUNTER.s
+      At line 308 in file INIT_COUNTER.s
+      At line 329 in file INIT_COUNTER.s
+      At line 355 in file INIT_COUNTER.s
+      At line 376 in file INIT_COUNTER.s
+      At line 401 in file INIT_COUNTER.s
+      At line 422 in file INIT_COUNTER.s
+      At line 446 in file INIT_COUNTER.s
+      At line 467 in file INIT_COUNTER.s
+      At line 492 in file INIT_COUNTER.s
+      At line 513 in file INIT_COUNTER.s
+      At line 539 in file INIT_COUNTER.s
+      At line 560 in file INIT_COUNTER.s
+      At line 585 in file INIT_COUNTER.s
+      At line 606 in file INIT_COUNTER.s
+      At line 633 in file INIT_COUNTER.s
+      At line 659 in file INIT_COUNTER.s
+      At line 685 in file INIT_COUNTER.s
+      At line 711 in file INIT_COUNTER.s
+      At line 738 in file INIT_COUNTER.s
+      At line 763 in file INIT_COUNTER.s
+      At line 788 in file INIT_COUNTER.s
+      At line 813 in file INIT_COUNTER.s
+      At line 837 in file INIT_COUNTER.s
+
+9 symbols
+393 symbols in table
